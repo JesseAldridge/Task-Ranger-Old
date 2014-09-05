@@ -1,0 +1,50 @@
+
+
+<!-- Html scaffolding.  Include javascript libs.-->
+
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src='jquery.mjs.nestedSortable.js'></script>
+    <style>
+    .placeholder { background-color: #cfcfcf; }
+    </style>
+  </head>
+  <body>
+      
+  <ol id="node_container" class="ui-sortable">
+    <li class="node" node_id="33768596197" style="background: #aaaaff">     
+      <div class="headline">   
+        <input class="text" value="Default Node #plan" style="width: 176px;">   
+      </div>        
+      <ol>
+        <li class="node" node_id="9433807107" style="background: aaffaa">     
+          <div class="headline">   
+            <input class="text" value="New Node">     
+          </div>        
+          <ol></ol>   
+        </li>
+        <li class="node" node_id="59158801637" style="background:ffaaaa">     
+          <div class="headline">   
+            <input class="text" value="New Node..." style="width: 294px;">
+          </div>        
+          <ol></ol>    
+        </li>
+      </ol>     
+    </li>
+  </ol>
+    
+    <script>
+  $('#node_container').nestedSortable({
+    forcePlaceholderSize: true, handle: 'div', helper:  'clone',
+    items: 'li', maxLevels: 0, opacity: .6, placeholder: 'placeholder',
+    revert: 100, tabSize: 25, tolerance: 'pointer', toleranceElement: '> div',
+    distance: 10,
+    update: function(event, ui) {
+    }
+  })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!-- CSS and Javascript -->
+<head>
+<link rel="stylesheet" href="../lib/smoothness/jquery-ui-1.8.12.custom.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../lib/tree.css" />
+<link rel="stylesheet" type="text/css" href="../tr.css" />
+<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js'></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+<script src='../lib/jquery.ui.nestedSortable.js'></script>
+<script src="../lib/jquery.flot.js"></script>
+<script src="../lib/jquery.flot.stack.js"></script>
+<script src="../lib/PorterStemmer2.js"></script>
+<script src='../lib/std.js'></script>
+<script src='static/lib/1_local_nodes.js'></script>
+<script src='static/lib/2_render_tree.js'></script>
+<script src='static/lib/3_json_to_node.js'></script>
+<script src='static/lib/4_toggle_collapse.js'></script>
+<script src='static/lib/5_add_nodes.js'></script>
+<script src='static/lib/6_delete_nodes.js'></script>
+<script src='static/lib/7_drag_and_drop.js'></script>
+<script src='static/1_tr.js'></script>
+<script src='static/2_tr.js'></script>
+</head>
+
+<!-- Pause indicator and Header (logo and buttons) -->
+
+<div class='pause_indic' style='display:none'>PAUSED</div>
+<div id="modify_times_popup" style="display:none" title="Modify times">
+  <textarea></textarea>
+</div>
+<div class='header'>
+  <a href='http://taskranger.com'><div class='logo'>Task Ranger</div></a>
+  <div class='buttons'></div>
+  <div class='login_boxes'></div>
+</div>
+
+<!-- Main and footer. -->
+
+<div style='clear:both'></div>
+<div id="stack" class="stack" style="width:900px;height:450px;float:left"></div>
+<ol id='top5' style='float:left'></ol>
+<div id='time_per_tln' class='time_per_tln' style='width:900px;height:450px;float:left'></div>
+<div id='avg_comp_time' style='float:left'>Average completion time:</div>
+<div id="find_panel"><button id="next">Next</button></div>
+<div style='clear:both'></div>
+<ol id='node_container'></ol>
+
+<p class='note'>Note:  Data is saved automatically.</p>
+<p class='note' style='margin-top:50px'>By:  <a href='http://jessealdridge.com'>Jesse Aldridge</a></p>

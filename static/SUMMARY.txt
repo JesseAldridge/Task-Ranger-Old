@@ -1,0 +1,30 @@
+
+2_tr.js
+  Init
+    Called from html.  Init tree stuff.  Set time background colors.
+      Start ping timer:
+        If not paused, increment current node time for today.
+        Recalc cum time and render.
+      Recurse through all nodes, bottom up, calculating cum_times.
+
+  Recalc cum time
+    Convert task_time + cum_time to seconds and replace.  Recurse upward.
+
+1_tr.js
+    Calculate rgb values.  Convert to rgb hex and set back.
+    Clear current and show pause indicator.
+    Add time tracking extras to tree: both model and html.
+    Bind:  set current to clicked, pause on change time, store old time.
+    Add pause button.
+    Integer seconds to hours:mins:seconds string.
+    $('<div>00:00:00</div>') -> 0
+    '00:00:00' -> [0, 0, 0]
+
+tests
+  2_tr.html
+      CSS and Javascript
+      Html structure
+
+images - pngs for index page
+lib - mostly js libs, a little css
+notes - asciiflow docs

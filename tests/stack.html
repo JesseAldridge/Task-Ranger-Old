@@ -1,0 +1,51 @@
+
+<script language="javascript" type="text/javascript" src="../lib/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="../lib/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="../lib/jquery.flot.stack.js"></script>
+
+<div id="placeholder" style="width:600px;height:300px;"></div>
+
+<script id="source">
+$(function () {
+    // var n = 10
+    var n = 1
+
+    function gen_layer() {
+        var layer = [];
+        var start = new Date();
+        for (var i = 0; i <= n; i += 2) {
+            var d = new Date();
+            d.setDate(start.getDate() + i + 1);
+            var val = parseInt(Math.random() * 30)
+            layer.push([d, val]);
+
+        }
+        return layer
+    }
+
+    var d1 = gen_layer(), d2 = gen_layer(), d3 = gen_layer()
+
+    function plotWithOptions() {
+        var data = [
+            {label:"foo", data:d1}, {label:"bar", data:d2}, 
+            {label:"baz", data:d3} ]
+
+        console.log('data:', data)
+
+        $.plot($("#placeholder"), data, {
+            series: {
+                stack: true,
+                lines: { show: true, fill: true, steps: true },
+                bars: {show:true, barWidth:1, align: 'center'}
+            },
+            xaxis: {
+                mode: "time",
+                timeformat: "%m/%d",
+            },
+        });
+    }
+
+    plotWithOptions();
+
+});
+</script>

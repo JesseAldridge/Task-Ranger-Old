@@ -1,0 +1,18 @@
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='static/lib/std.js'></script>
+<script src='static/lib/01_local_nodes.js'></script>
+
+<script>
+
+// Set node text to date.
+
+RemoteTree.prototype.after_load = function() {
+  this.walk_tree(this.top_ids, function(node) {
+    console.log('walk tree, node:', node)
+    node.set('text', new Date().getTime())
+  })
+}
+
+var tree = new RemoteTree()
+</script>

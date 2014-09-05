@@ -1,0 +1,17 @@
+
+Let's say I'd like to improve my productivity.  A good first step would be developing a better understanding of where my time is going.  How can I figure this out?  Maybe I could make small notes thoughout my workday -- notes about what I'm doing at that moment.  These notes would eventually end up in a file that looks something like this:
+
+12:00  next?  look at bob's code...
+12:20  email...  no reply from george...  bob's code... chatting...  read about ssl...
+12:40  read read read read
+01:00  read read read read
+01:20  chatting...  read...  read diagram
+01:40  read...  svn diff...  so what are these key and crt files?  study them...
+02:00  make no app versions page look nicer...  static files not working...
+02:20  static_url not working...  need to use render?  yep...  ok commit and deploy... talking to jerry
+
+Let's say that I keep this up for a year and end up with thousands of entries in this file.  I now have some decent data about how I'm spending my time and I'd like to extract useful information out of it.   The text is free-form and idiosyncratic, but there are clearly some insights to be gleaned.  For example, from the lines above, I can see that I spent at least 20 mintues reading stuff.  I see the word "chatting" appears on two lines.
+
+So at the very least, I can take the lowercase stemmed version of every word and calculate the most frequently occuring words or bigrams or something along those lines.  But really, I want to go way beyond that.  I'm thinking the main thing I'd like to pull out of this file is something like the top-ten most time consuming activities.  Maybe these activities could be broad (eg. "coding", "talking", "researching") and then narrowed down via sub-categories (eg. "coding" -> "refactoring", "talking" -> "chatting with Bob").  I could automatically tag each line and come up with a total time based on the number of lines that have the tag.
+
+Obviously this isn't an easy problem, but I was hoping for some general guidance.  What's the field of study here?  Preferably something more specific than "Natural Language Processing".  Some terms I could plug into google would be nice.  Where can I find relevant research papers?  Or does anybody have an alternative way to approach this problem?

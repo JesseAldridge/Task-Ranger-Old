@@ -1,0 +1,164 @@
+
+// Init node's timer vars.
+
+LocalNode.prototype.after_init = function() {
+  if(!this.cum_ms) {
+    this.cum_ms = 0
+    this.interval_list = []
+  }
+}
+
+// Start pinging.
+
+RemoteTree.prototype.after_bind_drag_drop = function() {
+  this.ping_secs = 1
+  this.ping_timer = setTimeout(this.ping, 1000 * this.ping_secs)
+  var tree = global_tree = this
+
+  $(document).on('click', '.text', function(evt) {
+    if(!evt.metaKey && !evt.altKey) {
+      $('.current').removeClass('current')
+      var node_el = tree.from(this, 'node_el')
+      node_el.addClass('current')
+      var node = tree.local_nodes[node_el.attr('node_id')]
+      node.new_interval()
+    }
+    return false
+  })
+
+  this.after_bind_ping()
+}
+
+RemoteTree.prototype.after_bind_ping = function() {}
+
+// Increment MetaNode for selected, re-render timer, recalc cum time, loop.
+
+RemoteTree.prototype.ping = function() {
+  var current = $('.current')
+  // (use global_tree because this method is called via setTimeout, so this == window)
+  if(current.length > 0 && !global_tree.paused) {
+    var selected_node = global_tree.local_nodes[current.attr('node_id')]
+    selected_node.increment()
+    global_tree.recalc_cum_time(selected_node)    
+    if(selected_node.calc_indiv_ms() / 1000 / 60 / selected_node.text.split('...').length > 10) {
+      console.log('yellow')
+      $('body').css('background', 'yellow')
+    }
+    else {
+      console.log('unyellow')
+      $('body').css('background', '')
+    }
+    global_tree.decorate_ids(global_tree.top_ids)
+  }
+  global_tree.ping_timer = setTimeout(global_tree.ping, global_tree.ping_secs * 1000)
+  global_tree.after_ping()
+}
+
+RemoteTree.prototype.after_ping = function() {}
+
+RemoteTree.prototype.after_drop = function(node, old_parent) {
+  this.recalc_cum_time(node)
+  this.recalc_cum_time(old_parent)
+}
+
+// Include descendant's time.  Display new time and recurse upward.
+
+RemoteTree.prototype.recalc_cum_time = function(task_node) {
+  var cum_ms = task_node.calc_indiv_ms()
+  var child_ids = task_node.child_ids
+  for(var i = 0; i < child_ids.length; i++)
+    cum_ms += this.local_nodes[child_ids[i]].cum_ms
+
+  var task_el = select_node_el(task_node)
+  var cum_time_dom = this.from(task_el, 'cum_time')
+  set_time_el(cum_time_dom, cum_ms)
+  task_node.set('cum_ms', cum_ms)
+  var parent_node = this.local_nodes[task_node.parent_id]
+  if(parent_node)
+    this.recalc_cum_time(parent_node)
+}
+
+RemoteTree.prototype.after_delete = function(node) {
+  this.recalc_cum_time(node)
+}
+
+// Set hours:mins:secs for passed element.
+
+function set_time_el(time_dom, ms) {
+  if(!ms)
+    ms = 0
+  var secs = ms / 1000
+  var time_str = build_time_str(secs)
+  if($(time_dom).is('input'))
+    time_dom.val(time_str)
+  else
+    time_dom.text(time_str)
+  return time_str
+}
+
+// Integer seconds to hours:mins:seconds string.
+
+function build_time_str(secs) {
+  var hms = break_up_secs(secs)
+  var hours = hms[0], mins = hms[1], secs = hms[2]
+  if(secs < 10)  secs = '0' + secs
+  if(mins < 10)  mins = '0' + mins
+  if(hours < 10)  hours = '0' + hours
+  var t_str = '%h:%m:%s'.replace('%h', hours).replace('%m', mins)
+  t_str = t_str.replace('%s', secs)
+  return t_str
+}
+
+// Seconds to hours, mins, secs
+
+function break_up_secs(secs) {
+  var mins = Math.floor(secs / 60)
+  secs %= 60
+  var hours = Math.floor(mins / 60)
+  mins %= 60
+  secs = Math.round(secs)
+  return [hours, mins, secs]
+}
+
+// Increase node's last interval by ms since last ping.
+
+LocalNode.prototype.increment = function() {
+  var curr_time = Date.now()
+  if(this.tree.last_inc_time) {
+    var interval_list = this.interval_list,
+        delta = curr_time - this.tree.last_inc_time
+    interval_list[interval_list.length - 1].ms += delta
+    this.send('interval_list/' + (interval_list.length - 1) + '/ms',
+      interval_list[interval_list.length - 1].ms)
+  }
+  this.tree.last_inc_time = curr_time
+}
+
+LocalNode.prototype.calc_indiv_ms = function() {
+  var ms = 0
+  for(var i = 0; i < this.interval_list.length; i++)
+    ms += this.interval_list[i].ms
+  return ms
+}
+
+window.html_after_buttons = function() { return "\
+<div title='Cumulative time' class='cum_time time'>00:00:00</div> \
+<input title='Individual time' class='task_time time' value='00:00:00'> \
+"
+}
+
+// Turn the seconds into a rendered date on the node.
+
+RemoteTree.prototype.decorate_node_el = function(task_node) {
+  var task_el = select_node_el(task_node)
+  set_time_el(this.from(task_el, 'task_time'), task_node.calc_indiv_ms())
+  set_time_el(this.from(task_el, 'cum_time'), task_node.cum_ms)
+}
+
+
+
+
+
+
+
+

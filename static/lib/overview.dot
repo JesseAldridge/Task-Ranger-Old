@@ -1,0 +1,7 @@
+digraph G {
+    "1_local_nodes" -> firebase [label="initial read"]
+    "1_local_nodes" -> firebase [label="modifications"]
+    "2_render_tree" -> "1_local_nodes" [label="render local nodes"]
+    "3_json_to_node" -> "1_local_nodes" [label="update nodes"]
+    "3_json_to_node" -> "2_render_tree" [label="get node_el by id"]
+}

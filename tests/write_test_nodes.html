@@ -1,0 +1,35 @@
+
+<!-- Html scaffolding.  Include javascript libs. -->
+
+<html>
+  <head>
+    <script src='https://cdn.firebase.com/v0/firebase.js'></script>
+  </head>
+</html>
+
+<script>
+  var root_ref = new Firebase('https://taskranger.firebaseio.com/')
+  root_ref.child('foo/bar/baz').set(true)
+  // root_ref.set({
+  //   'top_level_ids':['1', '2'],
+  //   'nodes':{
+  //     '1': {
+  //       node_id: '1',
+  //       is_expanded: true,
+  //       text: '1',
+  //       child_ids: ['3']
+  //     },
+  //     '2': {
+  //       node_id: '2',
+  //       is_expanded: true,
+  //       text: '2',
+  //     },
+  //     '3': {
+  //       node_id: '3',
+  //       is_expanded: true,
+  //       text: '3',
+  //       parent_id: '1'
+  //     }
+  //   }
+  // })
+</script>

@@ -1,0 +1,55 @@
+
+<!-- javascript and html -->
+
+<script language="javascript" type="text/javascript" src="../lib/jquery.min.js">
+</script>
+<script language="javascript" type="text/javascript" src="../lib/jquery.flot.js">
+</script>
+
+<div id="placeholder" style="width:600px;height:300px;"></div>
+
+<script id="source">
+$(function () {
+    // Plot points and draw regression line.
+
+    var data = [[0, 3], [1, 8], [2, 5], [3, 13]]
+    var xs = [], ys = []
+    for(var i = 0; i < data.length; i++) {
+        xs.push(data[i][0])
+        ys.push(data[i][1])
+    }
+    console.log('data:', data)
+    var plot = $.plot($("#placeholder"), [data])
+    var a = linear_regression(xs, ys)
+    var m = a[0], b = a[1]
+    var last_x = data[data.length - 1][0]
+    var off0 = plot.pointOffset({ x: 0, y: b})
+    var off1 = plot.pointOffset({ x: last_x, y: m * last_x + b })
+    var ctx = plot.getCanvas().getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(off0.left, off0.top);
+    ctx.lineTo(off1.left, off1.top);
+    ctx.stroke();
+})
+
+function linear_regression(xs, ys) {
+    var sum_x = 0, sum_y = 0, sum_xy = 0, sum_xx = 0, count = 0, x = 0, y = 0;
+    if (xs.length != ys.length)
+        throw new Error(
+          'The parameters xs and ys need to have same size!');
+    if (xs.length === 0)
+        return [];
+    for (var v = 0; v < xs.length; v++) {
+        x = xs[v];
+        y = ys[v];
+        sum_x += x;
+        sum_y += y;
+        sum_xx += x*x;
+        sum_xy += x*y;
+        count++;
+    }
+    var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
+    var b = (sum_y/count) - (m*sum_x)/count;
+    return [m, b]
+}
+</script>
