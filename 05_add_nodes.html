@@ -4,17 +4,17 @@
 <html>
   <head>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
-    <script src='static/lib/jquery.tmpl.min.js'></script>
+    <script src='static/jquery.tmpl.min.js'></script>
     <script src='https://cdn.firebase.com/v0/firebase.js'></script>
-    <script src='static/lib/std.js'></script>
-    <script src='static/lib/01_local_nodes.js'></script>
-    <script src='static/lib/02_render_tree.js'></script>
-    <script src='static/lib/03_json_to_node.js'></script>
-    <script src='static/lib/04_toggle_collapse.js'></script>
-    <script src='static/lib/05_add_nodes.js'></script>
+    <script src='static/std.js'></script>
+    <script src='static/01_local_nodes.js'></script>
+    <script src='static/02_render_tree.js'></script>
+    <script src='static/03_json_to_node.js'></script>
+    <script src='static/04_toggle_collapse.js'></script>
+    <script src='static/05_add_nodes.js'></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="static/lib/smoothness/jquery-ui-1.8.12.custom.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="static/lib/tree.css" />
+    <link rel="stylesheet" href="static/smoothness/jquery-ui-1.8.12.custom.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="static/tree.css" />
     <link rel="stylesheet" type="text/css" href="static/tr.css" />
 
     </script>
@@ -22,7 +22,7 @@
   <body>
     <div><ol id="node_container"></ol></div>
     <script>
-    var tree = new RemoteTree()
+    var global_tree = new RemoteTree()
     </script>
   </body>
 </html>
