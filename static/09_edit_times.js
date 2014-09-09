@@ -34,7 +34,7 @@ RemoteTree.prototype.after_bind_ping = function() {
       }
     }
     else {
-      if(node.interval_list.length == 0)
+      if(node.interval_list.length === 0)
         node.new_interval()
       node.interval_list[node.interval_list.length - 1].ms += remaining_diff
     }
@@ -59,7 +59,7 @@ function parse_time_div(el) {
     el = $(el)
     s = el.val()
   }
-  if(s == '')  s = el.text()
+  if(s === '')  s = el.text()
   return parse_time_str(s)
 }
 

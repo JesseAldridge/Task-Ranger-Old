@@ -34,7 +34,7 @@ RemoteTree.prototype.render_ids = function(node_ids, is_red) {
   this._render_ids(node_ids.slice(0), is_red)
 }
 RemoteTree.prototype._render_ids = function(node_ids, is_red) {
-  if(node_ids.length == 0)
+  if(node_ids.length === 0)
     return
   var node = this.local_nodes[node_ids.shift()]
   this.render_node(node, is_red)

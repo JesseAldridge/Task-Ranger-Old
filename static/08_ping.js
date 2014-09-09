@@ -15,7 +15,8 @@ LocalNode.prototype.after_init = function() {
 RemoteTree.prototype.after_bind_drag_drop = function() {
   this.ping_secs = 1
   this.ping_timer = setTimeout(this.ping, 1000 * this.ping_secs)
-  var tree = global_tree = this
+  var tree = this
+  global_tree = tree
 
   $(document).on('click', '.text', function(evt) {
     if(!evt.metaKey && !evt.altKey) {
@@ -112,8 +113,8 @@ function set_time_el(time_dom, ms) {
 
 // Integer seconds to hours:mins:seconds string.
 
-function build_time_str(secs) {
-  var hms = break_up_secs(secs)
+function build_time_str(all_secs) {
+  var hms = break_up_secs(all_secs)
   var hours = hms[0], mins = hms[1], secs = hms[2]
   if(secs < 10)  secs = '0' + secs
   if(mins < 10)  mins = '0' + mins
@@ -168,11 +169,12 @@ LocalNode.prototype.calc_indiv_ms = function() {
   return ms
 }
 
-window.html_after_buttons = function() { return "\
-<!--<span title='Date created' class='date_created'></span>--> \
-<div title='Cumulative time' class='cum_time time'>00:00:00</div> \
-<input title='Individual time' class='task_time time' value='00:00:00'> \
-"
+window.html_after_buttons = function() { 
+  return " \
+  <!--<span title='Date created' class='date_created'></span>--> \
+  <div title='Cumulative time' class='cum_time time'>00:00:00</div> \
+  <input title='Individual time' class='task_time time' value='00:00:00'> \
+  "
 }
 
 // Turn the seconds into a rendered date on the node.

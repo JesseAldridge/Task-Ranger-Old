@@ -17,7 +17,7 @@
     // Hook firebase top-level.  Setup click event handlers.
 
     console.log('yep...')
-    var root_ref = new Firebase('https://taskranger.firebaseio.com/test_nodes')
+    var root_ref = new Firebase('https://taskranger.firebaseio.com/test_tree')
     root_ref.once('value', function(snap) {
       var nodes = snap.val().nodes
       for(var key in nodes)

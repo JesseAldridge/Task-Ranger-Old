@@ -67,7 +67,7 @@ RemoteTree.prototype.decorate = function(node, is_red, prefix) {
     collapse.addClass('ui-icon-empty')
 
   // (nestedSortable kills empty ols on drop, so just add them back #note1)
-  if($(node_el).find('> ol').length == 0)
+  if($(node_el).find('> ol').length === 0)
     $(node_el).append('<ol></ol>')
 
 

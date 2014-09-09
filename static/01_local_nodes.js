@@ -12,7 +12,7 @@ function RemoteTree() {
     var top_ids = []
     if(snap.val()) {
       top_ids = snap.val().top_level_ids
-      if(!top_ids || top_ids.length == 0)
+      if(!top_ids || top_ids.length === 0)
         top_ids = []
       var node_snaps = snap.val().nodes
       for(var node_id in node_snaps)
@@ -21,6 +21,8 @@ function RemoteTree() {
     tree.top_ids = top_ids
     tree.after_load()
   })
+
+  debug.log_all_vars()
 }
 
 RemoteTree.prototype.get_user_root = function(){ return 'test_tree' }
@@ -53,8 +55,8 @@ function LocalNode(node_snap, tree) {
   for(var key in node_snap)
     this[key] = node_snap[key]
   var child_ids = []
-  for(var key in this.child_ids)
-    child_ids.push(this.child_ids[key])
+  for(var id in this.child_ids)
+    child_ids.push(this.child_ids[id])
   this.child_ids = child_ids
   if(!this.parent_id)
     this.parent_id = null

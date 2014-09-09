@@ -20,7 +20,7 @@ RemoteTree.prototype.after_bind_collapse = function() {
     if(e.keyCode == 13) // return
       tree.add_under($(this))
     else if(e.keyCode == 40) { // down
-      function next_node(node, start_index) {
+      var next_node = function(node, start_index) {
         var next_id = null
         if(node.child_ids.length > 0 && node.is_expanded) {
           if(start_index) {
@@ -43,13 +43,13 @@ RemoteTree.prototype.after_bind_collapse = function() {
       tree.set_current(next_node(node))
     }
     else if(e.keyCode == 38) { // up
-      function prev_node() {
+      var prev_node = function() {
         var parent = node.parent_id ? tree.local_nodes[node.parent_id] : null,
             prev_sibling = tree.get_prev_sibling(node)
         if(prev_sibling) {
           if(prev_sibling.is_expanded) {
-            function descend_to_leaf(node) {
-              if(node.child_ids.length == 0)
+            descend_to_leaf = function(node) {
+              if(node.child_ids.length === 0)
                 return node
               return descend_to_leaf(tree.local_nodes[node.child_ids[node.child_ids.length - 1]])
             }
@@ -154,7 +154,7 @@ RemoteTree.prototype.add_under = function(node_sub_el) {
   var node_el = node_sub_el.closest('.node')
   var parent_el = node_el.parent().closest('.node')
   var index = parent_el.find('ol:first > .node').index(node_el)
-  if(parent_el.length == 0)
+  if(parent_el.length === 0)
     index = this.top_ids.indexOf(node_el.attr('node_id'))
   this.add_index(this.local_nodes[parent_el.attr('node_id')], index + 1)
 }

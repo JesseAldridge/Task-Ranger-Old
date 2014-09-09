@@ -1,6 +1,6 @@
 
 RemoteTree.prototype.after_initial_render = function() {
-  if(this.top_ids.length == 0)
+  if(this.top_ids.length === 0)
     this.write_json_to_node(
       {text:"Type what you're doing. #study...  Use ellipses to separate chunks of time...  #foo Use hashtags to categorize"})
 
@@ -42,7 +42,7 @@ RemoteTree.prototype.decorate_ids = function(node_ids, is_red) {
   this._decorate_ids(node_ids ? node_ids.slice(0) : [], is_red)
 }
 RemoteTree.prototype._decorate_ids = function(node_ids, is_red) {
-  if(node_ids.length == 0)
+  if(node_ids.length === 0)
     return
   var node = this.local_nodes[node_ids.shift()]
   this.decorate(node, is_red)
@@ -58,7 +58,7 @@ RemoteTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
   var ids_list = parent_id ? this.local_nodes[parent_id].child_ids : this.top_ids
   if(!ids_list)
     ids_list = []
-  if(index == undefined)
+  if(index === undefined)
     ids_list.push(node_id)
   else
     ids_list.splice(index, 0, node_id)
@@ -85,7 +85,7 @@ RemoteTree.prototype.from = function(start, end) {
   var res = _from_node_el(start, end)
   if(res)
     return res
-  if(end.indexOf('.') != 0)
+  if(end.indexOf('.') !== 0)
     end = '.' + end
   if(start.hasClass('headline'))  
     return $(start.children(end))

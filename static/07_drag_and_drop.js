@@ -7,7 +7,7 @@ RemoteTree.prototype.after_bind_delete = function() {
 
   $('#node_container').nestedSortable({
     forcePlaceholderSize: true, handle: 'div', helper:  'clone',
-    items: 'li', maxLevels: 0, opacity: .6, placeholder: 'placeholder',
+    items: 'li', maxLevels: 0, opacity: 0.6, placeholder: 'placeholder',
     revert: 250, tabSize: 25, tolerance: 'pointer', toleranceElement: '> div',
     distance: 20, doNotClear: true,
     update: function(event, ui) {
@@ -32,6 +32,7 @@ RemoteTree.prototype.after_bind_delete = function() {
       // If no parent, add node to top level.
 
       else {
+        // jshint -W004
         var index = $('#node_container > .node').index($(ui.item))
         tree.top_ids.splice(index, 0, moved_node.node_id)
         tree.root_ref.child('top_level_ids').set(tree.top_ids)

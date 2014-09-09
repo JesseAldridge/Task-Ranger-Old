@@ -36,8 +36,6 @@ RemoteTree.prototype.regen_top5 = function(node_ids) {
 
       // Pull out tag for current segment if it has one.
 
-      var parent_id = task_node.parent_id
-
       var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(s)
       if(match) {
         tag = match[0].trim().slice(1)
