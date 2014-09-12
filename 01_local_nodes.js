@@ -21,8 +21,6 @@ function RemoteTree() {
     tree.top_ids = top_ids
     tree.after_load()
   })
-
-  debug.log_all_vars()
 }
 
 RemoteTree.prototype.get_user_root = function(){ return 'test_tree' }
