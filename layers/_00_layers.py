@@ -17,8 +17,8 @@ def increment_layers():
     old_num = int(split[0])
     new_filename = str(old_num + 1).zfill(2) + '_' + split[1]
     new_path = os.path.join(os.path.dirname(old_path), new_filename)
-    shutil.copyfile(old_filename, new_filename)
-    os.remove(old_filename)
+    shutil.copyfile(old_path, new_path)
+    os.remove(old_path)
 
 if __name__ == '__main__':
   increment_layers()
