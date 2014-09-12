@@ -1,23 +1,12 @@
 
-
-function gen_html() {
-  <html>
-    <head>
-      <script src='https://cdn.firebase.com/v0/firebase.js'></script>
-      <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'>
-      <script src='00_firebase_hello.js'></script>
-      </script>
-    </head>
-    <body>
-      <div class="nodes"></div>
-    </body>
-  </html>
-}
+// https://cdn.firebase.com/v0/firebase.js
+// https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js
 
 function connect_to_firebase() {
 
   // Hook firebase top-level.  Setup click event handlers.
 
+  $('body').append('<div class="nodes"></div>')
   var root_ref = new Firebase('https://taskranger.firebaseio.com/test_tree')
   root_ref.once('value', function(snap) {
     var nodes = snap.val().nodes
