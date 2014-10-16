@@ -1,0 +1,77 @@
+
+/* Header and stuff */
+
+body {background-color:#f8f8f8; height:100%}
+.header {margin-top:10px}
+.header a {text-decoration:none}
+/*.buttons {float:left; margin-left:20px; border:inset 2px; padding:5px;
+          border-radius:6px; margin-top:7px}*/
+.buttons { margin-top: 4px; display: inline-block; margin-left: 15px }
+.logo {float:left; font-size:200%; margin-bottom:20px; color:#fff;
+       background-color:#58C; border-radius:10px;
+       padding-left:10px; padding-right:10px;
+       padding-top:4px; padding-bottom:4px;
+       font-family:Palatino Linotype; border:solid 3px; border-color:#cdf;
+       background: -webkit-gradient(linear, left top, left bottom,
+                               from(#69D), to(#47b));
+       background: -moz-linear-gradient(top,  #69D,  #47b);
+       filter: progid:DXImageTransform.Microsoft.gradient(
+                     startColorstr='#6699dd', endColorstr='#4477bb');
+}
+.logo:hover {cursor:pointer;
+       background: -webkit-gradient(linear, left top, left bottom,
+                                    from(#7ae), to(#58c));
+       background: -moz-linear-gradient(top,  #7ae,  #58c);
+       filter: progid:DXImageTransform.Microsoft.gradient(
+                     startColorstr='#77aaee', endColorstr='#5588cc');
+}
+
+.login { margin-top:15px; display: inline-block }
+
+/* main content */
+
+#top5 { display: block }
+
+.cum_time {
+  font-size: 80%;
+  margin-top: 4px;
+}
+
+.task_time {
+  border: inset 1px;
+  width: 52px;
+  margin-top: 3px;
+}
+
+.time {
+  margin-right: 5px;
+  float: right;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.date_created {
+  float:right; font-size: 70%; margin-top: 5px; margin-right:4px
+}
+
+.value_per_hour {
+  float: right;
+  font-size: 60%;
+  margin-top: 7px;
+  margin-right: 4px;
+}
+
+.date {float:right; width:85px}
+
+.pause_indic {background:#fff; position:fixed; left:50%; top:50%;
+              border:solid 4px; display:none; font-size:20px;
+              padding:10px; font-weight:strong;}
+
+.stack {
+  width:450px; height:210px; float:left; margin-top:15px; margin-left:20px
+}
+
+.note {font-family:Tahoma; font-size:80%}
+
+
+

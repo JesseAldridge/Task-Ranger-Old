@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<!-- Html scaffolding.  Include javascript libs.-->
+
+<html>
+  <head>
+    <script src="static/PorterStemmer2.js"></script>
+    <script src="https://cdn.firebase.com/js/simple-login/1.6.1/firebase-simple-login.js"></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+    <script src='static/jquery.tmpl.min.js'></script>
+    <script src='https://cdn.firebase.com/v0/firebase.js'></script>
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="static/jquery.mjs.nestedSortable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js"></script>
+
+    <script src='static/std.js'></script>
+    <script src='01_local_nodes.js'></script>
+    <script src='02_json_to_node.js'></script>
+    <script src='03_render_tree.js'></script>
+    <script src='04_toggle_collapse.js'></script>
+    <script src='05_add_nodes.js'></script>
+    <script src='06_delete_nodes.js'></script>
+    <script src='07_drag_and_drop.js'></script>
+    <script src='08_ping.js'></script>
+    <script src='09_edit_times.js'></script>
+    <script src='10_tags.js'></script>
+    <script src='11_graph.js'></script>
+    <script src="static/jquery.flot.js"></script>
+    <script src="static/jquery.flot.stack.js"></script>
+    <link rel="stylesheet" href="static/smoothness/jquery-ui-1.8.12.custom.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="static/tree.css" />
+    <link rel="stylesheet" type="text/css" href="static/tr.css" />
+  </head>
+  <body>
+
+    <p class='note'>This is just an example page.  Changes will not be saved.</p>
+
+    <ul id='top5' style="float:left"></ul>
+    <div id="stack" class="stack"></div>
+    <div style="clear:both"></div>
+    <div class="buttons"></div>
+    <div><ol id="node_container"></ol></div>
+    <p class='note' style='margin-top:50px'>By:  <a href='http://jessealdridge.com' target="_blank">Jesse Aldridge</a></p>
+
+    <script>
+
+    RemoteTree.prototype.get_user_root = function(){ return 'example_tree/' }
+    global_tree = new RemoteTree()
+
+    </script>
+
+  </body>
+</html>
