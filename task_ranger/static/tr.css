@@ -30,7 +30,13 @@ body {background-color:#f8f8f8; height:100%}
 
 /* main content */
 
+
 #top5 { display: block }
+
+.tree_section {
+  display:inline-block; vertical-align:top;
+  border:solid 1px; width:300px
+}
 
 .cum_time {
   font-size: 80%;
@@ -61,7 +67,7 @@ body {background-color:#f8f8f8; height:100%}
   margin-right: 4px;
 }
 
-.date {float:right; width:85px}
+.tree_section .date {float:right; width:85px}
 
 .pause_indic {background:#fff; position:fixed; left:50%; top:50%;
               border:solid 4px; display:none; font-size:20px;
@@ -72,6 +78,44 @@ body {background-color:#f8f8f8; height:100%}
 }
 
 .note {font-family:Tahoma; font-size:80%}
+
+/*  Work chunks */
+
+.chunk_section {
+  display:inline-block; width:400px;
+  border:solid 1px; padding:2px;
+}
+
+.chunk_section .time_input {
+  display:none
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

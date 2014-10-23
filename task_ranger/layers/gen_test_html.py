@@ -2,14 +2,13 @@ import re, os, sys
 
 import _00_layers
 
-
 def gen_test_html(requested_num):
 
   # Write the test html for the requested layer.  Include previous layers and dependencies.
 
   layer_paths, required = [], []
   page_title = None
-  for path in _00_layers.each_layer():
+  for path in _00_layers.each_layer_path():
     layer_num, _ = _00_layers.split_layer_num(path)
     if layer_num > requested_num:
       break
@@ -24,14 +23,14 @@ def parse_required_scripts(path):
     lines = f.read().splitlines()
   line_iter = iter(lines)
   for line in line_iter:
-    if line.strip() == '// requires':
+    if line.strip() == '// requires:':
       break
   for line in line_iter:
     if not re.match('^// .+\.(js|css)', line):
       break
     file_path = line.split('// ', 1)[1]
     if not file_path.startswith('http'):
-      file_path = '../' + file_path
+      file_path = os.path.join(_00_layers.root_path, file_path)
     required.append(file_path)
   return required
 
@@ -48,14 +47,8 @@ def write_html(required, layer_paths, page_title):
     f.write('\n'.join(script_paths + [
       '<script> $(run_test) </script>', '<title>{}</title>'.format(page_title)]))
 
-  os.system('open test.html')
+  os.system('open -a /Applications/Google\ Chrome.app test.html')
 
 if __name__ == '__main__':
   gen_test_html(int(sys.argv[1]) if len(sys.argv) == 2 else 2)
-
-
-
-
-
-
 
