@@ -38,6 +38,14 @@ body {background-color:#f8f8f8; height:100%}
   border:solid 1px; width:300px
 }
 
+.tree_section ol {
+  padding-left:20px
+}
+
+.tree_section > ol {
+  padding:5px
+}
+
 .cum_time {
   font-size: 80%;
   margin-top: 4px;

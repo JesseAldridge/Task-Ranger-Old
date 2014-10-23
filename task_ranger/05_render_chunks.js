@@ -23,7 +23,7 @@ RemoteTree.prototype.after_initial_show_chunks = function() {}
 
 RemoteTree.prototype.show_chunks_for_day = function(node, date) {
   var daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-  var chunk_ids = node.node_chunks[daily_time]
+  var chunk_ids = node.node_chunks[daily_time] || []
   $('.chunk_list').empty()
   for(var i = 0; i < chunk_ids.length; i++) {
     var input = $('<input class="chunk"></input>')
@@ -57,14 +57,6 @@ RemoteTree.prototype.after_tree_html = function() {
 		pickTime: false
 	});
 }
-
-// Setup html and render tree and chunks.
-
-function run_test() {
-  var tree = new RemoteTree()
-  tree.write_test_data()
-}
-
 
 
 
