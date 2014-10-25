@@ -1,77 +1,4 @@
 
-LocalNode.prototype.new_interval = function() {
-  var interval_obj = {start:new Date().getTime(), ms:0}
-  if(!this.interval_list)
-    this.interval_list = []
-  this.interval_list.push(interval_obj)
-  this.send('interval_list/' + (this.interval_list.length - 1), interval_obj)
-}
-
-RemoteTree.prototype.after_delete2 = function() {
-  this.last_inc_time = null
-}
-
-
-// Increment selected node interval, re-render timer, recalc cum time, loop.
-
-// (not a method because it's called via setTimeout, so this == window)
-function ping() {
-  var current = $('.current')
-  if(current.length > 0 && !global_tree.paused) {
-    var selected_node = global_tree.local_nodes[current.attr('node_id')]
-    if(selected_node.just_selected) {
-      selected_node.just_selected = false
-      selected_node.new_interval()
-    }
-    selected_node.increment()
-    global_tree.recalc_cum_time(selected_node)
-    if(new Date() - global_tree.last_input_date > 10 * 60 * 1000) {
-      if(!global_tree.nagged) {
-        global_tree.nagged = true
-        if (!("Notification" in window))
-          return
-        else if (Notification.permission === "granted")
-          global_tree.notification = new Notification(
-            "It's been 10 minutes.", {icon:'static/clock.png'})
-      }
-    }
-    else {
-      if(global_tree.nagged)
-        global_tree.nagged = false
-      if(global_tree.notification) {
-        global_tree.notification.close()
-        global_tree.notification = null
-      }
-    }
-    global_tree.decorate_ids(global_tree.top_ids)
-  }
-  global_tree.ping_timer = setTimeout(ping, global_tree.ping_secs * 1000)
-  global_tree.after_ping()
-}
-
-// Increase node's last interval by ms since last ping.
-
-LocalNode.prototype.increment = function() {
-  var curr_time = Date.now()
-  if(this.tree.last_inc_time) {
-    var interval_list = this.interval_list,
-        delta = curr_time - this.tree.last_inc_time
-    interval_list[interval_list.length - 1].ms += delta
-    this.send('interval_list/' + (interval_list.length - 1) + '/ms',
-      interval_list[interval_list.length - 1].ms)
-  }
-  this.tree.last_inc_time = curr_time
-}
-
-RemoteTree.prototype.after_ping = function() {}
-
-RemoteTree.prototype.after_drop = function(node, old_parent) {
-  this.recalc_cum_time(node)
-  if(old_parent)
-    this.recalc_cum_time(old_parent)
-}
-
-
 // Start pinging.
 
 RemoteTree.prototype.after_bind_drag_drop = function() {
@@ -91,22 +18,12 @@ RemoteTree.prototype.after_bind_drag_drop = function() {
     return false
   })
 
-  this.after_bind_ping()
+  this.init_notifications()
 }
 
-RemoteTree.prototype.after_bind_ping = function() {}
+// Request permission and init notification vars.
 
-
-RemoteTree.prototype.html_before_times = function() {
-  return "<span title='Date created' class='date_created'></span>"
-}
-RemoteTree.prototype.html_after_times = function() {
-  return "<span title='Value per hour' class='value_per_hour'></span>"
-}
-
-
-
-RemoteTree.after_bind_ping = function() {
+RemoteTree.prototype.init_notifications = function() {
   if (!("Notification" in window)) {
     console.log("This browser does not support desktop notification");
   }
@@ -116,19 +33,120 @@ RemoteTree.after_bind_ping = function() {
       Notification.permission = permission;
     })
 
-  this.last_input_date = new Date()
-  console.log('set last_input_date, this:', this)
+  this.last_input_date = null
   this.nagged = false
   this.notification = null
 
+  var tree = this
   $(document).on('keydown', '.text', function(e) {
     tree.last_input_date = new Date()
   })
 
-  this.after_init_notification()
+  this.after_init_notifications()
 }
 
-RemoteTree.after_init_notification = function() {}
+RemoteTree.prototype.after_init_notifications = function() {}
+
+
+// Increment selected node interval, re-render timer, recalc cum time, loop.
+
+// (not a method because it's called via setTimeout, so this == window)
+function ping() {
+  if(!global_tree.last_input_date)
+    global_tree.last_input_date = new Date()
+  var current = $('.current')
+  if(current.length > 0 && !global_tree.paused) {
+    var selected_node = global_tree.local_nodes[current.attr('node_id')]
+    if(selected_node.just_selected) {
+      selected_node.just_selected = false
+      selected_node.new_interval()
+    }
+    selected_node.increment()
+    global_tree.recalc_cum_time(selected_node)
+    global_tree.nag()
+    global_tree.decorate_ids(global_tree.top_ids)
+  }
+  global_tree.ping_timer = setTimeout(ping, global_tree.ping_secs * 1000)
+  global_tree.after_ping()
+}
+
+// Create a notification every 10 minutes, unless the user ignored the last one.
+
+RemoteTree.prototype.nag = function() {
+  var nag_secs = 10 * 60
+  // var nag_secs = 5
+  if(this.last_input_date && new Date() - this.last_input_date > nag_secs * 1000) {
+    if(!this.nagged) {
+      this.nagged = true
+      if (!("Notification" in window))
+        return
+      else if (Notification.permission === "granted")
+        this.notification = new Notification(
+          "It's been 10 minutes.", {icon:'static/clock.png'})
+    }
+  }
+  else {
+    if(this.nagged)
+      this.nagged = false
+    if(this.notification) {
+      this.notification.close()
+      this.notification = null
+    }
+  }
+}
+
+// Create a new interval -- in local node, in db, and render view.
+
+LocalNode.prototype.new_interval = function() {
+  var interval_obj = {create_ms:new Date().getTime(), ms:0, text:'new interval'}
+  if(!this.node_intervals)
+    this.node_intervals = {}
+  var curr_day_ms = this.get_curr_day_ms()
+  var intervals = this.node_intervals[curr_day_ms]
+  intervals.push(interval_obj)
+  this.send('node_intervals/' + curr_day_ms + '/' + (intervals.length - 1), interval_obj)
+  this.tree.add_interval_el(interval_obj.text)
+}
+
+LocalNode.prototype.get_curr_day_ms = function() {
+  var date = $('#datetimepicker').data("DateTimePicker").getDate().toDate()
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+RemoteTree.prototype.after_delete2 = function() {
+  this.last_inc_time = null
+}
+
+// Increase node's last interval by ms since last ping.
+
+LocalNode.prototype.increment = function() {
+  var curr_time = Date.now()
+  if(this.tree.last_inc_time) {
+    var curr_day_ms = this.get_curr_day_ms(),
+        interval_list = this.node_intervals[curr_day_ms],
+        delta = curr_time - this.tree.last_inc_time
+    interval_list[interval_list.length - 1].ms += delta
+    this.send('interval_list/' + (interval_list.length - 1) + '/ms',
+      interval_list[interval_list.length - 1].ms)
+  }
+  this.tree.last_inc_time = curr_time
+}
+
+RemoteTree.prototype.after_ping = function() {}
+
+RemoteTree.prototype.after_drop = function(node, old_parent) {
+  this.recalc_cum_time(node)
+  if(old_parent)
+    this.recalc_cum_time(old_parent)
+}
+
+
+RemoteTree.prototype.html_before_times = function() {
+  return "<span title='Date created' class='date_created'></span>"
+}
+RemoteTree.prototype.html_after_times = function() {
+  return "<span title='Value per hour' class='value_per_hour'></span>"
+}
 
 
 LocalNode.prototype.after_init = function() {
@@ -161,13 +179,13 @@ RemoteTree.prototype.decorate_node_el = function(task_node) {
     task_el.find('.value_per_hour:first').text(score.toFixed(3))
 }
 
-// Pull user's score out of node's text.
 
-RemoteTree.prototype.task_score = function(node_) {
-  var text = node_.text.trim()
-  var match = text.match(/\(([0-9\.]+)\)?$/)
-  if(match) {
-    value = parseFloat(match[1])
-    return (value / (node_.cum_ms / 1000)) * 60 * 60 * 10
-  }
-}
+
+
+
+
+
+
+
+
+

@@ -28,7 +28,7 @@ RemoteTree.prototype.render_node = function(node) {
   console.log('render_node stub, node:', node)
 }
 
-RemoteTree.prototype.decorate = function(node) {
+RemoteTree.prototype.decorate_node = function(node) {
   console.log('decorate stub, node:', node)
 }
 
@@ -41,7 +41,7 @@ RemoteTree.prototype._decorate_ids = function(node_ids, is_red) {
   if(node_ids.length === 0)
     return
   var node = this.local_nodes[node_ids.shift()]
-  this.decorate(node, is_red)
+  this.decorate_node(node, is_red)
   node_ids = node.child_ids.concat(node_ids)
   this.decorate_ids(node_ids, !is_red)
 }

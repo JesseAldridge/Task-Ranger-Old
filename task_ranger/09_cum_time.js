@@ -97,7 +97,7 @@ function break_up_secs(secs) {
 
 
 function run_test() {
-  RemoteTree.prototype.after_bind_drag_drop = function() {
+  RemoteTree.prototype.after_bind_drag_drop2 = function() {
     for(var key in this.local_nodes) {
       var node = this.local_nodes[key]
       console.log('node:', node)

@@ -11,7 +11,6 @@
 RemoteTree.prototype.after_bind_text = function() {
   var tree = this
   $(document).on('focus', '.text', function() {
-    console.log('text focus')
     var node_el = $(this).closest('.node')
     tree.show_intervals_for_day(tree.local_nodes[node_el.attr('node_id')], new Date())
   })
@@ -26,11 +25,14 @@ RemoteTree.prototype.show_intervals_for_day = function(node, date) {
   var daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
   var intervals = node.node_intervals[daily_time] || []
   $('.interval_list').empty()
-  for(var i = 0; i < intervals.length; i++) {
-    var input = $('<input class="interval"></input>')
-    input.val(intervals[i].text)
-    $('.interval_list').append(input)
-  }
+  for(var i = 0; i < intervals.length; i++)
+    this.add_interval_el(intervals[i].text)
+}
+
+RemoteTree.prototype.add_interval_el = function(text) {
+  var input = $('<input class="interval"></input>')
+  input.val(text)
+  $('.interval_list').append(input)
 }
 
 // Div with date button and info row at the bottom.

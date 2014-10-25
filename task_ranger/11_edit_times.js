@@ -89,6 +89,17 @@ RemoteTree.prototype.unpause = function(e) {
 }
 
 
+// Pull user's score out of node's text.
+
+RemoteTree.prototype.task_score = function(node_) {
+  var text = node_.text.trim()
+  var match = text.match(/\(([0-9\.]+)\)?$/)
+  if(match) {
+    value = parseFloat(match[1])
+    return (value / (node_.cum_ms / 1000)) * 60 * 60 * 10
+  }
+}
+
 
 
 

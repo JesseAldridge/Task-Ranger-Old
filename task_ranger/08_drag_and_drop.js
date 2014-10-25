@@ -43,10 +43,12 @@ RemoteTree.prototype.after_bind_delete = function() {
   })
 
   this.after_bind_drag_drop()
+  this.after_bind_drag_drop2()
 }
 
 RemoteTree.prototype.after_drop = function(node, old_parent) {}
 RemoteTree.prototype.after_bind_drag_drop = function() {}
+RemoteTree.prototype.after_bind_drag_drop2 = function() {}
 
 
 
