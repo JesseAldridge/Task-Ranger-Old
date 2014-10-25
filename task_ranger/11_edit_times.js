@@ -100,6 +100,28 @@ RemoteTree.prototype.task_score = function(node_) {
   }
 }
 
+RemoteTree.prototype.after_decorate_node = function() {
+  var score = this.task_score(task_node)
+  if(score)
+    task_el.find('.value_per_hour:first').text(score.toFixed(3))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

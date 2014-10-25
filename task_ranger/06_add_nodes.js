@@ -57,7 +57,7 @@ RemoteTree.prototype.after_bind_focus = function() {
         if(index < tree.top_ids.length)
           return tree.local_nodes[tree.top_ids[index]]
       }
-      tree.set_current(next_node(node))
+      tree.set_current_node(next_node(node))
     }
     else if(e.keyCode == 38) { // up
       var prev_node = function() {
@@ -73,7 +73,7 @@ RemoteTree.prototype.after_bind_focus = function() {
         }
         return parent
       }
-      tree.set_current(prev_node())
+      tree.set_current_node(prev_node())
     }
     else if(e.keyCode == 9) { // tab
       if(event.shiftKey)
@@ -179,26 +179,25 @@ RemoteTree.prototype.add_index = function(parent_node, index) {
 
   var parent_id = parent_node ? parent_node.node_id : null
   new_node = this.write_json_to_node(new_node_json(), parent_id, index)
-  this.set_current(new_node)
+  this.set_current_node(new_node)
 }
 
 function new_node_json() { return {'text':'New Node'} }
 
-RemoteTree.prototype.set_current = function(node) {
-  console.log('set current')
+RemoteTree.prototype.set_current_node = function(node) {
   if(!node)
     return
   var node_el = select_node_el(node)
-  $('.current').removeClass('current')
-  node_el.addClass('current')
+  $('.current_node').removeClass('current_node')
+  node_el.addClass('current_node')
   var input = $(node_el).find('.text:first')
   console.log('focusing')
   input.focus()
   input.select()
-  this.after_set_current(node)
+  this.after_set_current_node(node)
 }
 
-RemoteTree.prototype.after_set_current = function(node) {}
+RemoteTree.prototype.after_set_current_node = function(node) {}
 
 RemoteTree.prototype.add_node_el = function(sibling_ids, ol, node, is_red, prefix) {
 

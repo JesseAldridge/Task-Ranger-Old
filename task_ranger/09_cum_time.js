@@ -95,6 +95,12 @@ function break_up_secs(secs) {
   return [hours, mins, secs]
 }
 
+RemoteTree.prototype.after_undelete = function(root_node) {
+  var parent_node = this.local_nodes[root_node.parent_id]
+  if(parent_node)
+    this.recalc_cum_time(parent_node)
+}
+
 
 function run_test() {
   RemoteTree.prototype.after_bind_drag_drop2 = function() {

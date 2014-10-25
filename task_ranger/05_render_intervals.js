@@ -27,13 +27,19 @@ RemoteTree.prototype.show_intervals_for_day = function(node, date) {
   $('.interval_list').empty()
   for(var i = 0; i < intervals.length; i++)
     this.add_interval_el(intervals[i].text)
+  this.after_intervals_shown()
 }
+
+RemoteTree.prototype.after_intervals_shown = function() {}
 
 RemoteTree.prototype.add_interval_el = function(text) {
   var input = $('<input class="interval"></input>')
   input.val(text)
   $('.interval_list').append(input)
+  this.after_add_interval_el(input)
 }
+
+RemoteTree.prototype.after_add_interval_el = function(input) {}
 
 // Div with date button and info row at the bottom.
 

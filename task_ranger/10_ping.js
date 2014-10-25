@@ -9,9 +9,9 @@ RemoteTree.prototype.after_bind_drag_drop = function() {
 
   $(document).on('click', '.headline', function(evt) {
     if(!evt.metaKey && !evt.altKey) {
-      $('.current').removeClass('current')
+      $('.current_node').removeClass('current_node')
       var node_el = $(this).closest('.node')
-      node_el.addClass('current')
+      node_el.addClass('current_node')
       var node = tree.local_nodes[node_el.attr('node_id')]
       node.new_interval()
     }
@@ -54,9 +54,9 @@ RemoteTree.prototype.after_init_notifications = function() {}
 function ping() {
   if(!global_tree.last_input_date)
     global_tree.last_input_date = new Date()
-  var current = $('.current')
-  if(current.length > 0 && !global_tree.paused) {
-    var selected_node = global_tree.local_nodes[current.attr('node_id')]
+  var current_node = $('.current_node')
+  if(current_node.length > 0 && !global_tree.paused) {
+    var selected_node = global_tree.local_nodes[current_node.attr('node_id')]
     if(selected_node.just_selected) {
       selected_node.just_selected = false
       selected_node.new_interval()
@@ -154,15 +154,22 @@ LocalNode.prototype.after_init = function() {
     this.set('date_created', Date.now())
 }
 
+RemoteTree.prototype.after_intervals_shown = function() {
+  this.set_current_interval($('.interval:last'))
 
-RemoteTree.prototype.after_set_current = function(node) {
-  node.just_selected = true
 }
 
-RemoteTree.prototype.after_undelete = function(root_node) {
-  var parent_node = this.local_nodes[root_node.parent_id]
-  if(parent_node)
-    this.recalc_cum_time(parent_node)
+RemoteTree.prototype.set_current_interval = function(el) {
+  $('.current_interval').removeClass('current_interval')
+  el.addClass('current_interval')
+}
+
+RemoteTree.prototype.after_add_interval_el = function(input) {
+  this.set_current_interval(input)
+}
+
+RemoteTree.prototype.after_set_current_node = function(node) {
+  node.just_selected = true
 }
 
 
@@ -173,12 +180,10 @@ RemoteTree.prototype.decorate_node_el = function(task_node) {
   set_time_el($(task_el).find('.task_time:first'), task_node.calc_indiv_ms())
   set_time_el($(task_el).find('.cum_time:first'), task_node.cum_ms)
   task_el.find('.date_created:first').text(moment(task_node.date_created).format('MM/DD'))
-
-  var score = this.task_score(task_node)
-  if(score)
-    task_el.find('.value_per_hour:first').text(score.toFixed(3))
+  this.after_decorate_node(task_node)
 }
 
+RemoteTree.prototype.after_decorate_node = function(task_node) {}
 
 
 
