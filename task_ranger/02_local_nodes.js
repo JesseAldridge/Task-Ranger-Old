@@ -9,11 +9,10 @@ RemoteTree.prototype.download_data = function() {
 
   this.root_ref = new Firebase('https://taskranger.firebaseio.com/' + this.get_user_root())
   this.local_nodes = {}
-  this.local_chunks = {}
   this.top_ids = []
-  this.create_time = Date.now()
+  this.create_ms = Date.now()
 
-  // Copy top ids from root.  Create LocalNodes and WorkChunks.
+  // Copy top ids from root.  Create LocalNodes and Intervals.
 
   var tree = this
   this.root_ref.once('value', function(snap) {
@@ -26,10 +25,6 @@ RemoteTree.prototype.download_data = function() {
       var node_snaps = snap.val().nodes
       for(var node_id in node_snaps)
         tree.local_nodes[node_id] = new LocalNode(node_snaps[node_id], tree)
-
-      var chunk_snaps = snap.val().chunks
-      for(var chunk_id in chunk_snaps)
-        tree.local_chunks[chunk_id] = new WorkChunk(chunk_snaps[chunk_id], tree)
     }
     tree.top_ids = top_ids
     tree.after_download_data()
@@ -58,13 +53,6 @@ RemoteTree.prototype.walk_tree = function(node_ids, func, extra_args) {
   }
 }
 
-function WorkChunk(chunk_snap) {
-  for(var key in chunk_snap)
-    this[key] = chunk_snap[key]
-  this.parent_id = this.parent_id || null
-}
-
-
 // Copy attributes from snapshot.  Init undefined vars.
 
 function LocalNode(node_snap, tree) {
@@ -75,7 +63,7 @@ function LocalNode(node_snap, tree) {
   this.text = '' + this.text
   this.child_ids = this.child_ids || []
   this.parent_id = this.parent_id || null
-  this.node_chunks = this.node_chunks || {}
+  this.node_intervals = this.node_intervals || {}
   this.after_init()
 }
 
@@ -99,12 +87,12 @@ function run_test() {
 
     var tree = this
     this.walk_tree(this.top_ids, function(node) {
-      var node_chunks = node.node_chunks
+      var node_intervals = node.node_intervals
       var total_time = 0
-      for(var timestamp in node_chunks) {
-        var daily_chunks = node_chunks[timestamp]
-        for(var i = 0; i < daily_chunks.length; i++)
-          total_time += tree.local_chunks[daily_chunks[i]].interval_time
+      for(var timestamp in node_intervals) {
+        var daily_intervals = node_intervals[timestamp]
+        for(var i = 0; i < daily_intervals.length; i++)
+          total_time += daily_intervals[i].ms
       }
       console.log('node time:', total_time)
       if(total_time <= 0)

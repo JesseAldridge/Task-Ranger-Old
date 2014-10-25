@@ -4,7 +4,7 @@
 
 // Headline template:  node buttons and stuff.  from: render_node
 
-function headline_template() {
+RemoteTree.prototype.headline_template = function() {
   return "\
 <div class='headline'> \
   <input class='text' value='${text}'> \
@@ -12,13 +12,13 @@ function headline_template() {
   <div title='Add child' class='ui-icon ui-icon-arrowreturnthick-1-e insert-child'></div> \
   <div title='Delete' class='ui-icon ui-icon-closethick delete'></div> \
   %after_buttons \
-</div> ".replace('%after_buttons', window.html_after_buttons())
+</div> ".replace('%after_buttons', this.html_after_buttons())
 }
-function html_after_buttons(){ return '' }
+RemoteTree.prototype.html_after_buttons = function(){ return '' }
 
 // Insert child, insert under buttons.
 
-RemoteTree.prototype.after_initial_show_chunks = function() {
+RemoteTree.prototype.after_bind_focus = function() {
   var tree = this
 
   $(document).on('click', '.insert-child', function() {
@@ -39,7 +39,7 @@ RemoteTree.prototype.after_initial_show_chunks = function() {
     else if(e.keyCode == 40) { // down
       var next_node = function(node, start_index) {
         var next_id = null
-        if(node.child_ids.length > 0 && node.is_expanded) {
+        if(node.child_ids.length > 0) {
           if(start_index) {
             if(start_index < node.child_ids.length)
               next_id = node.child_ids[start_index]
@@ -64,15 +64,12 @@ RemoteTree.prototype.after_initial_show_chunks = function() {
         var parent = node.parent_id ? tree.local_nodes[node.parent_id] : null,
             prev_sibling = tree.get_prev_sibling(node)
         if(prev_sibling) {
-          if(prev_sibling.is_expanded) {
-            descend_to_leaf = function(node) {
-              if(node.child_ids.length === 0 || !node.is_expanded)
-                return node
-              return descend_to_leaf(tree.local_nodes[node.child_ids[node.child_ids.length - 1]])
-            }
-            return descend_to_leaf(prev_sibling)
+          descend_to_leaf = function(node) {
+            if(node.child_ids.length === 0)
+              return node
+            return descend_to_leaf(tree.local_nodes[node.child_ids[node.child_ids.length - 1]])
           }
-          return prev_sibling
+          return descend_to_leaf(prev_sibling)
         }
         return parent
       }
@@ -131,8 +128,6 @@ RemoteTree.prototype.indent = function(node) {
   node.set('parent_id', prev_sibling.node_id)
   var node_el = $('.node[node_id="{}"]'.replace('{}', node.node_id))
   $('.node[node_id="{}"]'.replace('{}', prev_sibling.node_id)).find('ol:first').append(node_el)
-  if(!prev_sibling.is_expanded)
-    this.toggle_collapse(prev_sibling)
   node_el.find('.text:first').focus()
 }
 
@@ -190,12 +185,14 @@ RemoteTree.prototype.add_index = function(parent_node, index) {
 function new_node_json() { return {'text':'New Node'} }
 
 RemoteTree.prototype.set_current = function(node) {
+  console.log('set current')
   if(!node)
     return
   var node_el = select_node_el(node)
   $('.current').removeClass('current')
   node_el.addClass('current')
   var input = $(node_el).find('.text:first')
+  console.log('focusing')
   input.focus()
   input.select()
   this.after_set_current(node)
@@ -207,7 +204,7 @@ RemoteTree.prototype.add_node_el = function(sibling_ids, ol, node, is_red, prefi
 
   // Insert a new node el into ol at the appropriate index.  from: render_node
 
-  var new_html = $(window.node_el_template()).tmpl(node)
+  var new_html = $(this.node_el_template()).tmpl(node)
   var index = sibling_ids ? sibling_ids.indexOf(node.node_id) : -1
   if(index == -1 || index >= $(ol).children('li').length)
     $(ol).append(new_html)

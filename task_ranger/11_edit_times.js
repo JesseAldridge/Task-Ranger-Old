@@ -1,7 +1,7 @@
 
 // Apply new time to node on edit timer.
 
-RemoteTree.prototype.after_bind_ping = function() {
+RemoteTree.prototype.after_init_notification = function() {
   var tree = this
 
   $(document).on('focus', '.task_time', function() {
@@ -19,12 +19,12 @@ RemoteTree.prototype.after_bind_ping = function() {
     if(!$(this).val().match(/[0-9]{2}:[0-9]{2}:[0-9]{2}/))
       return
     var remaining_diff = el_ms($(this)) - el_ms($(this).data('old_val')),
-        node = tree.from($(this), 'node')
+        node = $(this).closest('.node')
     $(this).data('old_val', $(this).val())
     if(remaining_diff < 0) { // eg. was 30 seconds, is now 20 seconds
       for(var i = node.interval_list.length - 1; i >= 0; i--) {
         var interval_ms = node.interval_list[i].ms,
-            old_interval_ms = interval_ms    
+            old_interval_ms = interval_ms
 
         interval_ms += remaining_diff
         remaining_diff += old_interval_ms

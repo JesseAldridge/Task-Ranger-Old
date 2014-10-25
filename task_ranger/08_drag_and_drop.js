@@ -1,4 +1,3 @@
-
 // requires:
 // static/jquery.ui.nestedSortable.js
 
@@ -8,7 +7,7 @@ RemoteTree.prototype.after_bind_delete = function() {
 
   var tree = this
 
-  $('#tree_section').nestedSortable({
+  $('.tree_section > ol').nestedSortable({
     forcePlaceholderSize: true, handle: 'div', helper:  'clone',
     items: 'li', maxLevels: 0, opacity: 0.6, placeholder: 'placeholder',
     revert: 250, tabSize: 25, tolerance: 'pointer', toleranceElement: '> div',
@@ -25,11 +24,9 @@ RemoteTree.prototype.after_bind_delete = function() {
         var new_parent_node = tree.local_nodes[new_parent_el.attr('node_id')]
         moved_node.set('parent_id', new_parent_node.node_id)
         var child_ids = new_parent_node.child_ids
-        var index = tree.from(new_parent_el, 'each_child_el').index($(ui.item))
+        var index = $(new_parent_el).find('ol:first > .node').index($(ui.item))
         child_ids.splice(index, 0, moved_node.node_id)
         new_parent_node.set('child_ids', child_ids)
-        if(!new_parent_node.is_expanded)
-          ui.item.remove()
       }
 
       // If no parent, add node to top level.
@@ -49,7 +46,8 @@ RemoteTree.prototype.after_bind_delete = function() {
 }
 
 RemoteTree.prototype.after_drop = function(node, old_parent) {}
-
 RemoteTree.prototype.after_bind_drag_drop = function() {}
+
+
 
 

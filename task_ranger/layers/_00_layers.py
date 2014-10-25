@@ -33,7 +33,7 @@ def split_layer_num(path):
 
 if __name__ == '__main__':
   print 'running'
-  increment_layers(from_num=7, amount=-1)
+  increment_layers(from_num=10, amount=1)
   # increment_layers(-1)
   print 'done'
 

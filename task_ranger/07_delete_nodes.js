@@ -5,7 +5,7 @@ RemoteTree.prototype.after_bind_insert = function() {
   var tree = this
 
   $(document).on('click', '.delete', function() {
-    var id = tree.from($(this), 'node_el').attr('node_id')
+    var id = $(this).closest('.node').attr('node_id')
     tree.delete_(id)
     return false
   })
@@ -20,8 +20,6 @@ RemoteTree.prototype.after_bind_insert = function() {
         parent_id = root_node.parent_id,
         parent_node = tree.local_nodes[parent_id]
     tree.add_id_to_parent(root_node.node_id, parent_id, root_node.former_index)
-    if(parent_node && !parent_node.is_expanded)
-      tree.toggle_collapse(parent_node)
     for(var i = 0; i < nodes.length; i++)
       tree.restore_node(nodes[i])
     tree.after_undelete(root_node)
@@ -80,12 +78,17 @@ function append_widget(html) { $('.buttons').append(html) }
 
 RemoteTree.prototype.after_delete = function() {}
 
-
-function run_test() {
-  $('body').append([
-    '<div class="buttons"></div>', '<div><ol id="tree_section"></ol></div>'])
-  var tree = new RemoteTree()
+RemoteTree.prototype.after_interval_html = function() {
+  $('body').prepend('<div class="buttons"></div>')
 }
+
+
+
+
+
+
+
+
 
 
 

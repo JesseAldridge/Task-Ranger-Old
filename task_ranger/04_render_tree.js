@@ -7,7 +7,7 @@
 
 // Html node template:  (li (headline (input))(ol))
 
-var node_el_template = function() {
+RemoteTree.prototype.node_el_template = function() {
   return '<outer> \
   <li class="node" node_id="${node_id}"> \
     <div> \
@@ -15,11 +15,10 @@ var node_el_template = function() {
     </div> \
     <ol></ol> \
   </li> \
-  </outer> '.replace("{headline}", headline_template())
+  </outer> '.replace("{headline}", this.headline_template())
 }
 
-function headline_template() {
-  // overridden by 4_toggle_collapse.js
+RemoteTree.prototype.headline_template = function() {
   // (showing node_id can by handy for debugging)
   return '\
   <div class="headline"> \
@@ -64,8 +63,7 @@ RemoteTree.prototype._render_ids = function(node_ids, is_red) {
     return
   var node = this.local_nodes[node_ids.shift()]
   this.render_node(node, is_red)
-  if(node.is_expanded !== false)
-    node_ids = node.child_ids.concat(node_ids)
+  node_ids = node.child_ids.concat(node_ids)
   this._render_ids(node_ids, !is_red)
 }
 
@@ -78,10 +76,6 @@ RemoteTree.prototype.render_node = function(snap_or_node, is_red) {
     var parent_el = select_node_el(parent_id)
     var parent = this.local_nodes[parent_id]
     this.add_node_el(parent.child_ids, $(parent_el).find('ol').first(), node, is_red)
-    if(parent.is_expanded === false) {
-      var node_el = select_node_el(node)
-      node_el.hide()
-    }
   }
   else
     this.add_node_el(this.top_ids, $('.tree_section > ol:first'), node, is_red)
@@ -97,7 +91,7 @@ function select_node_el(node_id) {
 
 // (overridden by 06_add_nodes.js)
 RemoteTree.prototype.add_node_el = function(sibling_ids, ol, node, is_red) {
-  var new_html = $(window.node_el_template()).tmpl(node)
+  var new_html = $(this.node_el_template()).tmpl(node)
   $(ol).append(new_html)
   this.decorate_node(node, is_red)
 }

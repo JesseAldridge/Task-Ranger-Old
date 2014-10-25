@@ -16,25 +16,23 @@ RemoteTree.prototype.write_test_data = function() {
     return '' + Math.round(Math.random() * Math.pow(10, 10))
   }
 
-  // Generate a couple of chunks for a node.  Store in global map, ref'd from node.
+  // Generate a couple of intervals for a node.  Store in global map, ref'd from node.
 
-  var global_chunks_json = {}
-  function generate_fake_chunks() {
+  function generate_fake_intervals() {
     var date = new Date(),
         daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-    node_chunks = {}
-    node_chunks[daily_time] = []
+    node_intervals = {}
+    node_intervals[daily_time] = []
     for(var _ = 0; _ < 2; _++) {
-      var chunk_id = random_id()
-      global_chunks_json[chunk_id] = {
-        chunk_id:chunk_id,
-        create_time:moment().subtract(30, 'days').valueOf(),
-        interval_time:1000 * 60 * 60 * 60,  // 1 hour
-        text:'default chunk text ' + chunk_id
-      }
-      node_chunks[daily_time].push(chunk_id)
+      var interval_id = random_id()
+      node_intervals[daily_time].push({
+        interval_id:interval_id,
+        create_ms:moment().subtract(30, 'days').valueOf(),
+        ms:1000 * 60 * 60,  // 1 hour
+        text:'default interval text ' + interval_id
+      })
     }
-    return node_chunks
+    return node_intervals
   }
 
   // Create some fake data.
@@ -44,12 +42,12 @@ RemoteTree.prototype.write_test_data = function() {
   var nodes_json = {}
   nodes_json[id_a] = {
     node_id:id_a,
-    node_chunks:generate_fake_chunks(),
+    node_intervals:generate_fake_intervals(),
     child_ids:[id_b]
   }
   nodes_json[id_b] = {
     node_id:id_b,
-    node_chunks:generate_fake_chunks(),
+    node_intervals:generate_fake_intervals(),
     parent_id:id_a
   }
   for(var key in nodes_json) {
@@ -59,7 +57,7 @@ RemoteTree.prototype.write_test_data = function() {
 
   var tree = this
   new Firebase('https://taskranger.firebaseio.com/test_tree').set(
-    {nodes:nodes_json, chunks:global_chunks_json, top_level_ids:[id_a]}, function() {
+    {nodes:nodes_json, top_level_ids:[id_a]}, function() {
       $('body').append('<a href="https://taskranger.firebaseio.com/test_tree">View Data</a>')
       tree.after_write_test_data()
     })

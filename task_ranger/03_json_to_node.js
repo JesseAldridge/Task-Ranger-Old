@@ -24,13 +24,6 @@ RemoteTree.prototype.write_json_to_node = function(obj, parent_id, index) {
   return new_node
 }
 
-RemoteTree.prototype.decorate_node_json = function(json_obj) {
-  json_obj.is_expanded = true
-  return json_obj
-}
-
-RemoteTree.prototype.decorate_node_json2 = function() {}
-
 RemoteTree.prototype.render_node = function(node) {
   console.log('render_node stub, node:', node)
 }
@@ -49,8 +42,7 @@ RemoteTree.prototype._decorate_ids = function(node_ids, is_red) {
     return
   var node = this.local_nodes[node_ids.shift()]
   this.decorate(node, is_red)
-  if(node.is_expanded)
-    node_ids = node.child_ids.concat(node_ids)
+  node_ids = node.child_ids.concat(node_ids)
   this.decorate_ids(node_ids, !is_red)
 }
 

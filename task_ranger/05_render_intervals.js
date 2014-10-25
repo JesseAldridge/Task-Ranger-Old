@@ -6,29 +6,30 @@
 // https://rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css
 
 
-// Initially show chunks for today.
+// Initially show intervals for today.
 
 RemoteTree.prototype.after_bind_text = function() {
-  this.after_initial_show_chunks()
   var tree = this
-  $('.text').focus(function() {
+  $(document).on('focus', '.text', function() {
+    console.log('text focus')
     var node_el = $(this).closest('.node')
-    tree.show_chunks_for_day(tree.local_nodes[node_el.attr('node_id')], new Date())
+    tree.show_intervals_for_day(tree.local_nodes[node_el.attr('node_id')], new Date())
   })
+  this.after_bind_focus()
 }
 
-RemoteTree.prototype.after_initial_show_chunks = function() {}
+RemoteTree.prototype.after_bind_focus = function() {}
 
-// Display chunks for the passed day.
+// Display intervals for the passed day.
 
-RemoteTree.prototype.show_chunks_for_day = function(node, date) {
+RemoteTree.prototype.show_intervals_for_day = function(node, date) {
   var daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-  var chunk_ids = node.node_chunks[daily_time] || []
-  $('.chunk_list').empty()
-  for(var i = 0; i < chunk_ids.length; i++) {
-    var input = $('<input class="chunk"></input>')
-    input.val(this.local_chunks[chunk_ids[i]].text)
-    $('.chunk_list').append(input)
+  var intervals = node.node_intervals[daily_time] || []
+  $('.interval_list').empty()
+  for(var i = 0; i < intervals.length; i++) {
+    var input = $('<input class="interval"></input>')
+    input.val(intervals[i].text)
+    $('.interval_list').append(input)
   }
 }
 
@@ -36,7 +37,7 @@ RemoteTree.prototype.show_chunks_for_day = function(node, date) {
 
 RemoteTree.prototype.after_tree_html = function() {
   $('body').append(multiline(function(){/*
-    <div class="chunk_section">
+    <div class="interval_section">
       <div class='input-group date' id='datetimepicker'>
           <input type='text' class="form-control" data-provide="datepicker" data-date-format="MMMM D, YYYY" />
           <span class="input-group-addon">
@@ -44,9 +45,9 @@ RemoteTree.prototype.after_tree_html = function() {
           </span>
       </div>
 
-      <div class="chunk_list"></div>
+      <div class="interval_list"></div>
       <hr>
-      <div class="chunk_info">
+      <div class="interval_info">
         <span class="text"></span>
         <input class="time_input"></input>
       </div>
@@ -56,7 +57,11 @@ RemoteTree.prototype.after_tree_html = function() {
 	$('#datetimepicker').datetimepicker({
 		pickTime: false
 	});
+
+  this.after_interval_html()
 }
+
+RemoteTree.prototype.after_interval_html = function() {}
 
 
 
