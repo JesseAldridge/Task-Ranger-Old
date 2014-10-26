@@ -14,7 +14,65 @@ RemoteTree.prototype.after_bind_text = function() {
     var node_el = $(this).closest('.node')
     tree.show_intervals_for_day(tree.local_nodes[node_el.attr('node_id')], new Date())
   })
+
+  $(document).on('keydown', '.interval', function() {
+    clearTimeout(window.save_timer)
+    function make_setter(interval_el) {
+      return function() {
+        var node = tree.local_nodes[$('.current_node').attr('node_id')]
+        node.get_interval_obj(interval_el).text = interval_el.val()
+        var text_path = node.build_interval_path(interval_el) + '/text'
+        node.send(text_path, interval_el.val())
+      }
+    }
+    window.save_timer = setTimeout(make_setter($(this)), 500)
+  })
+
+  $(document).on('click', '.headline', function(evt) {
+    if(!evt.metaKey && !evt.altKey) {
+      $('.current_node').removeClass('current_node')
+      var node_el = $(this).closest('.node')
+      node_el.addClass('current_node')
+      var node = tree.local_nodes[node_el.attr('node_id')]
+      node.new_interval()
+    }
+    return false
+  })
+
   this.after_bind_focus()
+}
+
+LocalNode.prototype.get_interval_obj = function(interval_el) {
+  var intervals = this.node_intervals[this.get_curr_day_ms()],
+      interval_index = $('.interval').index(interval_el),
+      interval = intervals[interval_index]
+  return interval
+}
+
+LocalNode.prototype.build_interval_path = function(interval_el) {
+  var curr_day_ms = this.get_curr_day_ms()
+  var interval_index = $('.interval').index(interval_el)
+  return 'node_intervals/' + curr_day_ms + '/' + interval_index
+}
+
+LocalNode.prototype.get_curr_day_ms = function() {
+  var date = $('#datetimepicker').data("DateTimePicker").getDate().toDate()
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+// Create a new interval -- in local node, in db, and render view.
+
+LocalNode.prototype.new_interval = function() {
+  var interval_obj = {create_ms:new Date().getTime(), ms:0, text:'new interval'}
+  if(!this.node_intervals)
+    this.node_intervals = {}
+  var curr_day_ms = this.get_curr_day_ms()
+  if(!this.node_intervals[curr_day_ms])
+    this.node_intervals[curr_day_ms] = []
+  var intervals = this.node_intervals[curr_day_ms]
+  intervals.push(interval_obj)
+  this.send('node_intervals/' + curr_day_ms + '/' + (intervals.length - 1), interval_obj)
+  this.tree.add_interval_el(this, interval_obj.text)
 }
 
 RemoteTree.prototype.after_bind_focus = function() {}

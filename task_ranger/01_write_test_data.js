@@ -27,7 +27,7 @@ RemoteTree.prototype.write_test_data = function() {
       node_intervals[daily_time].push({
         create_ms:moment().subtract(30, 'days').valueOf(),
         ms:1000 * 60 * 60,  // 1 hour
-        text:'default interval text ' + random_id()
+        text:'#default interval text ' + random_id()
       })
     }
     return node_intervals

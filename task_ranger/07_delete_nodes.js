@@ -80,7 +80,10 @@ RemoteTree.prototype.after_delete = function() {}
 
 RemoteTree.prototype.after_interval_html = function() {
   $('body').prepend('<div class="buttons"></div>')
+  this.after_buttons_html()
 }
+
+RemoteTree.prototype.after_buttons_html = function() {}
 
 
 

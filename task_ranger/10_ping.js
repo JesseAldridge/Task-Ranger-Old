@@ -7,17 +7,6 @@ RemoteTree.prototype.after_bind_drag_drop = function() {
   var tree = this
   global_tree = tree
 
-  $(document).on('click', '.headline', function(evt) {
-    if(!evt.metaKey && !evt.altKey) {
-      $('.current_node').removeClass('current_node')
-      var node_el = $(this).closest('.node')
-      node_el.addClass('current_node')
-      var node = tree.local_nodes[node_el.attr('node_id')]
-      node.new_interval()
-    }
-    return false
-  })
-
   $(document).on('focus', '.interval', function(e) {
     global_tree.set_current_interval(
       tree.local_nodes[$('.current_node').attr('node_id')], $(this))
@@ -101,28 +90,6 @@ RemoteTree.prototype.nag = function() {
   }
 }
 
-// Create a new interval -- in local node, in db, and render view.
-
-LocalNode.prototype.new_interval = function() {
-  var interval_obj = {create_ms:new Date().getTime(), ms:0, text:'new interval'}
-  if(!this.node_intervals)
-    this.node_intervals = {}
-  var curr_day_ms = this.get_curr_day_ms()
-  var intervals = this.get_curr_intervals()
-  intervals.push(interval_obj)
-  this.send('node_intervals/' + curr_day_ms + '/' + (intervals.length - 1), interval_obj)
-  this.tree.add_interval_el(this, interval_obj.text)
-}
-
-LocalNode.prototype.get_curr_intervals = function() {
-  return this.node_intervals[this.get_curr_day_ms()]
-}
-
-LocalNode.prototype.get_curr_day_ms = function() {
-  var date = $('#datetimepicker').data("DateTimePicker").getDate().toDate()
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-}
-
 RemoteTree.prototype.after_delete2 = function() {
   this.last_inc_time = null
 }
@@ -149,11 +116,11 @@ LocalNode.prototype.increment = function() {
 // Modify the interval object's ms.  Update backend and tree view.
 
 LocalNode.prototype.modify_curr_interval_ms = function(ms_func) {
-  var intervals = this.get_curr_intervals(),
-      interval_index = $('.interval').index($('.current_interval')),
-      interval = intervals[interval_index]
+  var interval_el = $('.current_interval')
+  var interval = this.get_interval_obj(interval_el)
   interval.ms = ms_func(interval)
-  this.send('interval_list/' + interval_index + '/ms', interval.ms)
+  var ms_path = this.build_interval_path(interval_el) + '/ms'
+  this.send(ms_path, interval.ms)
   this.tree.recalc_cum_time(this)
 }
 
@@ -180,7 +147,7 @@ LocalNode.prototype.after_init = function() {
 RemoteTree.prototype.set_current_interval = function(node, interval_el) {
   $('.current_interval').removeClass('current_interval')
   interval_el.addClass('current_interval')
-  var intervals = node.get_curr_intervals(),
+  var intervals = node.node_intervals[node.get_curr_day_ms()]
       interval = intervals[$('.interval').index(interval_el)]
   set_time_el($('.interval_info .time_input'), interval.ms)
 

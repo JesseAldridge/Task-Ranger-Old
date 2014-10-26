@@ -83,7 +83,6 @@ RemoteTree.prototype.task_score = function(node_) {
 }
 
 RemoteTree.prototype.after_decorate_node = function(node) {
-  console.log('after_decorate_node')
   var score = this.task_score(node)
   if(score) {
     var node_el = $('.node[node_id="()"]'.replace('()', node.node_id))

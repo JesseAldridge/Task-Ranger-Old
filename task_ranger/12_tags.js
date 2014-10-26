@@ -13,7 +13,7 @@ RemoteTree.prototype.after_ping = function() {
     var tags_data = this.regen_top5(this.top_ids)
     this.after_regenTop5(tags_data)
   }
-  if(Date.now() - this.regen_start > 100) {
+  if(Date.now() - this.regen_start > 200) {
     console.log('regen top5 too slow, stopping')
     this.regen_every_ping = false
   }
@@ -26,45 +26,39 @@ RemoteTree.prototype.regen_top5 = function(node_ids) {
 
   function add_to_tags(task_node, extra_args) {
 
-    // Divide string into segments:  "#tag foo... bar" -> ["#tag foo", "bar"]
+    // Collect tags for each interval
 
     var tags = extra_args[0], stem_to_tags = extra_args[1]
-    var parent_id = task_node.parent_id
-    var tag = parent_id ? tree.local_nodes[parent_id].end_tag : null
-    var seg_strings = task_node.text.trim().split('...')
-    for(var iseg = 0; iseg < seg_strings.length; iseg++) {
-      var s = seg_strings[iseg]
-      if(!s.trim())
-        continue
+    var tag = null
 
-      // Pull out tag for current segment if it has one.
+    var node_intervals = task_node.node_intervals
+    for(var date_key in node_intervals) {
+      var intervals = node_intervals[date_key],
+          tag = null
+      for(var i = 0; i < intervals.length; i++) {
 
-      var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(s)
-      if(match) {
-        tag = match[0].trim().slice(1)
-        var stem_tag = stemmer(tag)
-        if(!(stem_tag in stem_to_tags))
-          stem_to_tags[stem_tag] = []
-        stem_to_tags[stem_tag].push(tag)
-        tag = stem_to_tags[stem_tag][0]
-      }
-      if(!tag)
-        continue
+        // Pull out tag for current segment if it has one.
 
-      // Add the segment's time to the tags.  Store ending tag.
-
-      if(!(tag in tags))
-        tags[tag] = {}
-
-      var interval_list = task_node.interval_list
-      for(var i = 0; i < interval_list.length; i++) {
-        var date1 = new Date(interval_list[i].start)
-        var date2 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate())
-        if(!(date2 in tags[tag]))
-          tags[tag][date2] = 0
-        tags[tag][date2] += interval_list[i].ms / seg_strings.length
+        var interval = intervals[i]
+        var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(interval.text)
+        if(match) {
+          tag = match[0].trim().slice(1)
+          var stem_tag = stemmer(tag)
+          if(!(stem_tag in stem_to_tags))
+            stem_to_tags[stem_tag] = []
+          stem_to_tags[stem_tag].push(tag)
+          tag = stem_to_tags[stem_tag][0]
+        }
+        if(!tag)
+          continue
+        if(!(tag in tags))
+          tags[tag] = {}
+        if(!(date_key in tags[tag]))
+          tags[tag][date_key] = 0
+        tags[tag][date_key] += interval.ms
       }
     }
+
     task_node.end_tag = tag
   }
 
@@ -72,6 +66,7 @@ RemoteTree.prototype.regen_top5 = function(node_ids) {
 
   var tags_data = {}, stem_to_tags = {}
   this.walk_tree(node_ids, add_to_tags, [tags_data, stem_to_tags])
+
   var total_ms = 0
   for(var tag in tags_data)
     for(var date in tags_data[tag])
@@ -126,11 +121,8 @@ RemoteTree.prototype.regen_top5 = function(node_ids) {
   return tags_data
 }
 
-
-function run_test() {
-  $('body').append([
-    '<div class="buttons"></div>', "<ol id='top5' style='float:left'></ol>",
-    '<div style="clear:both"></div>', '<div><ol id="tree_section"></ol></div>'])
-  var tree = new RemoteTree()
+RemoteTree.prototype.after_buttons_html = function() {
+  $('body').prepend("<ol id='top5' style='float:left'></ol>")
 }
+
 
