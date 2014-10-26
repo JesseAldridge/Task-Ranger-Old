@@ -10,12 +10,10 @@ LocalNode.prototype.after_init = function() {
 LocalNode.prototype.after_init_cum_ms = function() {}
 
 RemoteTree.prototype.html_after_buttons = function() {
-  return (this.html_before_times() + "\n" +
-  "<div title='Cumulative time' class='cum_time time'>00:00:00</div>\n" +
+  return ("<div title='Cumulative time' class='cum_time time'>00:00:00</div>\n" +
   this.html_after_times())
 }
 
-RemoteTree.prototype.html_before_times = function() { return "" }
 RemoteTree.prototype.html_after_times = function() { return "" }
 
 // Include descendants' times.  Display new time and recurse upward.

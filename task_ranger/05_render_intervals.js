@@ -22,7 +22,6 @@ RemoteTree.prototype.after_bind_focus = function() {}
 // Display intervals for the passed day.
 
 RemoteTree.prototype.show_intervals_for_day = function(node, date) {
-  console.log('show_intervals_for_day, node:', node)
   var daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
   var intervals = node.node_intervals[daily_time] || []
   $('.interval_list').empty()

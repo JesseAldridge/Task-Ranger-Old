@@ -91,12 +91,10 @@ function select_node_el(node_id) {
 
 // (overridden by 06_add_nodes.js)
 RemoteTree.prototype.add_node_el = function(sibling_ids, ol, node, is_red) {
-  var new_html = $(this.node_el_template()).tmpl(node)
-  $(ol).append(new_html)
+  var node_el = $(this.node_el_template()).tmpl(node)
+  $(ol).append(node_el)
   this.decorate_node(node, is_red)
 }
-
-RemoteTree.prototype.decorate_node = function(node, is_red) {}
 
 function run_test() {
   var tree = new RemoteTree()

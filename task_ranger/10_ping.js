@@ -135,18 +135,27 @@ LocalNode.prototype.increment = function() {
 
   var curr_time = Date.now()
   if(this.tree.last_inc_time) {
-    var intervals = this.get_curr_intervals(),
-        delta = curr_time - this.tree.last_inc_time,
-        interval_index = $('.interval').index($('.current_interval')),
-        interval = intervals[interval_index]
-
-    interval.ms += delta
-    this.send('interval_list/' + interval_index + '/ms', interval.ms)
-    set_time_el($('.interval_info .time_input'), interval.ms)
+    var delta = curr_time - this.tree.last_inc_time
+    var curr_interval = null
+    this.modify_curr_interval_ms(function(interval) {
+      curr_interval = interval
+      return interval.ms + delta
+    })
+    set_time_el($('.interval_info .time_input'), curr_interval.ms)
   }
   this.tree.last_inc_time = curr_time
 }
 
+// Modify the interval object's ms.  Update backend and tree view.
+
+LocalNode.prototype.modify_curr_interval_ms = function(ms_func) {
+  var intervals = this.get_curr_intervals(),
+      interval_index = $('.interval').index($('.current_interval')),
+      interval = intervals[interval_index]
+  interval.ms = ms_func(interval)
+  this.send('interval_list/' + interval_index + '/ms', interval.ms)
+  this.tree.recalc_cum_time(this)
+}
 
 RemoteTree.prototype.after_ping = function() {}
 
@@ -157,9 +166,6 @@ RemoteTree.prototype.after_drop = function(node, old_parent) {
 }
 
 
-RemoteTree.prototype.html_before_times = function() {
-  return "<span title='Date created' class='date_created'></span>"
-}
 RemoteTree.prototype.html_after_times = function() {
   return "<span title='Value per hour' class='value_per_hour'></span>"
 }
@@ -196,7 +202,7 @@ RemoteTree.prototype.after_add_interval_el = function(node, input) {
 
 // Turn the seconds into a rendered date on the node.
 
-RemoteTree.prototype.decorate_node_el = function(task_node) {
+RemoteTree.prototype.decorate_node = function(task_node) {
   var task_el = select_node_el(task_node)
   set_time_el($(task_el).find('.task_time:first'), task_node.calc_indiv_ms())
   set_time_el($(task_el).find('.cum_time:first'), task_node.cum_ms)

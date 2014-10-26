@@ -1,46 +1,27 @@
 
 // Apply new time to node on edit timer.
 
-RemoteTree.prototype.after_init_notification = function() {
+RemoteTree.prototype.after_init_notifications = function() {
   var tree = this
 
-  $(document).on('focus', '.task_time', function() {
-    $(this).data('old_val', $(this).val())
+  $(document).on('focus', '.interval_section .time_input', function() {
+    console.log('pausing')
     tree.pause()
   })
 
-  $(document).on('blur', '.task_time', function() {
+  $(document).on('blur', '.interval_section .time_input', function() {
     tree.unpause()
   })
 
-  $(document).on('keyup', '.task_time', function(e) {
+  $(document).on('keyup', '.interval_section .time_input', function(e) {
     if(e.keyCode == 13) // return
-      $(this).closest('.node').find('.text').first().focus()
+      $('.current_interval').focus()
     if(!$(this).val().match(/[0-9]{2}:[0-9]{2}:[0-9]{2}/))
       return
-    var remaining_diff = el_ms($(this)) - el_ms($(this).data('old_val')),
-        node = $(this).closest('.node')
-    $(this).data('old_val', $(this).val())
-    if(remaining_diff < 0) { // eg. was 30 seconds, is now 20 seconds
-      for(var i = node.interval_list.length - 1; i >= 0; i--) {
-        var interval_ms = node.interval_list[i].ms,
-            old_interval_ms = interval_ms
 
-        interval_ms += remaining_diff
-        remaining_diff += old_interval_ms
-        if(interval_ms < 0)  interval_ms = 0
-        node.interval_list[i].ms = interval_ms
-
-        if(remaining_diff >= 0)  break
-      }
-    }
-    else {
-      if(node.interval_list.length === 0)
-        node.new_interval()
-      node.interval_list[node.interval_list.length - 1].ms += remaining_diff
-    }
-    node.send('interval_list', node.interval_list)
-    tree.recalc_cum_time(tree.from($(this), 'node'))
+    var new_ms = el_ms(this)
+    var selected_node = tree.local_nodes[$('.current_node').attr('node_id')]
+    selected_node.modify_curr_interval_ms(function(){ return new_ms })
   })
 
   $('body').append("<div class='pause_indic' style='display:none'>PAUSED</div>")
@@ -50,10 +31,12 @@ RemoteTree.prototype.after_init_notification = function() {
 RemoteTree.prototype.after_bind_time_edits = function() {}
 
 // $('<div>00:00:00</div>') -> 0
+
 function el_ms(el) {
   var hms = parse_time_div(el)
   return (hms[0] * 60 * 60 + hms[1] * 60 + hms[2]) * 1000
 }
+
 function parse_time_div(el) {
   var s = el
   if(typeof(el) != 'string') {
@@ -64,8 +47,8 @@ function parse_time_div(el) {
   return parse_time_str(s)
 }
 
-
 // '00:00:00' -> [0, 0, 0]
+
 function parse_time_str(s) {
   var split = s.split(':', 3)
   for(var i = 0; i < split.length; i++) {
@@ -88,7 +71,6 @@ RemoteTree.prototype.unpause = function(e) {
   $('.pause_indic').hide()
 }
 
-
 // Pull user's score out of node's text.
 
 RemoteTree.prototype.task_score = function(node_) {
@@ -100,10 +82,13 @@ RemoteTree.prototype.task_score = function(node_) {
   }
 }
 
-RemoteTree.prototype.after_decorate_node = function() {
-  var score = this.task_score(task_node)
-  if(score)
-    task_el.find('.value_per_hour:first').text(score.toFixed(3))
+RemoteTree.prototype.after_decorate_node = function(node) {
+  console.log('after_decorate_node')
+  var score = this.task_score(node)
+  if(score) {
+    var node_el = $('.node[node_id="()"]'.replace('()', node.node_id))
+    node_el.find('.value_per_hour:first').text(score.toFixed(3))
+  }
 }
 
 
