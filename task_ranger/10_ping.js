@@ -18,6 +18,11 @@ RemoteTree.prototype.after_bind_drag_drop = function() {
     return false
   })
 
+  $(document).on('focus', '.interval', function(e) {
+    global_tree.set_current_interval(
+      tree.local_nodes[$('.current_node').attr('node_id')], $(this))
+  })
+
   this.init_notifications()
 }
 
@@ -70,6 +75,7 @@ function ping() {
   global_tree.after_ping()
 }
 
+
 // Create a notification every 10 minutes, unless the user ignored the last one.
 
 RemoteTree.prototype.nag = function() {
@@ -102,10 +108,14 @@ LocalNode.prototype.new_interval = function() {
   if(!this.node_intervals)
     this.node_intervals = {}
   var curr_day_ms = this.get_curr_day_ms()
-  var intervals = this.node_intervals[curr_day_ms]
+  var intervals = this.get_curr_intervals()
   intervals.push(interval_obj)
   this.send('node_intervals/' + curr_day_ms + '/' + (intervals.length - 1), interval_obj)
-  this.tree.add_interval_el(interval_obj.text)
+  this.tree.add_interval_el(this, interval_obj.text)
+}
+
+LocalNode.prototype.get_curr_intervals = function() {
+  return this.node_intervals[this.get_curr_day_ms()]
 }
 
 LocalNode.prototype.get_curr_day_ms = function() {
@@ -120,17 +130,23 @@ RemoteTree.prototype.after_delete2 = function() {
 // Increase node's last interval by ms since last ping.
 
 LocalNode.prototype.increment = function() {
+  if($('.current_interval').length == 0)
+    return
+
   var curr_time = Date.now()
   if(this.tree.last_inc_time) {
-    var curr_day_ms = this.get_curr_day_ms(),
-        interval_list = this.node_intervals[curr_day_ms],
-        delta = curr_time - this.tree.last_inc_time
-    interval_list[interval_list.length - 1].ms += delta
-    this.send('interval_list/' + (interval_list.length - 1) + '/ms',
-      interval_list[interval_list.length - 1].ms)
+    var intervals = this.get_curr_intervals(),
+        delta = curr_time - this.tree.last_inc_time,
+        interval_index = $('.interval').index($('.current_interval')),
+        interval = intervals[interval_index]
+
+    interval.ms += delta
+    this.send('interval_list/' + interval_index + '/ms', interval.ms)
+    set_time_el($('.interval_info .time_input'), interval.ms)
   }
   this.tree.last_inc_time = curr_time
 }
+
 
 RemoteTree.prototype.after_ping = function() {}
 
@@ -154,24 +170,29 @@ LocalNode.prototype.after_init = function() {
     this.set('date_created', Date.now())
 }
 
-RemoteTree.prototype.after_intervals_shown = function() {
-  this.set_current_interval($('.interval:last'))
 
-}
-
-RemoteTree.prototype.set_current_interval = function(el) {
+RemoteTree.prototype.set_current_interval = function(node, interval_el) {
   $('.current_interval').removeClass('current_interval')
-  el.addClass('current_interval')
+  interval_el.addClass('current_interval')
+  var intervals = node.get_curr_intervals(),
+      interval = intervals[$('.interval').index(interval_el)]
+  set_time_el($('.interval_info .time_input'), interval.ms)
+
+  $('.interval_info .text').text(interval_el.val())
+  $('.interval_info .time_input').show()
 }
 
-RemoteTree.prototype.after_add_interval_el = function(input) {
-  this.set_current_interval(input)
+RemoteTree.prototype.after_show_intervals = function(node) {
+  this.set_current_interval(node, $('.interval:last'))
 }
 
 RemoteTree.prototype.after_set_current_node = function(node) {
   node.just_selected = true
 }
 
+RemoteTree.prototype.after_add_interval_el = function(node, input) {
+  this.set_current_interval(node, input)
+}
 
 // Turn the seconds into a rendered date on the node.
 

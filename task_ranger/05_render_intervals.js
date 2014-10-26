@@ -22,24 +22,25 @@ RemoteTree.prototype.after_bind_focus = function() {}
 // Display intervals for the passed day.
 
 RemoteTree.prototype.show_intervals_for_day = function(node, date) {
+  console.log('show_intervals_for_day, node:', node)
   var daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
   var intervals = node.node_intervals[daily_time] || []
   $('.interval_list').empty()
   for(var i = 0; i < intervals.length; i++)
-    this.add_interval_el(intervals[i].text)
-  this.after_intervals_shown()
+    this.add_interval_el(node, intervals[i].text)
+  this.after_show_intervals(node)
 }
 
-RemoteTree.prototype.after_intervals_shown = function() {}
+RemoteTree.prototype.after_show_intervals = function(node) {}
 
-RemoteTree.prototype.add_interval_el = function(text) {
+RemoteTree.prototype.add_interval_el = function(node, text) {
   var input = $('<input class="interval"></input>')
   input.val(text)
   $('.interval_list').append(input)
-  this.after_add_interval_el(input)
+  this.after_add_interval_el(node, input)
 }
 
-RemoteTree.prototype.after_add_interval_el = function(input) {}
+RemoteTree.prototype.after_add_interval_el = function(node, input) {}
 
 // Div with date button and info row at the bottom.
 
