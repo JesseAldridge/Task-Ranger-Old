@@ -31,26 +31,33 @@ RemoteTree.prototype.download_data = function() {
   })
 }
 
-RemoteTree.prototype.after_download_data = function() {}
+RemoteTree.prototype.get_user_root = function() { return 'test_tree' }
 
-RemoteTree.prototype.get_user_root = function(){ return 'test_tree' }
+RemoteTree.prototype.after_download_data = function() {}
 
 RemoteTree.prototype.after_top_ids = function(){}
 
 // Apply some function to every node.
 
 RemoteTree.prototype.walk_tree = function(node_ids, func, extra_args) {
-  for(var i in node_ids) {
-    var node = this.local_nodes[node_ids[i]]
-    if(!node)
-      throw 'node not found locally: ' + node_ids[i]
-    if(!node.node_id) {
-      console.log('node:', node)
-      throw 'node has no id'
-    }
+  this._walk_tree(node_ids ? node_ids.slice(0) : [], func, extra_args)
+}
+
+RemoteTree.prototype._walk_tree = function(node_ids, func, extra_args) {
+  if(node_ids.length == 0)
+    return
+  var node_id = node_ids.shift(),
+      node = this.local_nodes[node_id]
+  if(node) {
+    if(!node.node_id)
+      node.node_id = node_id
     func(node, extra_args)
-    this.walk_tree(node.child_ids, func, extra_args)
+    node_ids = node.child_ids.concat(node_ids)
   }
+  else
+    console.log('node not found locally: ' + node_id)
+
+  this.walk_tree(node_ids, func, extra_args)
 }
 
 // Copy attributes from snapshot.  Init undefined vars.
@@ -75,8 +82,10 @@ LocalNode.prototype.set = function(key, val) {
 }
 
 LocalNode.prototype.send = function(key, val) {
-  this.tree.root_ref.child('nodes/{id}/{key}'.replace(
-    '{id}', this.node_id).replace('{key}', key)).set(val)
+  var path = 'nodes/{id}/{key}'.replace('{id}', this.node_id).replace('{key}', key)
+  if(val === undefined)
+    val = this[key]
+  this.tree.root_ref.child(path).set(val)
 }
 
 

@@ -23,7 +23,7 @@ def parse_required_scripts(path):
     lines = f.read().splitlines()
   line_iter = iter(lines)
   for line in line_iter:
-    if line.strip() == '// requires:':
+    if re.match('^// ?requires:', line):
       break
   for line in line_iter:
     if not re.match('^// .+\.(js|css)', line):

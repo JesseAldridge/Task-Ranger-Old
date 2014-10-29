@@ -57,13 +57,18 @@ LocalNode.prototype.build_interval_path = function(interval_el) {
 
 LocalNode.prototype.get_curr_day_ms = function() {
   var date = $('#datetimepicker').data("DateTimePicker").getDate().toDate()
+  return this.date_to_daily_ms(date)
+}
+
+LocalNode.prototype.date_to_daily_ms = function(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
 }
 
 // Create a new interval -- in local node, in db, and render view.
 
-LocalNode.prototype.new_interval = function() {
-  var interval_obj = {create_ms:new Date().getTime(), ms:0, text:'new interval'}
+LocalNode.prototype.new_interval = function(interval_obj) {
+  if(!interval_obj)
+    interval_obj = {create_ms:new Date().getTime(), ms:0, text:'new interval'}
   if(!this.node_intervals)
     this.node_intervals = {}
   var curr_day_ms = this.get_curr_day_ms()

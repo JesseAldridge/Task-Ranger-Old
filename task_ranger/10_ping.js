@@ -147,9 +147,11 @@ LocalNode.prototype.after_init = function() {
 RemoteTree.prototype.set_current_interval = function(node, interval_el) {
   $('.current_interval').removeClass('current_interval')
   interval_el.addClass('current_interval')
-  var intervals = node.node_intervals[node.get_curr_day_ms()]
-      interval = intervals[$('.interval').index(interval_el)]
-  set_time_el($('.interval_info .time_input'), interval.ms)
+  var intervals = node.node_intervals[node.get_curr_day_ms()],
+      index = $('.interval').index(interval_el)
+      interval = index != -1 ? intervals[index] : null
+  if(interval)
+    set_time_el($('.interval_info .time_input'), interval.ms)
 
   $('.interval_info .text').text(interval_el.val())
   $('.interval_info .time_input').show()

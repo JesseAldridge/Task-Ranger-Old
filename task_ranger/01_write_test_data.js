@@ -5,10 +5,10 @@
 
 
 function RemoteTree() {
-  this.on_construction()
+  this.after_construction()
 }
 
-RemoteTree.prototype.on_construction = function() {}
+RemoteTree.prototype.after_construction = function() {}
 
 RemoteTree.prototype.write_test_data = function() {
 

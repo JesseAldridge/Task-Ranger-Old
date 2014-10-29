@@ -1,5 +1,5 @@
 
-RemoteTree.prototype.on_construction = function() {
+RemoteTree.prototype.after_construction = function() {
   $('body').append('<div class="tree_section"><ol></ol></div>')
   this.after_tree_html()
 }

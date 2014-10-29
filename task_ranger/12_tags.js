@@ -123,6 +123,21 @@ RemoteTree.prototype.regen_top5 = function(node_ids) {
 
 RemoteTree.prototype.after_buttons_html = function() {
   $('body').prepend("<ol id='top5' style='float:left'></ol>")
+  this.after_top5_html()
 }
+
+RemoteTree.prototype.after_top5_html = function() {}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
