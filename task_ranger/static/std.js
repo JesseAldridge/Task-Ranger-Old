@@ -16,7 +16,7 @@ $.extend(
   $.fn.autoGrowInput = function(o) {
     o = $.extend({
         maxWidth: 2000,
-        minWidth: 0,
+        minWidth: 1,
         comfortZone: 70
     }, o);
 

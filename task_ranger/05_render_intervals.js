@@ -15,7 +15,7 @@ RemoteTree.prototype.after_bind_text = function() {
     tree.show_intervals_for_day(tree.local_nodes[node_el.attr('node_id')], new Date())
   })
 
-  $(document).on('keydown', '.interval', function() {
+  $(document).on('keydown', '.interval_input', function() {
     clearTimeout(window.save_timer)
     function make_setter(interval_el) {
       return function() {
@@ -44,14 +44,14 @@ RemoteTree.prototype.after_bind_text = function() {
 
 LocalNode.prototype.get_interval_obj = function(interval_el) {
   var intervals = this.node_intervals[this.get_curr_day_ms()],
-      interval_index = $('.interval').index(interval_el),
+      interval_index = $('.interval_div').index(interval_el),
       interval = intervals[interval_index]
   return interval
 }
 
 LocalNode.prototype.build_interval_path = function(interval_el) {
-  var curr_day_ms = this.get_curr_day_ms()
-  var interval_index = $('.interval').index(interval_el)
+  var curr_day_ms = this.get_curr_day_ms(),
+      interval_index = $('.interval_div').index(interval_el)
   return 'node_intervals/' + curr_day_ms + '/' + interval_index
 }
 
@@ -96,10 +96,18 @@ RemoteTree.prototype.show_intervals_for_day = function(node, date) {
 RemoteTree.prototype.after_show_intervals = function(node) {}
 
 RemoteTree.prototype.add_interval_el = function(node, text) {
-  var input = $('<input class="interval"></input>')
+  var interval_el = $(multiline.stripIndent(function(){ /*
+    <div class="interval_div">
+      <input><div class="close">×</div>
+    </div>
+  */}))
+
+  $('.interval_list').append(interval_el)
+  var input = interval_el.find('input')
+  input.autoGrowInput({comfortZone: 7})
   input.val(text)
-  $('.interval_list').append(input)
-  this.after_add_interval_el(node, input)
+  input.blur()
+  this.after_add_interval_el(node, interval_el)
 }
 
 RemoteTree.prototype.after_add_interval_el = function(node, input) {}

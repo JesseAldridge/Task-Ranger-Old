@@ -7,9 +7,9 @@ RemoteTree.prototype.after_bind_drag_drop = function() {
   var tree = this
   global_tree = tree
 
-  $(document).on('focus', '.interval', function(e) {
+  $(document).on('focus', '.interval_div input', function(e) {
     global_tree.set_current_interval(
-      tree.local_nodes[$('.current_node').attr('node_id')], $(this))
+      tree.local_nodes[$('.current_node').attr('node_id')], $(this).closest('.interval_div'))
   })
 
   this.init_notifications()
@@ -108,7 +108,8 @@ LocalNode.prototype.increment = function() {
       curr_interval = interval
       return interval.ms + delta
     })
-    set_time_el($('.interval_info .time_input'), curr_interval.ms)
+    if(curr_interval)
+      set_time_el($('.interval_info .time_input'), curr_interval.ms)
   }
   this.tree.last_inc_time = curr_time
 }
@@ -118,6 +119,8 @@ LocalNode.prototype.increment = function() {
 LocalNode.prototype.modify_curr_interval_ms = function(ms_func) {
   var interval_el = $('.current_interval')
   var interval = this.get_interval_obj(interval_el)
+  if(!interval)
+    return
   interval.ms = ms_func(interval)
   var ms_path = this.build_interval_path(interval_el) + '/ms'
   this.send(ms_path, interval.ms)
@@ -144,21 +147,21 @@ LocalNode.prototype.after_init = function() {
 }
 
 
-RemoteTree.prototype.set_current_interval = function(node, interval_el) {
+RemoteTree.prototype.set_current_interval = function(node, interval_div) {
   $('.current_interval').removeClass('current_interval')
-  interval_el.addClass('current_interval')
-  var intervals = node.node_intervals[node.get_curr_day_ms()],
-      index = $('.interval').index(interval_el)
-      interval = index != -1 ? intervals[index] : null
-  if(interval)
-    set_time_el($('.interval_info .time_input'), interval.ms)
+  interval_div.addClass('current_interval')
+  var interval_objs = node.node_intervals[node.get_curr_day_ms()],
+      index = $('.interval_div').index(interval_div),
+      interval_obj = index != -1 ? interval_objs[index] : null
+  if(interval_obj)
+    set_time_el($('.interval_info .time_input'), interval_obj.ms)
 
-  $('.interval_info .text').text(interval_el.val())
+  $('.interval_info .text').text(interval_div.val())
   $('.interval_info .time_input').show()
 }
 
 RemoteTree.prototype.after_show_intervals = function(node) {
-  this.set_current_interval(node, $('.interval:last'))
+  this.set_current_interval(node, $('.interval_div:last'))
 }
 
 RemoteTree.prototype.after_set_current_node = function(node) {

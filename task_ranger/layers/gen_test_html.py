@@ -44,7 +44,9 @@ def write_html(required, layer_paths, page_title):
         script_paths[i])
 
   with open('test.html', 'w') as f:
-    f.write('\n'.join(script_paths + [
+    f.write('\n'.join([
+      '<meta http-equiv="content-type" content="text-html; charset=utf-8">'] +
+      script_paths + [
       '<script> $(run_test) </script>', '<title>{}</title>'.format(page_title)]))
 
   os.system('open -a /Applications/Google\ Chrome.app test.html')

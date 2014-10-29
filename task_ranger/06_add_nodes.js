@@ -213,7 +213,7 @@ RemoteTree.prototype.add_node_el = function(sibling_ids, ol, node, is_red, prefi
   }
   var node_el = select_node_el(node)
   var input = node_el.find('.text:first')
-  input.autoGrowInput({comfortZone: 5})
+  input.autoGrowInput({comfortZone: 7})
   input.blur()
   this.decorate_node(node, is_red, prefix)
   return node_el
