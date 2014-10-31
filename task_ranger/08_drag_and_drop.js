@@ -34,7 +34,7 @@ RemoteTree.prototype.after_bind_delete = function() {
       else {
         var index = $('#tree_section > .node').index($(ui.item))
         tree.top_ids.splice(index, 0, moved_node.node_id)
-        tree.root_ref.child('top_level_ids').set(tree.top_ids)
+        tree.root_ref.child('top_ids').set(tree.top_ids)
         moved_node.set('parent_id', null)
       }
       tree.decorate_ids(tree.top_ids)

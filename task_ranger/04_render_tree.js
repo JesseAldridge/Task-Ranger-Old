@@ -7,6 +7,15 @@
 
 // Html node template:  (li (headline (input))(ol))
 
+
+RemoteTree.prototype.after_construction = function() {
+  $('body').append('<div class="tree_section"><ol></ol></div>')
+  this.after_tree_html()
+}
+
+RemoteTree.prototype.after_tree_html = function() {}
+
+
 RemoteTree.prototype.node_el_template = function() {
   return '<outer> \
   <li class="node" node_id="${node_id}"> \

@@ -55,8 +55,7 @@ RemoteTree.prototype.write_test_data = function() {
 
   var tree = this
   new Firebase('https://taskranger.firebaseio.com/test_tree').set(
-    {nodes:nodes_json, top_level_ids:[id_a]}, function() {
-      $('body').append('<a href="https://taskranger.firebaseio.com/test_tree">View Data</a>')
+    {nodes:nodes_json, top_ids:[id_a]}, function() {
       tree.after_write_test_data()
     })
 }
@@ -64,10 +63,43 @@ RemoteTree.prototype.write_test_data = function() {
 RemoteTree.prototype.decorate_node_json = function(json_obj) {}
 RemoteTree.prototype.after_write_test_data = function() {}
 
-function run_test() {
-  var tree = new RemoteTree()
-  tree.write_test_data()
+RemoteTree.prototype.write_json_to_node = function(node, parent_id, index) {
+
+  // Add some extra attributes to the node, save it and add to parent.
+
+  var node_id = node.node_id = '' + Math.round(Math.random() * 100000000000)
+  node.parent_id = parent_id || null;
+  node.child_ids = []
+  this.decorate_node_json(node)
+  this.root_ref.child('nodes/' + node_id).set(node)
+  this.nodes[node_id] = node
+  this.add_id_to_parent(node.node_id, parent_id, index)
+  return node
 }
+
+RemoteTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
+
+  // Add a child id to parent node's child_id list or to top level ids.
+
+  var ids_list = parent_id ? this.nodes[parent_id].child_ids : this.top_ids
+  ids_list = ids_list || []
+  if(index === undefined)
+    ids_list.push(node_id)
+  else
+    ids_list.splice(index, 0, node_id)
+  var path = (
+    parent_id ? 'nodes/{0}/child_ids'.replace('{0}', parent_id) : 'top_ids')
+  this.root_ref.child(path).set(ids_list)
+}
+
+
+
+
+
+
+
+
+
 
 
 

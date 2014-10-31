@@ -18,7 +18,7 @@ RemoteTree.prototype.download_data = function() {
   this.root_ref.once('value', function(snap) {
     var top_ids = []
     if(snap.val()) {
-      top_ids = snap.val().top_level_ids
+      top_ids = snap.val().top_ids
       if(!top_ids || top_ids.length === 0)
         top_ids = []
 

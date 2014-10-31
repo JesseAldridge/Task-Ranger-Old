@@ -102,7 +102,7 @@ RemoteTree.prototype.dedent = function(node) {
   if(grandparent)
     grandparent.set('child_ids', gp_id_list)
   else
-    this.root_ref.child('top_level_ids').set(gp_id_list)
+    this.root_ref.child('top_ids').set(gp_id_list)
   std.delete_val(parent.child_ids, node.node_id)
   parent.set('child_ids', parent.child_ids)
   node.set('parent_id', grandparent ? grandparent.node_id : null)
@@ -146,7 +146,7 @@ RemoteTree.prototype.remove_id_from_parent = function(node) {
   else {
     node.former_index = this.top_ids.indexOf(node.node_id)
     std.delete_val(this.top_ids, node.node_id)
-    this.root_ref.child('top_level_ids').set(this.top_ids)
+    this.root_ref.child('top_ids').set(this.top_ids)
   }
 }
 
