@@ -1,0 +1,33 @@
+<html ng-app="myApp">
+  <head>
+    <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js'></script>
+    <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
+    <script src='https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+  </head>
+  <body ng-controller="treeController">
+    <ol>
+      <li ng-repeat="node in fb_data.nodes">
+        {{node.node_id}}
+      </li>
+    </ol>
+
+    <a href="https://taskranger.firebaseio.com/test_tree">View Data</a>
+
+    <script>
+    var myApp = angular.module("myApp", ["firebase"]);
+
+    myApp.controller('treeController', ['$scope', '$firebase',
+      function($scope, $firebase) {
+        var ref = new Firebase('https://taskranger.firebaseio.com/test_tree');
+        $scope.fb_data = $firebase(ref).$asObject();
+        $scope.fb_data.$loaded(function(fb_data) {
+          fb_data.nodes[1] = {node_id:1}
+        })
+      }
+    ]);
+
+    </script>
+  </body>
+</html>
+
