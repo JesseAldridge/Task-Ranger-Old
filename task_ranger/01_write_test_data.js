@@ -21,7 +21,7 @@ RemoteTree.prototype.write_test_data = function() {
   function generate_fake_intervals() {
     var date = new Date(),
         daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-    node_intervals = {}
+    varnode_intervals = {}
     node_intervals[daily_time] = []
     for(var _ = 0; _ < 2; _++) {
       node_intervals[daily_time].push({
@@ -62,20 +62,20 @@ RemoteTree.prototype.write_test_data = function() {
 
 RemoteTree.prototype.decorate_node_json = function(json_obj) {}
 RemoteTree.prototype.after_write_test_data = function() {}
-
-RemoteTree.prototype.write_json_to_node = function(node, parent_id, index) {
-
-  // Add some extra attributes to the node, save it and add to parent.
-
-  var node_id = node.node_id = '' + Math.round(Math.random() * 100000000000)
-  node.parent_id = parent_id || null;
-  node.child_ids = []
-  this.decorate_node_json(node)
-  this.root_ref.child('nodes/' + node_id).set(node)
-  this.nodes[node_id] = node
-  this.add_id_to_parent(node.node_id, parent_id, index)
-  return node
-}
+//
+// RemoteTree.prototype.write_json_to_node = function(node, parent_id, index) {
+//
+//   // Add some extra attributes to the node, save it and add to parent.
+//
+//   // var node_id = node.node_id = '' + Math.round(Math.random() * 100000000000)
+//   // node.parent_id = parent_id || null;
+//   // node.child_ids = []
+//   // this.decorate_node_json(node)
+//   // this.root_ref.child('nodes/' + node_id).set(node)
+//   // this.nodes[node_id] = node
+//   // this.add_id_to_parent(node.node_id, parent_id, index)
+//   // return node
+// }
 
 RemoteTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
 

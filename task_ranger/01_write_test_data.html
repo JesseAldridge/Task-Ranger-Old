@@ -1,4 +1,4 @@
-<html ng-app="myApp">
+<html ng-app="treeApp">
   <head>
     <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js'></script>
     <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
@@ -24,7 +24,7 @@
     <a href="https://taskranger.firebaseio.com/test_tree">View Data</a>
 
     <script>
-    var myApp = angular.module("myApp", ["firebase"]);
+    var treeApp = angular.module("treeApp", ["firebase"]);
 
     myApp.controller('treeController', ['$scope', '$firebase',
       function($scope, $firebase) {

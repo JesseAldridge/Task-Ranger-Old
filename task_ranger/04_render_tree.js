@@ -37,11 +37,6 @@ RemoteTree.prototype.headline_template = function() {
 
 // Recursively insert html elements for all local nodes after they are loaded.
 
-RemoteTree.prototype.after_download_data = function() {
-  this.render_ids(this.top_ids)
-  this.after_initial_render()
-}
-
 RemoteTree.prototype.after_initial_render = function() {
   if(this.top_ids.length === 0)
     this.write_json_to_node({text:"Default Node"})

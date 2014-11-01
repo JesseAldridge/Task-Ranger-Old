@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/JimLiu/angular-ui-tree/master/dist/angular-ui-tree.min.css">
+
+    <style>
+      .angular-ui-tree-placeholder {
+          background: #f0f9ff;
+          border: 2px dashed #bed2db;
+      }
+      .angular-ui-tree-handle {
+          background: #f8faff;
+          border: 1px solid #dae2ea;
+          color: #7c9eb2;
+          padding: 10px 10px;
+      }
+
+    </style>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/JimLiu/angular-ui-tree/master/dist/angular-ui-tree.js"></script>
+  </head>
+  <body ng-app="treeApp">
+    <div class="tree_section" ng-controller="treeCtrl">
+
+      <!-- Nested node template -->
+
+      <script type="text/ng-template" id="nodes_renderer.html">
+        <div ui-tree-handle class="tree-node tree-node-content">
+          {{id}} {{nodes[id].text}} {{nodes[id].child_ids}}
+        </div>
+        <ol ui-tree-nodes="" ng-model="nodes[id].child_ids">
+          <li ng-repeat="id in nodes[id].child_ids" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+        </ol>
+      </script>
+
+      <div ui-tree id="tree-root">
+        <ol ui-tree-nodes="" ng-model="top_ids">
+          <li ng-repeat="id in top_ids" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+        </ol>
+      </div>
+
+      <p>top_ids: {{top_ids}}</p>
+
+      <script>
+      var treeApp = angular.module("treeApp", ['ui.tree']);
+
+      treeApp.controller('treeCtrl', ['$scope',
+        function($scope) {
+
+          $scope.nodes = {
+            '1': {
+              'text': 'foo',
+              'child_ids': ['2'],
+            },
+            '2': {
+              'text': 'bar',
+              'child_ids': [],
+            }
+          }
+          $scope.top_ids = ['1']
+
+          $scope.nodes['3'] = {
+            text:'baz', child_ids:[]
+          }
+          $scope.nodes['1'].child_ids.push('3');
+        }
+      ]);
+
+      </script>
+    </div>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
