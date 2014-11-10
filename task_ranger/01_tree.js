@@ -1,102 +1,61 @@
-// requires:
-// https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js
-// https://cdn.firebase.com/js/client/1.0.21/firebase.js
-// https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js
+angular.module('treeApp', [])
 
+.controller('TreeController', ['$scope', '$timeout', function($scope, $timeout) {
 
-function RemoteTree() {
-  this.after_construction()
-}
+  $scope.nodes = {
+    1:{node_id:1, text:'foo text', parent_id:null, child_ids:[2,3]},
+    2:{node_id:2, text:'bar text', parent_id:1, child_ids:[]},
+    3:{node_id:3, text:'red text', parent_id:1, child_ids:[]}
+  }
+  $scope.top_ids = [1]
 
-RemoteTree.prototype.after_construction = function() {}
-
-RemoteTree.prototype.random_id = function() {
-  return '' + Math.round(Math.random() * Math.pow(10, 10))
-}
-
-RemoteTree.prototype.write_test_data = function() {
-
-  // Generate a couple of intervals for a node.  Store in global map, ref'd from node.
-
-  var tree = this
-  function generate_fake_intervals() {
-    var date = new Date(),
-        daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime(),
-        intervals = {}
-    intervals[daily_time] = []
-    for(var _ = 0; _ < 2; _++) {
-      intervals[daily_time].push({
-        create_ms:moment().subtract(30, 'days').valueOf(),
-        ms:1000 * 60 * 60,  // 1 hour
-        text:'#default interval text ' + tree.random_id()
-      })
-    }
-    return intervals
+  function remove_id_from_parent(node) {
+    var parent_node = $scope.nodes[node.parent_id]
+    if(parent_node)
+      std.delete_val(parent_node.child_ids, node.node_id)
+    else
+      std.delete_val($scope.top_ids, node.node_id)
   }
 
-  // Create some fake data.
+  function setup_nestedSortable() {
+    $('#tree_section').nestedSortable({
+      forcePlaceholderSize: true, handle: 'div', helper:  'clone',
+      items: 'li', maxLevels: 0, opacity: .6, placeholder: 'placeholder',
+      revert: 100, tabSize: 25, tolerance: 'pointer', toleranceElement: '> div',
+      distance: 10, doNotClear: true,
+      update: function(event, ui) {
 
-  var id_a = this.random_id(), id_b = this.random_id()
+        // Change node's parent and parent's children on drop.
 
-  var nodes = [{
-    node_id: id_a,
-    intervals: generate_fake_intervals(),
-    nodes: [{
-      node_id: id_b,
-      intervals: generate_fake_intervals(),
-      parent_id: id_a
-    }]
-  }]
-  this.walk_tree(function(node) {
-    node.text = 'foo text ' + node.node_id
-  }, nodes)
+        var moved_node = $scope.nodes[ui.item.attr('node_id')]
+        var old_parent = $scope.nodes[moved_node.parent_id]
+        remove_id_from_parent(moved_node)
+        var new_parent_el = ui.item.parent().parent()
+        if(new_parent_el.attr('node_id')) {
+          var new_parent_node = $scope.nodes[new_parent_el.attr('node_id')]
+          moved_node.parent_id = new_parent_node.node_id
+          var child_ids = new_parent_node.child_ids
+          var index = $(new_parent_el).find('ol:first > [node_id]').index($(ui.item))
+          child_ids.splice(index, 0, moved_node.node_id)
+        }
 
-  var tree = this
-  new Firebase('https://taskranger.firebaseio.com/test_tree').set(
-    {nodes:nodes}, function() {
-      tree.after_write_test_data()
-    })
-}
+        // If no parent, add node to top level.
 
-RemoteTree.prototype.walk_tree = function(func, nodes) {
-  for(var i = 0; i < nodes.length; i++) {
-    func(nodes[i])
-    if(!nodes[i].nodes)
-      nodes[i].nodes = []
-    this.walk_tree(func, nodes[i].nodes)
-  }
-}
+        else {
+          var index = $('#tree_section > [node_id]').index($(ui.item))
+          $scope.top_ids.splice(index, 0, moved_node.node_id)
+          moved_node.parent_id = null
+        }
 
-RemoteTree.prototype.after_write_test_data = function() {}
-
-angular.module("treeApp", ['ui.tree', 'firebase'])
-.controller('treeController', ['$scope', '$firebase', function($scope, $firebase) {
-
-  RemoteTree.prototype.after_write_test_data = function() {
-    console.log('wrote test data')
-    var ref = this.root_ref = new Firebase('https://taskranger.firebaseio.com/test_tree/nodes');
-    $scope.nodes = $firebase(ref).$asArray();
-    var tree = this
-    $scope.nodes.$loaded(function() {
-      tree.walk_tree(function(){}, $scope.nodes)
+        $scope.show_tree = false
+        $scope.$apply()
+        $scope.show_tree = true
+        $scope.$apply()
+        setup_nestedSortable()
+      }
     })
   }
-
-  var tree = new RemoteTree()
-  tree.write_test_data()
-}]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  $scope.show_tree = true
+  $timeout(setup_nestedSortable, 100)
+}])
 

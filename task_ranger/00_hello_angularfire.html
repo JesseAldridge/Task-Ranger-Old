@@ -6,10 +6,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
   </head>
   <body ng-controller="treeController">
-    <ol>
-      <li ng-repeat="node in fb_data.nodes">
-        {{node.node_id}}
-      </li>
+
+
+    <script type="text/ng-template" id="node_template.html">
+      <input class="text" ng-model="node.text">
+      <ol ng-model="node.nodes">
+        <li ng-repeat="node in node.nodes" ng-include="'node_template.html'">
+        </li>
+      </ol>
+    </script>
+
+    <ol ng-model="nodes">
+      <li ng-repeat="node in nodes" ng-include="'node_template.html'"></li>
     </ol>
 
     <a href="https://taskranger.firebaseio.com/test_tree">View Data</a>
@@ -17,12 +25,23 @@
     <script>
     var myApp = angular.module("myApp", ["firebase"]);
 
+    fucntion walk_tree(func, nodes) {
+      for(var i = 0; i < nodes.length; i++) {
+        func(nodes[i])
+        walk_tree(nodes[i].nodes)
+      }
+    }
+
     myApp.controller('treeController', ['$scope', '$firebase',
       function($scope, $firebase) {
-        var ref = new Firebase('https://taskranger.firebaseio.com/test_tree');
-        $scope.fb_data = $firebase(ref).$asObject();
-        $scope.fb_data.$loaded(function(fb_data) {
-          fb_data.nodes[1] = {node_id:1}
+        var ref = new Firebase('https://taskranger.firebaseio.com/test_tree/nodes');
+        $scope.nodes = $firebase(ref).$asArray();
+        console.log('nodes:', $scope.nodes)
+
+        $scope.nodes.$loaded(function(nodes) {
+          walk_tree(function(node) {
+            node.text.$bindTo($scope, "nodes");
+          })
         })
       }
     ]);

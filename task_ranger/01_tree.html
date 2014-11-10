@@ -1,59 +1,49 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="static/bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/angular-ui-tree.min.css">
-    <link rel="stylesheet" href="static/demo.css">
+<script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+<script src='https://cdn.rawgit.com/ilikenwf/nestedSortable/2.0alpha/jquery.mjs.nestedSortable.js'></script>
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
-    <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js'></script>
-    <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
-    <script src='https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
-    <script src="https://cdn.rawgit.com/JimLiu/angular-ui-tree/master/dist/angular-ui-tree.js"></script>
+<script src='std.js'></script>
 
-    <script src='01_write_test_data.js'></script>
-    <script src='02_angular_tree.js'></script>
-  </head>
-  <body ng-app="treeApp">
+<script src='01_tree.js'></script>
+<script src='02_tree.js'></script>
 
-    <div class="tree_section" ng-controller="treeController">
+<style>
+li {background:white}
+.highlight {background-color:#ddffff}
+.placeholder {background: #f0f9ff; border: 1px dashed #bed2db;}
+.headline {border: solid 1px}
+</style>
 
-      <!-- Nested node template -->
 
-      <script type="text/ng-template" id="nodes_renderer.html">
-        <div ui-tree-handle class="tree-node tree-node-content">
-          <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)">
-            <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
-          </a>
-          {{node.text}}
-          <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)">
-            <span class="glyphicon glyphicon-remove"></span>
-          </a>
-          <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;">
-            <span class="glyphicon glyphicon-plus"></span>
-          </a>
-        </div>
-        <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-          <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
-          </li>
-        </ol>
-      </script>
+<div ng-app="treeApp">
 
-      <!-- Outer cotainer. -->
-
-      <div ui-tree id="tree-root">
-        <ol ui-tree-nodes="" ng-model="nodes">
-          <li ng-repeat="node in nodes" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-        </ol>
+  <script type="text/ng-template" id="nodes_renderer.html">
+    <li node_id="{{node_id}}" ng-repeat="node_id in node_ids" ui-tree-node
+        ng-init="node = nodes[node_id]">
+      <div class='headline'>
+        <a class="btn btn-success btn-xs" ng-click="toggle(this)">
+          <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+        </a>
+        <input ng-model="node.text"> {{node.text}}
+        <a class="btn btn-primary btn-xs" ng-click="newSubItem(this)">
+          <span class="glyphicon glyphicon-plus"></span>
+        </a>
+        {{node.child_ids}}
       </div>
-    </div>
-  </body>
-</html>
+      <ol ng-include="'nodes_renderer.html'" ng-init="node_ids = node.child_ids"></ol>
+    </li>
+  </script>
 
-
-
-
-
+  <div ng-controller="TreeController">
+    <ol ng-include="'nodes_renderer.html'" ng-init="node_ids = top_ids"
+        id="tree_section" class="ui-sortable"  ng-if="show_tree">
+    </ol>
+    <pre>{{top_ids | json}}</pre>
+    <pre>{{nodes | json}}</pre>
+  </div>
+</div>
 
 
 
