@@ -4,11 +4,13 @@
 <script src='https://cdn.rawgit.com/ilikenwf/nestedSortable/2.0alpha/jquery.mjs.nestedSortable.js'></script>
 <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+<script src='https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js'></script>
 
 <script src='static/std.js'></script>
 
 <script src='01_tree.js'></script>
-<script src='02_tree.js'></script>
+<!-- <script src='02_tree.js'></script> -->
 
 <style>
 li {background:white}
@@ -21,7 +23,7 @@ li {background:white}
 <div ng-app="treeApp">
 
   <script type="text/ng-template" id="nodes_renderer.html">
-    <li node_id="{{node_id}}" ng-repeat="node_id in node_ids" ui-tree-node
+    <li node_id="{{node_id}}" ng-repeat="node_id in top_ids" ui-tree-node
         ng-init="node = nodes[node_id]">
       <div class='headline'>
         <a class="btn btn-success btn-xs" ng-click="toggle(this)">
@@ -33,12 +35,12 @@ li {background:white}
         </a>
         {{node.child_ids}}
       </div>
-      <ol ng-include="'nodes_renderer.html'" ng-init="node_ids = node.child_ids"></ol>
+      <ol ng-include="'nodes_renderer.html'" ng-init="top_ids = node.child_ids"></ol>
     </li>
   </script>
 
   <div ng-controller="TreeController">
-    <ol ng-include="'nodes_renderer.html'" ng-init="node_ids = top_ids"
+    <ol ng-include="'nodes_renderer.html'"
         id="tree_section" class="ui-sortable"  ng-if="show_tree">
     </ol>
     <pre>{{top_ids | json}}</pre>

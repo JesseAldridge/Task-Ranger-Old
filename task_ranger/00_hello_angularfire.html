@@ -2,7 +2,6 @@
   <head>
     <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js'></script>
     <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
-    <script src='https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
   </head>
   <body ng-controller="treeController">
@@ -25,7 +24,7 @@
     <script>
     var myApp = angular.module("myApp", ["firebase"]);
 
-    fucntion walk_tree(func, nodes) {
+    function walk_tree(func, nodes) {
       for(var i = 0; i < nodes.length; i++) {
         func(nodes[i])
         walk_tree(nodes[i].nodes)
