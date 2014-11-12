@@ -34,16 +34,16 @@ body {background-color:#f8f8f8; height:100%}
 
 #top5 { display: block }
 
-.tree_section {
+#tree_section {
   display:inline-block; vertical-align:top;
   border:solid 1px; width:370px
 }
 
-.tree_section ol {
+#tree_section ol {
   padding-left:20px
 }
 
-.tree_section > ol {
+#tree_section > ol {
   padding:5px
 }
 
@@ -76,7 +76,7 @@ body {background-color:#f8f8f8; height:100%}
   margin-right: 4px;
 }
 
-.tree_section .date {float:right; width:85px}
+#tree_section .date {float:right; width:85px}
 
 .pause_indic {background:#fff; position:fixed; left:25%; top:50%;
               border:solid 4px; display:none; font-size:20px;
