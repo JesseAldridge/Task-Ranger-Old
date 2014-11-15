@@ -1,0 +1,46 @@
+<!doctype html>
+<meta http-equiv="content-type" content="text-html; charset=utf-8">
+
+<script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.2/ui-bootstrap-tpls.js'></script>
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
+
+<link rel="stylesheet" href="static/tree.css">
+<link rel="stylesheet" href="static/tr.css">
+
+<script src='00_tree.js'></script>
+
+<div ng-app="treeApp">
+
+  <!-- Recursive node template.  Collapse button, input widget, new node buttons, child nodes. -->
+
+  <script type="text/ng-template" id="nodes_renderer.html">
+    <li node_id="{{node_id}}" ng-repeat="node_id in top_ids" ui-tree-node
+        ng-init="node = nodes[node_id]">
+      <div class='headline'>
+        <span>{{node_id}}</span>
+        <div title='Add child' class='ui-icon ui-icon-arrowreturnthick-1-e insert-child'
+             ng-click='new_node(node.node_id, 0)'>
+        </div>
+      </div>
+      <ol ng-include="'nodes_renderer.html'" ng-init="top_ids = node.child_ids"></ol>
+    </li>
+  </script>
+
+  <!-- Outer tree followed by interval section: date picker, interval list, and interval info. -->
+
+  <div ng-controller="TreeController">
+    <ol tree ng-include="'nodes_renderer.html'"
+        id="tree_section" class="ui-sortable">
+    </ol>
+
+    <pre>{{top_ids | json}}</pre>
+    <pre>{{nodes | json}}</pre>
+  </div>
+
+</div>
+
+
+
+
