@@ -14,27 +14,26 @@ function RemoteTree(scope) {
   var tree = this
   scope.new_node = function(parent_id, index) {
     var node_id = random_id()
-    var new_node = { node_id:node_id, child_ids:[], parent_id:parent_id }
+    var new_node = {
+      node_id:node_id, child_ids:[], parent_id:parent_id, node_intervals:{} }
     scope.nodes[node_id] = new_node
     tree.save_node(new_node)
-    add_id_to_parent(node_id, parent_id, index)
+    tree.add_id_to_parent(node_id, parent_id, index)
     tree.set_current_node(new_node)
   }
+}
 
-  function add_id_to_parent(node_id, parent_id, index) {
+RemoteTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
 
-    // Add a child id to parent node's child_id list or to top level ids.
+  // Add a child id to parent node's child_id list or to top level ids.
 
-    var parent_node = scope.nodes[parent_id]
-    if(!parent_node.child_ids)
-      parent_node.child_ids = []
-    var ids_list = (parent_id ? parent_node.child_ids : $scope.top_ids)
-    if(index === undefined)
-      ids_list.push(node_id)
-    else
-      ids_list.splice(index, 0, node_id)
-    tree.save_id_list(parent_id, ids_list)
-  }
+  var scope = this.scope,
+      ids_list = parent_id ? scope.nodes[parent_id].child_ids : scope.top_ids
+  if(index === undefined)
+    ids_list.push(node_id)
+  else
+    ids_list.splice(index, 0, node_id)
+  this.save_id_list(parent_id, ids_list)
 }
 
 RemoteTree.prototype.save_node = function(node) {}

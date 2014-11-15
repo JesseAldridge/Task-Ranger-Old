@@ -59,9 +59,12 @@ RemoteTree.prototype.after_request_data = function() {
     var path = 'node_intervals/' + curr_day_ms + '/' + (intervals.length - 1)
     tree.scope.save_node_key(node, path, interval)
   }
+
+  this.after_bind_intervals()
 }
 
 RemoteTree.prototype.after_show_intervals = function(){}
+RemoteTree.prototype.after_bind_intervals = function(){}
 
 
 

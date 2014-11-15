@@ -26,6 +26,7 @@
 <script src='01_firebase.js'></script>
 <script src='02_intervals.js'></script>
 <script src='03_drag_and_drop.js'></script>
+<script src='04_delete.js'></script>
 
 
 <div ng-app="treeApp">
@@ -50,7 +51,9 @@
         <div title='Add child' class='ui-icon ui-icon-arrowreturnthick-1-e insert-child'
              ng-click='new_node(node.node_id, 0)'>
         </div>
-        <div title='Delete' class='ui-icon ui-icon-closethick delete'></div>
+        <div title='Delete' class='ui-icon ui-icon-closethick delete'
+             ng-click='delete_node(node)'>
+        </div>
       </div>
       <ol ng-include="'nodes_renderer.html'"
           ng-init="top_ids = node.child_ids; parent_node = node"
@@ -61,6 +64,11 @@
   <!-- Outer tree followed by interval section: date picker, interval list, and interval info. -->
 
   <div ng-controller="TreeController">
+
+    <div>
+      <button class='undelete' ng-click='undelete()'>Undelete</button>
+    </div>
+
     <ol tree ng-include="'nodes_renderer.html'"
         id="tree_section" class="ui-sortable">
     </ol>
