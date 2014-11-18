@@ -27,7 +27,8 @@ module.directive('tree', function() {
 
         // Change node's parent and parent's children on drop.
 
-        var moved_node = scope.nodes[ui.item.attr('node_id')]
+        var moved_node = scope.nodes[ui.item.attr('node_id')],
+            old_parent = scope.nodes[moved_node.parent_id]
         tree.remove_id_from_parent(moved_node)
         var new_parent_el = ui.item.parent().parent()
         if(new_parent_el.attr('node_id')) {
@@ -48,11 +49,14 @@ module.directive('tree', function() {
           moved_node.parent_id = null
           tree.root_ref.child('top_ids').set(scope.top_ids)
         }
+        tree.after_drop(moved_node, old_parent)
         scope.$apply()
       }
     })
   }}
 })
+
+RemoteTree.prototype.after_drop = function() {}
 
 
 

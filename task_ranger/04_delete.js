@@ -43,6 +43,17 @@ RemoteTree.prototype.after_bind_intervals = function() {
     tree.after_undelete(root_node)
   }
 
+  this.scope.task_score = function(node) {
+    if(!node.text)
+      return
+    var text = node.text.trim()
+    var match = text.match(/\(([0-9\.]+)\)?$/)
+    if(match) {
+      value = parseFloat(match[1])
+      return (value / (node.cum_ms / 1000)) * 60 * 60 * 10
+    }
+  }
+
   this.after_bind_delete()
 }
 
@@ -59,11 +70,11 @@ RemoteTree.prototype.restore_node = function(node) {
 
 RemoteTree.prototype.after_bind_delete = function() {}
 
-RemoteTree.prototype.walk_tree = function(top_ids, func) {
+RemoteTree.prototype.walk_tree = function(top_ids, func, extra_args) {
   for(var i = 0; i < top_ids.length; i++) {
     var node = this.scope.nodes[top_ids[i]]
-    func(node)
-    this.walk_tree(node.child_ids, func)
+    func(node, extra_args)
+    this.walk_tree(node.child_ids, func, extra_args)
   }
 }
 

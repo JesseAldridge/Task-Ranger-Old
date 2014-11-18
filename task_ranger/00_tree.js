@@ -3,24 +3,23 @@ function RemoteTree(scope) {
   this.scope = scope
   scope.tree = this
 
-  this.write_test_data()
-
-  function random_id() {
-    return '' + Math.round(Math.random() * Math.pow(10, 10))
-  }
-
   // Add a child node at the passed index.
 
   var tree = this
   scope.new_node = function(parent_id, index) {
-    var node_id = random_id()
+    var node_id = '' + Math.round(Math.random() * Math.pow(10, 10))
     var new_node = {
-      node_id:node_id, child_ids:[], parent_id:parent_id, node_intervals:{} }
+      node_id:node_id, child_ids:[], parent_id:parent_id, node_intervals:{},
+      date_created:Date.now()}
     scope.nodes[node_id] = new_node
     tree.save_node(new_node)
     tree.add_id_to_parent(node_id, parent_id, index)
     tree.set_current_node(new_node)
   }
+}
+
+RemoteTree.prototype.init = function() {
+  this.write_test_data()
 }
 
 RemoteTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
@@ -61,5 +60,9 @@ var module = angular.module('treeApp', ['ui.bootstrap'])
 module.controller('TreeController', ['$scope',
   function($scope) {
     var tree = new RemoteTree($scope)
+    tree.init()
   }])
+
+
+
 

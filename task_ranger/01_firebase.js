@@ -1,6 +1,8 @@
 
 RemoteTree.prototype.write_test_data = function() {
 
+  console.log('writing test data')
+
   // Write some test data to firebase.
 
   var test_json = {
@@ -13,18 +15,20 @@ RemoteTree.prototype.write_test_data = function() {
           "1415952000000" : [ {
             "create_ms" : 1413407782790,
             "ms" : 3600000,
-            "text" : "#default interval text 58233205"
+            "text" : "#foo interval text 58233205"
           }, {
             "create_ms" : 1413407782792,
             "ms" : 3600000,
-            "text" : "#default interval text 4848701092"
+            "text" : "#foo interval text 4848701092"
           } ]
         },
+        "cum_ms": 14400000,
         "text" : "foo text 5005108148"
       },
       "5534964984" : {
         "node_id" : "5534964984",
-        "parent_id" : "9072973696"
+        "parent_id" : "9072973696",
+        "cum_ms": 0
       },
       "9072973696" : {
         "child_ids" : [ "5534964984" ],
@@ -34,13 +38,14 @@ RemoteTree.prototype.write_test_data = function() {
           "1415952000000" : [ {
             "create_ms" : 1413407782793,
             "ms" : 3600000,
-            "text" : "#default interval text 9083590657"
+            "text" : "#bar interval text 9083590657"
           }, {
             "create_ms" : 1413407782793,
             "ms" : 3600000,
-            "text" : "#default interval text 5191242022"
+            "text" : "#bar interval text 5191242022"
           } ]
         },
+        "cum_ms": 7200000,
         "parent_id" : "5005108148",
         "text" : "foo text 9072973696"
       }
@@ -52,14 +57,20 @@ RemoteTree.prototype.write_test_data = function() {
   new Firebase('https://taskranger.firebaseio.com/test_tree').set(
     test_json, function() {
       $('body').append('<a href="https://taskranger.firebaseio.com/test_tree">View Data</a>')
-      tree.after_write_test_data()
+      this.download_data()
     })
 }
 
-// Download data from firebase.
 
-RemoteTree.prototype.after_write_test_data = function() {
-  this.root_ref = new Firebase('https://taskranger.firebaseio.com/test_tree')
+RemoteTree.prototype.get_user_root = function() {
+  return 'test_tree'
+}
+
+RemoteTree.prototype.download_data = function() {
+
+  // Download data from firebase.
+
+  this.root_ref = new Firebase('https://taskranger.firebaseio.com/' + this.get_user_root())
   var tree = this
   this.root_ref.once('value', function(snap) {
     scope = tree.scope
