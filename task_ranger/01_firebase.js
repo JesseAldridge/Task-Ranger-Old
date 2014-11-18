@@ -56,7 +56,6 @@ RemoteTree.prototype.write_test_data = function() {
   var tree = this
   new Firebase('https://taskranger.firebaseio.com/test_tree').set(
     test_json, function() {
-      $('body').append('<a href="https://taskranger.firebaseio.com/test_tree">View Data</a>')
       this.download_data()
     })
 }
@@ -73,6 +72,23 @@ RemoteTree.prototype.download_data = function() {
   this.root_ref = new Firebase('https://taskranger.firebaseio.com/' + this.get_user_root())
   var tree = this
   this.root_ref.once('value', function(snap) {
+
+    if(!snap.val() || snap.val().nodes.length == 0) {
+        var default_json = {
+          "nodes" : {
+            "0" : {
+              "node_id" : "0",
+              "cum_ms": 0,
+              "text" : "Default Category"
+            }
+          },
+          "top_ids" : [ "0" ]
+        }
+
+        tree.root_ref.set(default_json, function() { tree.download_data() })
+        return
+    }
+
     scope = tree.scope
     var nodes = snap.val().nodes || []
     for(var id in nodes) {
