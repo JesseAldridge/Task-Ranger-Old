@@ -8,6 +8,12 @@ RemoteTree.prototype.after_bind_intervals = function() {
     tree.root_ref.child('nodes/' + node.node_id).remove()
   }
 
+  this.scope.collapse_icon = function(node) {
+    if(!node.child_ids || node.child_ids.length == 0)
+      return 'ui-icon-blank'
+    return node.is_collapsed ? 'ui-icon-triangle-1-e' : 'ui-icon-triangle-1-s'
+  }
+
   // Store deleted nodes.
 
   this.deleted_batches = []
@@ -25,7 +31,23 @@ RemoteTree.prototype.after_bind_intervals = function() {
     }
     tree.deleted_batches.push(deleted_nodes)
     tree.remove_id_from_parent(deleted_root)
+    if(tree.scope.curr_node == node)
+      tree.scope.curr_node = null
     tree.after_delete(deleted_root)
+  }
+
+  // Delete the current interval.
+
+  this.scope.delete_interval = function(node, interval) {
+    var node_intervals = tree.scope.nodes[node.node_id].node_intervals,
+        daily_ms = tree.date_to_daily_ms(new Date(interval.create_ms))
+    var interval_list = node_intervals[daily_ms],
+        index = interval_list.indexOf(interval)
+    interval_list.splice(index, 1)
+    if(interval == tree.scope.curr_interval)
+      tree.scope.curr_interval = null
+    var path = 'nodes/' + node.node_id + '/node_intervals/' + daily_ms + '/'
+    tree.root_ref.child(path).set(angular.copy(interval_list))
   }
 
   // Add the last deleted batch of nodes back to the tree.

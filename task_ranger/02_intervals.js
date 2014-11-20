@@ -40,6 +40,7 @@ module.directive('timeInput', ['$filter', function($filter) {
 
 module.filter('secs_to_hms', function() {
   return function(all_secs) {
+    all_secs = all_secs || 0
     var hms = break_up_secs(all_secs)
     var hours = hms[0], mins = hms[1], secs = hms[2]
     if(secs < 10)  secs = '0' + secs
@@ -68,7 +69,7 @@ RemoteTree.prototype.after_request_data = function() {
 
   // Setup datepicker.
 
-  this.scope.curr_date = new Date()
+  this.scope.curr_date = new Date(this.date_to_daily_ms(new Date()))
 
   this.scope.open_datepicker = function(e) {
     e.preventDefault();
@@ -78,10 +79,12 @@ RemoteTree.prototype.after_request_data = function() {
 
   // Show intervals for the current day.
 
-  this.scope.set_current_node = function(node) {
+  this.scope.set_current_node = function(node, e) {
+    if((!e || (!e.metaKey && !e.altKey)) && node != tree.scope.curr_node)
+      tree.scope.new_interval(node);
     tree.scope.curr_node = node
     var daily_time = tree.date_to_daily_ms(new Date())
-    var intervals = tree.scope.curr_intervals = node.node_intervals[daily_time] || []
+    var intervals = node.node_intervals[daily_time] || []
     tree.scope.set_curr_interval(intervals[intervals.length - 1])
   }
 
@@ -98,18 +101,23 @@ RemoteTree.prototype.after_request_data = function() {
   // Create a new interval for the current node.
 
   this.scope.new_interval = function(node) {
-    var interval = {create_ms:new Date().getTime(), ms:0, text:'new interval'}
     var curr_day_ms = tree.date_to_daily_ms(tree.scope.curr_date)
-    if(!node.node_intervals[curr_day_ms]) {
+    var interval = {
+      create_ms:new Date().getTime(), ms:0, text:'new interval'}
+    if(!node.node_intervals[curr_day_ms])
       node.node_intervals[curr_day_ms] = []
-    }
-    var intervals = tree.scope.curr_intervals = node.node_intervals[curr_day_ms]
+    var intervals = node.node_intervals[curr_day_ms]
     intervals.push(interval)
     var path = 'node_intervals/' + curr_day_ms + '/' + (intervals.length - 1)
     tree.scope.save_node_key(node, path, interval)
     tree.scope.set_curr_interval(interval)
+    var daily_time = tree.date_to_daily_ms(new Date())
   }
 
+  this.scope.get_curr_intervals = function() {
+    var curr_node = tree.scope.curr_node
+    return curr_node ? curr_node.node_intervals[tree.scope.curr_date.getTime()] : []
+  }
 
   this.scope.set_curr_interval = function(interval) {
     tree.scope.curr_interval = interval

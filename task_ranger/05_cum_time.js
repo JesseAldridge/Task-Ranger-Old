@@ -5,11 +5,12 @@ RemoteTree.prototype.recalc_cum_time = function(task_node) {
   var cum_ms = this.calc_indiv_ms(task_node)
   var child_ids = task_node.child_ids
   for(var i = 0; i < child_ids.length; i++)
-    cum_ms += this.scope.nodes[child_ids[i]].cum_ms
+    cum_ms += this.scope.nodes[child_ids[i]].cum_ms || 0
   task_node.cum_ms = cum_ms
   this.scope.save_node_key(task_node, 'cum_ms', cum_ms)
 
   var parent_node = this.scope.nodes[task_node.parent_id]
+  console.log('parent_node:', parent_node)
   if(parent_node)
     this.recalc_cum_time(parent_node)
 }
@@ -40,8 +41,6 @@ RemoteTree.prototype.after_undelete = function(root_node) {
   if(parent_node)
     this.recalc_cum_time(parent_node)
 }
-
-
 
 
 

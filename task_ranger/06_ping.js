@@ -4,8 +4,15 @@
 RemoteTree.prototype.after_bind_delete = function() {
   this.ping_secs = 1
   this.ping_timer = setTimeout(ping, 1000 * this.ping_secs)
-  global_tree = this
+  var tree = global_tree = this
   this.init_notifications()
+
+  this.scope.pause = function() {
+    if(tree.scope.paused)
+      tree.last_inc_time = Date.now()
+    tree.scope.paused = !tree.scope.paused
+  }
+
   this.after_setup_ping()
 }
 
@@ -16,7 +23,6 @@ RemoteTree.prototype.after_setup_ping = function() {}
 RemoteTree.prototype.init_notifications = function() {
   if (Notification.permission !== 'granted')
     Notification.requestPermission(function (permission) {
-      console.log('permission:', permission)
       Notification.permission = permission;
     })
 
@@ -35,10 +41,12 @@ RemoteTree.prototype.init_notifications = function() {
     function(){ return tree.scope.curr_interval ? tree.scope.curr_interval.ms : null },
     function(newValue, oldValue) {
       var curr_node = tree.scope.curr_node, curr_interval = tree.scope.curr_interval
-      if(!curr_interval)
+      if(!curr_interval || !curr_node)
         return
       var daily_time = tree.date_to_daily_ms(new Date())
       var index = curr_node.node_intervals[daily_time].indexOf(curr_interval)
+      if(index == -1)
+        return
       tree.scope.save_interval(curr_node, tree.scope.curr_date, index, 'ms', curr_interval.ms)
       tree.recalc_cum_time(curr_node)
     }, true);
@@ -55,7 +63,7 @@ function ping() {
   if(!global_tree.last_input_date)
     global_tree.last_input_date = new Date()
   var curr_node = global_tree.scope.curr_node
-  if(curr_node && !global_tree.paused) {
+  if(curr_node && !global_tree.scope.paused) {
     if(curr_node.just_selected) {
       curr_node.just_selected = false
       curr_node.new_interval()

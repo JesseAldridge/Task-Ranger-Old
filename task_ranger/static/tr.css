@@ -1,12 +1,10 @@
 
 /* Header and stuff */
 
-body {background-color:#f8f8f8; height:100%}
+body {background-color:#4488bb; height:100%}
 .header {margin-top:10px}
 .header a {text-decoration:none}
-/*.buttons {float:left; margin-left:20px; border:inset 2px; padding:5px;
-          border-radius:6px; margin-top:7px}*/
-.buttons { margin-top: 4px; display: inline-block; margin-left: 15px }
+.top_buttons { margin-top: 4px; margin-left: 15px }
 .logo {
   float:left; font-size:200%; margin-bottom:20px; color:#fff;
   background-color:#58C; border-radius:10px;
@@ -44,21 +42,30 @@ body {background-color:#f8f8f8; height:100%}
   display: inline-block;
   vertical-align: top;
   width: 370px;
-  padding-left: 0px;
-  border: solid 2px #ccc;
-  padding: 2px;
+  padding: 11px;
+  padding-top: 5px;
   border-radius: 4px;
   margin: 12px;
+  background: #e5e5e5;
 }
 
+.section_label {
+  font-weight: 800;
+  font-size: 116%;
+  margin-bottom: 7px;
+  display:inline-block
+}
+
+
 #tree_section > ol {
-  padding:5px;
+  padding:0px;
 }
 
 #tree_section .headline {
-  border: solid 2px #aaa;
-  margin: 3px;
+  border-bottom: solid 1px #aaa;
+  margin-bottom: 3px;
   border-radius: 4px;
+  background: #f7f7f7;
 }
 
 #tree_section .headline input {
@@ -68,6 +75,15 @@ body {background-color:#f8f8f8; height:100%}
 #tree_section .curr_node > .headline {
   background: #ffa
 }
+
+.curr_interval {
+  background: #ffa
+}
+
+.curr_interval * {
+  background: #ffa
+}
+
 
 .cum_time {
   font-size: 80%;
@@ -102,9 +118,9 @@ body {background-color:#f8f8f8; height:100%}
 
 #tree_section .date {float:right; width:85px}
 
-.pause_indic {background:#fff; position:fixed; left:25%; top:50%;
-              border:solid 4px; display:none; font-size:20px;
-              padding:10px; font-weight:strong;}
+.pause {background:#fff; position:fixed; left:25%; top:50%;
+        border:solid 4px; font-size:20px;
+        padding:10px; font-weight:strong;}
 
 .stack {
   width:450px; height:210px; float:left; margin-top:15px; margin-left:20px
@@ -115,12 +131,27 @@ body {background-color:#f8f8f8; height:100%}
 /*  Work intervals */
 
 .interval_section {
-  display:inline-block; width:400px;
-  border:solid 1px; padding:2px;
+  display:inline-block; width:370px;
+  padding:7px;
+  margin: 12px;
+  border-radius: 4px;
+  background: #e5e5e5;
+}
+
+.interval_section hr {
+  border-color: #aaa;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.interval_section .input-group {
+  width: 200px;
+  float: right;
+  margin: 0px;
 }
 
 .interval_list {
-  line-height:0px
+  line-height:0px; margin-top: 16px;
 }
 
 .interval_div {
@@ -145,20 +176,13 @@ body {background-color:#f8f8f8; height:100%}
   border-left:0px;
   background-color:#eee;
 }
-
-.curr_interval {
-  background: #ffa
-}
-
-.curr_interval * {
-  background: #ffa
-}
-
 .interval_section .time_input { width: 65px }
 
 
 
-
+[datepicker] .btn-default {
+  border:none
+}
 
 
 

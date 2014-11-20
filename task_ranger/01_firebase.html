@@ -3,7 +3,7 @@
 
 <!-- Libraries by other people. -->
 
-<script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
 <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
@@ -54,13 +54,12 @@
         ng-init="node = nodes[node_id]" ng-class="{'curr_node': node == curr_node}">
       <div class='headline'>
         <div class="ui-icon collapse"
-             ng-class="{'ui-icon-triangle-1-e': node.is_collapsed, 'ui-icon-triangle-1-s': !node.is_collapsed}"
+             ng-class="collapse_icon(node)"
              ng-click="node.is_collapsed = !node.is_collapsed">
         </div>
         <input ng-model="node.text"
-               ng-change="save_node_key(node, 'text', node.text)"
-               ng-focus="set_current_node(node)"
-               ng-click="evt.metaKey || evt.altKey || new_interval(node)"
+               ng-change="save_node_key(node, 'text', node.text, true)"
+               ng-focus="set_current_node(node, e)"
                ng-keyup="set_last_input_date()">
         <div title='Add sibling' class='ui-icon ui-icon-arrowthick-1-s insert-under'
              ng-click='new_node(node.parent_id, top_ids.indexOf(node.node_id) + 1)'>
@@ -95,20 +94,27 @@
       </li>
     </ul>
 
-    <div>
-      <button class='undelete' ng-click='undelete()'>Undelete</button>
+    <div class='top_buttons'>
+      <button class='undelete' ng-click='undelete()'>Undelete category</button>
+      <button ng-click='pause()'>Pause</button>
     </div>
 
-    <ol tree ng-include="'nodes_renderer.html'"
-        id="tree_section" class="ui-sortable">
-    </ol>
+    <div id="tree_section">
+      <div class='section_label'>Project Categories</div>
+
+      <ol tree ng-include="'nodes_renderer.html'" class="ui-sortable">
+      </ol>
+    </div>
 
     <div class="interval_section">
+      <div class='section_label'>Work Timeline</div>
 
-      <p class="input-group">
-        <input type="text" class="form-control" datepicker-popup="shortDate"
-               ng-model="curr_date" is-open="date_opened" format="shortDate"
-               ng-required="true" close-text="Close" />
+      <p class="input-group" style='float:right'>
+        <input type="text" class="form-control" datepicker-popup="MMMM dd, yyyy"
+               ng-model="curr_date" is-open="date_opened"
+               ng-required="true" close-text="Close"
+               datepicker-options="{showWeeks:false}" show-button-bar="false"
+               ng-change="curr_interval = null" />
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="open_datepicker($event)">
           <i class="glyphicon glyphicon-calendar"></i></button>
@@ -116,13 +122,19 @@
       </p>
 
       <div class="interval_list">
-        <div class="interval_div" ng-repeat="interval in curr_intervals"
+        <div class="interval_div"
+             ng-repeat="interval in get_curr_intervals()"
              ng-class="{'curr_interval': interval == curr_interval}">
           <input ng-model="interval.text"
                  ng-change="save_interval(curr_node, curr_date, $index, 'text', interval.text)"
                  ng-focus="set_curr_interval(interval)"
                  autogrow>
         </div>
+        <div title='Create new interval' class='ui-icon ui-icon-plusthick'
+             ng-click='new_interval(curr_node)' ng-if="curr_node"
+             ng-focus='pause()' ng-blur='pause()'>
+        </div>
+
       </div>
 
       <hr>
@@ -130,11 +142,17 @@
       <div class="interval_info" ng-if='curr_interval'>
         <span class="text">{{curr_interval.text}}</span>
         <input time-input ng-model='curr_interval.ms' class='time_input'></input>
+        <div title='Delete this interval' class='ui-icon ui-icon-closethick delete'
+             ng-click='delete_interval(curr_node, curr_interval)'>
+        </div>
       </div>
     </div>
 
-    <pre>{{top_ids | json}}</pre>
-    <pre>{{nodes | json}}</pre>
+    <!-- <pre>{{top_ids | json}}</pre>
+    <pre>{{nodes | json}}</pre> -->
+
+
+    <div class='pause' ng-if="paused">PAUSED</div>
   </div>
 
 </div>

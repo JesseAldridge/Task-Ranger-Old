@@ -15,11 +15,13 @@ RemoteTree.prototype.write_test_data = function() {
           "1415952000000" : [ {
             "create_ms" : 1413407782790,
             "ms" : 3600000,
-            "text" : "#foo interval text 58233205"
+            "text" : "#foo interval text 58233205",
+            'daily_time': 1415952000000
           }, {
             "create_ms" : 1413407782792,
             "ms" : 3600000,
-            "text" : "#foo interval text 4848701092"
+            "text" : "#foo interval text 4848701092",
+            'daily_time': 1415952000000
           } ]
         },
         "cum_ms": 14400000,
@@ -72,14 +74,14 @@ RemoteTree.prototype.download_data = function() {
   this.root_ref = new Firebase('https://taskranger.firebaseio.com/' + this.get_user_root())
   var tree = this
   this.root_ref.once('value', function(snap) {
-
-    if(!snap.val() || snap.val().nodes.length == 0) {
+    if(!snap.val() || snap.val().nodes.length == 0 || !snap.val().top_ids) {
         var default_json = {
           "nodes" : {
             "0" : {
               "node_id" : "0",
               "cum_ms": 0,
-              "text" : "Default Category"
+              "text" : "Default Category",
+              "create_ms" : Date.now()
             }
           },
           "top_ids" : [ "0" ]
@@ -90,25 +92,32 @@ RemoteTree.prototype.download_data = function() {
     }
 
     scope = tree.scope
-    var nodes = snap.val().nodes || []
+    var nodes = snap.val().nodes
     for(var id in nodes) {
       var node = nodes[id]
       node.child_ids = node.child_ids || []
       node.node_intervals = node.node_intervals || {}
     }
-    scope.top_ids = snap.val().top_ids || []
+    scope.top_ids = snap.val().top_ids
     scope.nodes = nodes
     scope.$apply()
   })
 
   // Debounced save of a key/val pair for the passed node.
 
-  this.scope.save_node_key = function(node, key, val) {
-    clearTimeout(tree.save_timer)
-    tree.save_timer = setTimeout(function() {
-      var path = 'nodes/{id}/{key}'.replace('{id}', node.node_id).replace('{key}', key)
+  this.scope.save_node_key = function(node, key, val, debounce) {
+    var path = 'nodes/{id}/{key}'.replace('{id}', node.node_id).replace('{key}', key)
+    set_func = function() {
       tree.root_ref.child(path).set(angular.copy(val))
-    }, 500)
+    }
+    if(debounce) {
+      if(!tree.save_timers)
+        tree.save_timers = {}
+      clearTimeout(tree.save_timers[path])
+      tree.save_timers[path] = setTimeout(set_func, 500)
+    }
+    else
+      set_func()
   }
 
   this.after_request_data()

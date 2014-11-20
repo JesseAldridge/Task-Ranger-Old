@@ -13,7 +13,6 @@ RemoteTree.prototype.init = function() {
     if(err)
       alert(err)
     else if(user) {
-      console.log('user:', user)
       $('.login-layer').hide()
       $('.main_content').show()
       RemoteTree.prototype.get_user_root = function(){ return 'user_trees/' + user.uid + '/' }
@@ -25,7 +24,10 @@ RemoteTree.prototype.init = function() {
     }
   })
 
-  $('#login-github').click(function() { auth.login('github', { rememberMe: true }) })
-  $('#login-twitter').click(function() { auth.login('twitter', { rememberMe: true }) })
-  $('#logout').click(function() { auth.logout() });
+  $('#login-github').click(function() {
+    auth.login('github', { rememberMe: true }) })
+  $('#login-twitter').click(function() {
+    auth.login('twitter', { rememberMe: true }) })
+  $('#logout').click(function() {
+    auth.logout() });
 }

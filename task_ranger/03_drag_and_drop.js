@@ -18,7 +18,7 @@ module.directive('tree', function() {
 
     var tree = scope.tree
 
-    $('#tree_section').nestedSortable({
+    $('#tree_section > ol').nestedSortable({
       forcePlaceholderSize: true, handle: 'div', helper:  'clone',
       items: 'li', maxLevels: 0, opacity: .6, placeholder: 'placeholder',
       revert: 100, tabSize: 25, tolerance: 'pointer', toleranceElement: '> div',
@@ -43,7 +43,7 @@ module.directive('tree', function() {
         // If no parent, add node to top level.
 
         else {
-          var index = $('#tree_section > [node_id]').index($(ui.item))
+          var index = $('#tree_section [node_id]:first').index($(ui.item))
           scope.top_ids.splice(index, 0, moved_node.node_id)
           console.log('spliced top ids:', scope.top_ids)
           moved_node.parent_id = null
