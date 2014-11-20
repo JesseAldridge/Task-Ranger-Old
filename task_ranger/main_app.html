@@ -107,7 +107,7 @@
     </div>
 
     <div class="interval_section">
-      <div class='section_label'>Work Timeline</div>
+      <div class='section_label'>Daily Work Log</div>
 
       <p class="input-group" style='float:right'>
         <input type="text" class="form-control" datepicker-popup="MMMM dd, yyyy"
@@ -128,7 +128,6 @@
           <input ng-model="interval.text"
                  ng-change="save_interval(curr_node, curr_date, $index, 'text', interval.text)"
                  ng-focus="set_curr_interval(interval)"
-                 ng-keyup="set_last_input_date()"
                  autogrow />
         </div>
         <div title='Create new interval' class='ui-icon ui-icon-plusthick'
@@ -150,7 +149,6 @@
     </div>
 
     <div style='color:white'>
-      <p>Time til next notification: {{time_til_nag}}</p>
       <p>All data is saved automatically.</p>
       <p>Send feedback to:
         <a href='mailto:JesseAldridge@gmail.com' style='color:#ddddff'>
