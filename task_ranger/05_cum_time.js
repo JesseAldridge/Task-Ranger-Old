@@ -10,7 +10,6 @@ RemoteTree.prototype.recalc_cum_time = function(task_node) {
   this.scope.save_node_key(task_node, 'cum_ms', cum_ms)
 
   var parent_node = this.scope.nodes[task_node.parent_id]
-  console.log('parent_node:', parent_node)
   if(parent_node)
     this.recalc_cum_time(parent_node)
 }

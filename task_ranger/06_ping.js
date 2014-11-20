@@ -7,11 +7,21 @@ RemoteTree.prototype.after_bind_delete = function() {
   var tree = global_tree = this
   this.init_notifications()
 
-  this.scope.pause = function() {
-    if(tree.scope.paused)
-      tree.last_inc_time = Date.now()
+  this.scope.toggle_pause = function() {
     tree.scope.paused = !tree.scope.paused
   }
+
+  this.scope.pause = function() {
+    if(!tree.scope.paused)
+      tree.last_inc_time = Date.now()
+    tree.scope.paused = true
+  }
+
+  this.scope.unpause = function() {
+    tree.scope.paused = false
+  }
+
+  this.scope.time_til_nag = this.filter('secs_to_hms')(0)
 
   this.after_setup_ping()
 }
@@ -26,13 +36,16 @@ RemoteTree.prototype.init_notifications = function() {
       Notification.permission = permission;
     })
 
-  this.last_input_date = null
+  this.scope.last_input_date = null
   this.nagged = false
   this.notification = null
 
+  this.scope.nag_secs = 10 * 60
+  // this.scope.nag_secs = 5
+
   var tree = this
   this.scope.set_last_input_date = function() {
-    tree.last_input_date = new Date()
+    tree.scope.last_input_date = new Date()
   }
 
   // Modify the interval object's ms.  Update backend and tree view.
@@ -60,8 +73,8 @@ RemoteTree.prototype.after_init_notifications = function() {}
 
 // (not a method because it's called via setTimeout, so this == window)
 function ping() {
-  if(!global_tree.last_input_date)
-    global_tree.last_input_date = new Date()
+  if(!global_tree.scope.last_input_date)
+    global_tree.scope.last_input_date = new Date()
   var curr_node = global_tree.scope.curr_node
   if(curr_node && !global_tree.scope.paused) {
     if(curr_node.just_selected) {
@@ -81,9 +94,12 @@ function ping() {
 // Create a notification every 10 minutes, unless the user ignored the last one.
 
 RemoteTree.prototype.nag = function() {
-  var nag_secs = 10 * 60
-  // var nag_secs = 5
-  if(this.last_input_date && new Date() - this.last_input_date > nag_secs * 1000) {
+  var secs_til_nag = (
+    scope.nag_secs * 1000 - (new Date() - this.scope.last_input_date)) / 1000
+  this.scope.time_til_nag = this.filter('secs_to_hms')(
+    secs_til_nag < 0 ? 0 : secs_til_nag)
+
+  if(this.scope.last_input_date && secs_til_nag <= 0) {
     if(!this.nagged) {
       this.nagged = true
       if (Notification.permission === "granted")

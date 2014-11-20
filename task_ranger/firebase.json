@@ -7,6 +7,8 @@
     "**/node_modules/**",
     "junk",
     "layers",
-    "stuff"
+    "stuff",
+    "static/bower_components",
+    "static/smoothness"
   ]
 }

@@ -1,7 +1,4 @@
 
-// requires:
-// static/PorterStemmer2.js
-
 RemoteTree.prototype.after_setup_ping = function() {
   this.regen_every_ping = true
 }
@@ -73,6 +70,7 @@ RemoteTree.prototype.regen_top5 = function() {
   for(var tag in tags_data)
     for(var date in tags_data[tag])
       total_ms += tags_data[tag][date]
+  this.scope.total_ms = total_ms
 
   // Generate top X list.
 
