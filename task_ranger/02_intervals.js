@@ -10,6 +10,18 @@ module.directive('autogrow', ['$timeout', function($timeout) {
   }
 }])
 
+.directive('autoselect', ['$timeout', function($timeout) {
+  return {
+    link: function (scope, element) {
+      var select_timeout = scope.tree.select_timeout
+      $timeout.cancel(scope.tree.select_timeout)
+      scope.tree.select_timeout = $timeout(function() {
+        element[0].select();
+      }, 100)
+    }
+  };
+}])
+
 
 // '10:00:00' <-> 36000000  (hours, minutes, seconds string to milliseconds int)
 
@@ -69,7 +81,7 @@ RemoteTree.prototype.after_request_data = function() {
 
   // Setup datepicker.
 
-  this.scope.curr_date = new Date(this.date_to_daily_ms(new Date()))
+  this.scope.curr_daily_date = new Date(this.date_to_daily_ms(new Date()))
 
   this.scope.open_datepicker = function(e) {
     e.preventDefault();
@@ -99,9 +111,9 @@ RemoteTree.prototype.after_request_data = function() {
   // Create a new interval for the current node.
 
   this.scope.new_interval = function(node) {
-    var curr_day_ms = tree.date_to_daily_ms(tree.scope.curr_date)
+    var curr_day_ms = tree.date_to_daily_ms(tree.scope.curr_daily_date)
     var interval = {
-      create_ms:new Date().getTime(), ms:0, text:'new interval'}
+      create_ms:new Date().getTime(), ms:0, text:'new interval #foo'}
     if(!node.node_intervals[curr_day_ms])
       node.node_intervals[curr_day_ms] = []
     var intervals = node.node_intervals[curr_day_ms]
@@ -114,7 +126,7 @@ RemoteTree.prototype.after_request_data = function() {
 
   this.scope.get_curr_intervals = function() {
     var curr_node = tree.scope.curr_node
-    return curr_node ? curr_node.node_intervals[tree.scope.curr_date.getTime()] : []
+    return curr_node ? curr_node.node_intervals[tree.scope.curr_daily_date.getTime()] : []
   }
 
   this.scope.set_curr_interval = function(interval) {

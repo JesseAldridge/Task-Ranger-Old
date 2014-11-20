@@ -23,11 +23,12 @@ RemoteTree.prototype.after_regenTop5 = function(tags_data) {}
 RemoteTree.prototype.regen_top5 = function() {
   var tree = this
 
-  function add_to_tags(task_node, extra_args) {
+  function add_to_tags(task_node, tree_stats) {
 
     // Collect tags for each interval
 
-    var tags = extra_args[0], stem_to_tags = extra_args[1]
+    var tags = tree_stats.tags_data, stem_to_tags = tree_stats.stem_to_tags,
+        time_per_day = tree_stats.time_per_day
     var tag = null
 
     var node_intervals = task_node.node_intervals
@@ -48,6 +49,9 @@ RemoteTree.prototype.regen_top5 = function() {
           stem_to_tags[stem_tag].push(tag)
           tag = stem_to_tags[stem_tag][0]
         }
+        if(!(date_key in time_per_day))
+          time_per_day[date_key] = 0
+        time_per_day[date_key] += interval.ms || 0
         if(!tag)
           continue
         if(!(tag in tags))
@@ -63,8 +67,11 @@ RemoteTree.prototype.regen_top5 = function() {
 
   // Recurse tree to build tags data.  Calculate total time.
 
-  var tags_data = {}, stem_to_tags = {}
-  this.walk_tree(this.scope.top_ids, add_to_tags, [tags_data, stem_to_tags])
+  var tags_data = {}
+  var tree_stats = this.scope.tree_stats = {
+    tags_data:tags_data, stem_to_tags:{}, time_per_day:{}
+  }
+  this.walk_tree(this.scope.top_ids, add_to_tags, tree_stats)
 
   var total_ms = 0
   for(var tag in tags_data)

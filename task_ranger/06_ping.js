@@ -55,7 +55,7 @@ RemoteTree.prototype.init_notifications = function() {
       var index = curr_node.node_intervals[daily_time].indexOf(curr_interval)
       if(index == -1)
         return
-      tree.scope.save_interval(curr_node, tree.scope.curr_date, index, 'ms', curr_interval.ms)
+      tree.scope.save_interval(curr_node, tree.scope.curr_daily_date, index, 'ms', curr_interval.ms)
       tree.recalc_cum_time(curr_node)
     }, true);
 
@@ -87,7 +87,7 @@ function ping() {
 // Create a notification every 10 minutes, unless the user ignored the last one.
 
 RemoteTree.prototype.nag = function() {
-  if(this.scope.curr_interval.ms / 1000 > this.nag_secs) {
+  if(this.scope.curr_interval && this.scope.curr_interval.ms / 1000 > this.nag_secs) {
     if(!this.nagged) {
       this.nagged = true
       if (Notification.permission === "granted")

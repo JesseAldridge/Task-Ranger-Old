@@ -87,12 +87,22 @@
 
   <div ng-controller="TreeController">
 
-    <ul id="top5">
-      <li ng-repeat='tag_info in top_list'>
-        {{tag_info.tag}} {{tag_info.ms / 1000 | secs_to_hms | limitTo : 5}}
-        ({{tag_info.ms / total_ms * 100 | number:0}}%)
-      </li>
-    </ul>
+    <div class='reports'>
+      <div class='report'>
+        <div class='report_label'>Overall time breakdown:</div>
+        <ol id="top5">
+          <li ng-repeat='tag_info in top_list'>
+            {{tag_info.ms / 1000 | secs_to_hms | limitTo : 5}} {{tag_info.tag}}
+            ({{tag_info.ms / total_ms * 100 | number:0}}%)
+          </li>
+        </ol>
+      </div>
+
+      <div class='report'>
+        <span class='report_label'>Time logged today:</span>
+        {{tree_stats.time_per_day[curr_daily_date.getTime()] / 1000 | secs_to_hms}}
+      </div>
+    </div>
 
     <div class='top_buttons'>
       <button class='undelete' ng-click='undelete()'>Undelete category</button>
@@ -109,9 +119,11 @@
     <div class="interval_section">
       <div class='section_label'>Daily Work Log</div>
 
+      <!-- Datepicker widget. -->
+
       <p class="input-group" style='float:right'>
         <input type="text" class="form-control" datepicker-popup="MMMM dd, yyyy"
-               ng-model="curr_date" is-open="date_opened"
+               ng-model="curr_daily_date" is-open="date_opened"
                ng-required="true" close-text="Close"
                datepicker-options="{showWeeks:false}" show-button-bar="false"
                ng-change="curr_interval = null" />
@@ -121,14 +133,16 @@
         </span>
       </p>
 
+      <!-- Intervals -->
+
       <div class="interval_list">
         <div class="interval_div"
              ng-repeat="interval in get_curr_intervals()"
              ng-class="{'curr_interval': interval == curr_interval}">
           <input ng-model="interval.text"
-                 ng-change="save_interval(curr_node, curr_date, $index, 'text', interval.text)"
+                 ng-change="save_interval(curr_node, curr_daily_date, $index, 'text', interval.text)"
                  ng-focus="set_curr_interval(interval)"
-                 autogrow />
+                 autogrow autoselect/>
         </div>
         <div title='Create new interval' class='ui-icon ui-icon-plusthick'
              ng-click='new_interval(curr_node)' ng-if="curr_node">

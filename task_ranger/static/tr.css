@@ -35,8 +35,26 @@ body {background-color:#4488bb; height:100%}
 
 /* main content */
 
+.reports ol {
+  list-style: none;
+  padding:0; margin:0
+}
 
-#top5 { display: block; color:white }
+.report_label {
+  font-weight: 800;
+}
+
+.reports .report {
+  background: #f7f7f7;
+  display: inline-block;
+  color: black;
+  padding: 5px;
+  border-radius: 4px;
+  margin-left: 15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 
 #tree_section {
   display: inline-block;
