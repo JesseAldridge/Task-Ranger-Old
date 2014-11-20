@@ -80,8 +80,6 @@ RemoteTree.prototype.after_request_data = function() {
   // Show intervals for the current day.
 
   this.scope.set_current_node = function(node, e) {
-    if((!e || (!e.metaKey && !e.altKey)) && node != tree.scope.curr_node)
-      tree.scope.new_interval(node);
     tree.scope.curr_node = node
     var daily_time = tree.date_to_daily_ms(new Date())
     var intervals = node.node_intervals[daily_time] || []

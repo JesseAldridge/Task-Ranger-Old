@@ -74,7 +74,8 @@ RemoteTree.prototype.download_data = function() {
   this.root_ref = new Firebase('https://taskranger.firebaseio.com/' + this.get_user_root())
   var tree = this
   this.root_ref.once('value', function(snap) {
-    if(!snap.val() || snap.val().nodes.length == 0 || !snap.val().top_ids) {
+    if(!snap.val() || !snap.val().nodes || snap.val().nodes.length == 0 ||
+       !snap.val().top_ids || snap.val().top_ids.length == 0) {
         var default_json = {
           "nodes" : {
             "0" : {

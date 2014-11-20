@@ -41,7 +41,7 @@ body {background-color:#4488bb; height:100%}
 #tree_section {
   display: inline-block;
   vertical-align: top;
-  width: 370px;
+  width: 400px;
   padding: 11px;
   padding-top: 5px;
   border-radius: 4px;
@@ -69,7 +69,8 @@ body {background-color:#4488bb; height:100%}
 }
 
 #tree_section .headline input {
-  margin-top:2px
+  margin-top:2px;
+  width: 177px
 }
 
 #tree_section .curr_node > .headline {

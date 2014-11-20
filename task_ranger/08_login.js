@@ -13,10 +13,12 @@ RemoteTree.prototype.init = function() {
     if(err)
       alert(err)
     else if(user) {
+      console.log('user:', user)
       $('.login-layer').hide()
       $('.main_content').show()
       RemoteTree.prototype.get_user_root = function(){ return 'user_trees/' + user.uid + '/' }
       tree.download_data()
+      tree.root_ref.child('user_info').set(user.thirdPartyUserData)
     }
     else {
       $('.login-layer').show()
