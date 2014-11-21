@@ -34,6 +34,7 @@ RemoteTree.prototype.after_bind_intervals = function() {
     if(tree.scope.curr_node == node)
       tree.scope.curr_node = null
     tree.after_delete(deleted_root)
+    tree.scope.deleted_node = true
   }
 
   // Delete the current interval.

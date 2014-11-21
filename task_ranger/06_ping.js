@@ -21,8 +21,6 @@ RemoteTree.prototype.after_bind_delete = function() {
     tree.scope.paused = false
   }
 
-  this.scope.time_til_nag = this.filter('secs_to_hms')(0)
-
   this.after_setup_ping()
 }
 
@@ -40,10 +38,11 @@ RemoteTree.prototype.init_notifications = function() {
   this.notification = null
 
   this.nag_secs = 10 * 60
+  // this.nag_secs = 5
 
   var tree = this
 
-  // Modify the interval object's ms.  Update backend and tree view.
+  // Watch interval ms changes and save to firebase.
 
   this.scope.$watch(
     function(){ return tree.scope.curr_interval ? tree.scope.curr_interval.ms : null },
@@ -51,8 +50,9 @@ RemoteTree.prototype.init_notifications = function() {
       var curr_node = tree.scope.curr_node, curr_interval = tree.scope.curr_interval
       if(!curr_interval || !curr_node)
         return
-      var daily_time = tree.date_to_daily_ms(new Date())
-      var index = curr_node.node_intervals[daily_time].indexOf(curr_interval)
+      var daily_time = tree.date_to_daily_ms(new Date()),
+          node_intervals = curr_node.node_intervals || {},
+          index = (node_intervals[daily_time] || []).indexOf(curr_interval)
       if(index == -1)
         return
       tree.scope.save_interval(curr_node, tree.scope.curr_daily_date, index, 'ms', curr_interval.ms)
@@ -95,8 +95,10 @@ RemoteTree.prototype.nag = function() {
           "It's been 10 minutes.", {icon:'static/clock.png'})
     }
   }
-  else
+  else {
     this.nagged = false
+    this.notification && this.notification.close()
+  }
 }
 
 RemoteTree.prototype.after_delete2 = function() {

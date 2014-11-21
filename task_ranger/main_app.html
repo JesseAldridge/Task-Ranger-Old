@@ -105,7 +105,9 @@
     </div>
 
     <div class='top_buttons'>
-      <button class='undelete' ng-click='undelete()'>Undelete category</button>
+      <button class='undelete' ng-click='undelete()' ng-if="deleted_node">
+        Undelete category
+      </button>
       <button ng-click='toggle_pause()'>Pause</button>
     </div>
 
@@ -162,7 +164,7 @@
       </div>
     </div>
 
-    <div style='color:white'>
+    <div style='color:white; margin-left:10px'>
       <p>All data is saved automatically.</p>
       <p>Send feedback to:
         <a href='mailto:JesseAldridge@gmail.com' style='color:#ddddff'>
