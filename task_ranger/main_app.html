@@ -144,6 +144,7 @@
           <input ng-model="interval.text"
                  ng-change="save_interval(curr_node, curr_daily_date, $index, 'text', interval.text)"
                  ng-focus="set_curr_interval(interval)"
+                 ng-keydown="interval_keydown(interval, $event)"
                  autogrow autoselect/>
         </div>
         <div title='Create new interval' class='ui-icon ui-icon-plusthick'
