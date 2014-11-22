@@ -8,7 +8,7 @@ RemoteTree.prototype.init = function() {
 
   var tree = this
 
-  var ref = new Firebase('https://taskranger.firebaseio.com/')
+  var ref = new Firebase(this.firebase_url())
   var auth = new FirebaseSimpleLogin(ref, function(err,user) {
     if(err)
       alert(err)
