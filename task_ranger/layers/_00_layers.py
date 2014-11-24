@@ -14,10 +14,11 @@ def each_layer_path():
 
 def increment_layers(from_num=None, to_num=None, amount=1):
   layer_paths = list(each_layer_path())
-  from_index = (from_num - 1) if from_num else 0
-  to_index = (to_num - 1) if to_num else len(layer_paths)
-  for old_path in layer_paths[from_index:to_index]:
+  for old_path in layer_paths:
     old_num, rem_name = split_layer_num(old_path)
+    if((from_num and old_num < from_num) or
+       (to_num and old_num > to_num)):
+       continue
     new_filename = str(old_num + amount).zfill(2) + rem_name
     new_path = os.path.join(os.path.dirname(old_path), new_filename)
     shutil.copyfile(old_path, new_path)
@@ -33,7 +34,7 @@ def split_layer_num(path):
 
 if __name__ == '__main__':
   print 'running'
-  increment_layers(from_num=10, amount=1)
+  increment_layers(from_num=2, amount=-1)
   # increment_layers(-1)
   print 'done'
 

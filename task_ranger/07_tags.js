@@ -22,7 +22,7 @@ RemoteTree.prototype.after_regenTop5 = function(tags_data) {}
 
 RemoteTree.prototype.regen_top5 = function() {
   var tree = this
-
+  
   function add_to_tags(task_node, tree_stats) {
 
     // Collect tags for each interval
