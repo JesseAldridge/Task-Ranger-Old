@@ -17,10 +17,12 @@ function RemoteTree(scope, filter) {
     tree.add_id_to_parent(node_id, parent_id, index)
     tree.set_current_node(new_node)
   }
+
+  this.init_db()
 }
 
-RemoteTree.prototype.init = function() {
-  this.write_test_data()
+RemoteTree.prototype.after_init_db = function() {
+  write_test_data()
 }
 
 RemoteTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
@@ -61,7 +63,6 @@ var module = angular.module('treeApp', ['ui.bootstrap'])
 module.controller('TreeController', ['$scope', '$filter',
   function($scope, $filter) {
     var tree = new RemoteTree($scope, $filter)
-    tree.init()
   }])
 
 

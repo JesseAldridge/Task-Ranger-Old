@@ -111,13 +111,12 @@ RemoteTree.prototype.after_request_data = function() {
   // Create a new interval for the current node.
 
   this.scope.new_interval = function(node) {
-    console.log('new interval')
     var curr_day_ms = tree.date_to_daily_ms(tree.scope.curr_daily_date)
-    var intervals = node.node_intervals[curr_day_ms]
     var interval = {
       create_ms:new Date().getTime(), ms:0, text:'new interval #foo'}
     if(!node.node_intervals[curr_day_ms])
       node.node_intervals[curr_day_ms] = []
+    var intervals = node.node_intervals[curr_day_ms]
     intervals.push(interval)
     var path = 'node_intervals/' + curr_day_ms + '/' + (intervals.length - 1)
     tree.scope.save_node_key(node, path, interval)
