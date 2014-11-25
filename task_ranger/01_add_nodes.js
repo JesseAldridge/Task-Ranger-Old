@@ -26,7 +26,6 @@ BaseTree.prototype.after_construction = function() {
 
   this.scope.set_curr_interval = function(interval) {
     tree.scope.curr_interval = interval || null
-    console.log('set curr_interval:', tree.scope.curr_interval)
   }
 
   this.scope.get_curr_intervals = function() {
@@ -35,12 +34,15 @@ BaseTree.prototype.after_construction = function() {
   }
 
   this.scope.date_changed = function() {
-    console.log('date changed')
     tree.scope.curr_interval = null
   }
 
   this.scope.curr_daily_date = new Date(this.date_to_daily_ms(new Date()))
+
+  this.after_bind_show_intervals()
 }
+
+BaseTree.prototype.after_bind_show_intervals = function() {}
 
 BaseTree.prototype.date_to_daily_ms = function(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()

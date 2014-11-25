@@ -146,7 +146,9 @@ RemoteTree.prototype.save_id_list = function(node_id, id_list) {
 
 RemoteTree.prototype.after_request_data = function(){}
 
-
+RemoteTree.prototype.save_top_ids = function() {
+  tree.root_ref.child('top_ids').set(this.scope.top_ids)
+}
 
 
 

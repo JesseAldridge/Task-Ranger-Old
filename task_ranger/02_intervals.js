@@ -75,7 +75,7 @@ module.filter('secs_to_hms', function() {
   }
 })
 
-BaseTree.prototype.after_request_data = function() {
+BaseTree.prototype.after_bind_show_intervals = function() {
   var tree = this
 
   // Setup datepicker.
@@ -130,6 +130,8 @@ BaseTree.prototype.after_request_data = function() {
     if(e.which == 9 && intervals[intervals.length - 1] == interval) // tab
       scope.new_interval(scope.curr_node)
   }
+
+  this.scope.save_node_key = function(node, path, interval) {}
 
   this.after_bind_intervals()
 }

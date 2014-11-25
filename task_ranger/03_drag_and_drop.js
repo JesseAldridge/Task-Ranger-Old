@@ -2,6 +2,7 @@
 // Remove id from parent.child_ids or from top_ids.
 
 BaseTree.prototype.remove_id_from_parent = function (node) {
+  var scope = this.scope
   var parent_node = scope.nodes[node.parent_id]
   if(parent_node) {
     std.delete_val(parent_node.child_ids, node.node_id)
@@ -9,7 +10,7 @@ BaseTree.prototype.remove_id_from_parent = function (node) {
   }
   else {
     std.delete_val(scope.top_ids, node.node_id)
-    this.root_ref.child('top_ids').set(scope.top_ids)
+    this.save_top_ids()
   }
 }
 
@@ -47,7 +48,7 @@ module.directive('tree', function() {
           scope.top_ids.splice(index, 0, moved_node.node_id)
           console.log('spliced top ids:', scope.top_ids)
           moved_node.parent_id = null
-          tree.root_ref.child('top_ids').set(scope.top_ids)
+          tree.save_top_ids()
         }
         tree.after_drop(moved_node, old_parent)
         scope.$apply()
@@ -57,6 +58,6 @@ module.directive('tree', function() {
 })
 
 BaseTree.prototype.after_drop = function() {}
-
+BaseTree.prototype.save_top_ids = function() {}
 
 

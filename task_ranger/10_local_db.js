@@ -127,6 +127,10 @@ RemoteTree.prototype.save_id_list = function(node_id, id_list) {
     this.save_key_val('top_ids', id_list)
 }
 
+RemoteTree.prototype.save_top_ids = function() {
+  this.save_key_val('top_ids', this.scope.top_ids)
+}
+
 RemoteTree.prototype.after_request_data = function(){}
 
 // (this file isn't as long as it looks -- 50 lines are the test data)
