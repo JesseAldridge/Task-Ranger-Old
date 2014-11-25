@@ -5,7 +5,7 @@ import os, re, shutil
 root_path = '.'
 
 def each_layer_path():
-  layer_format = '^\-?[0-9]{2}_.+\.js$'
+  layer_format = '^\-?[0-9]{2}_.+\.(js|html)$'
   for filename in os.listdir(root_path):
     if re.match(layer_format, filename):
       yield os.path.join(root_path, filename)
@@ -34,7 +34,7 @@ def split_layer_num(path):
 
 if __name__ == '__main__':
   print 'running'
-  increment_layers(from_num=2, amount=-1)
+  increment_layers(from_num=0, amount=1)
   # increment_layers(-1)
   print 'done'
 

@@ -1,7 +1,7 @@
 
 // Delete button.  Undelete button.
 
-RemoteTree.prototype.after_bind_intervals = function() {
+BaseTree.prototype.after_bind_intervals = function() {
   var tree = this
   this.scope.delete_node = function(node) {
     delete scope.nodes[node.node_id]
@@ -80,20 +80,20 @@ RemoteTree.prototype.after_bind_intervals = function() {
   this.after_bind_delete()
 }
 
-RemoteTree.prototype.after_delete = function(){}
-RemoteTree.prototype.after_undelete = function(root_node){}
+BaseTree.prototype.after_delete = function(){}
+BaseTree.prototype.after_undelete = function(root_node){}
 
 // Add node back to local_nodes and firebase.
 
-RemoteTree.prototype.restore_node = function(node) {
+BaseTree.prototype.restore_node = function(node) {
   var node_id = node.node_id
   this.scope.nodes[node_id] = node
   this.root_ref.child('nodes/' + node_id).set(angular.copy(node))
 }
 
-RemoteTree.prototype.after_bind_delete = function() {}
+BaseTree.prototype.after_bind_delete = function() {}
 
-RemoteTree.prototype.walk_tree = function(top_ids, func, extra_args) {
+BaseTree.prototype.walk_tree = function(top_ids, func, extra_args) {
   for(var i = 0; i < top_ids.length; i++) {
     var node = this.scope.nodes[top_ids[i]]
     func(node, extra_args)
@@ -101,7 +101,7 @@ RemoteTree.prototype.walk_tree = function(top_ids, func, extra_args) {
   }
 }
 
-RemoteTree.prototype.after_delete = function() {}
+BaseTree.prototype.after_delete = function() {}
 
 
 

@@ -1,7 +1,7 @@
 
 // Remove id from parent.child_ids or from top_ids.
 
-RemoteTree.prototype.remove_id_from_parent = function (node) {
+BaseTree.prototype.remove_id_from_parent = function (node) {
   var parent_node = scope.nodes[node.parent_id]
   if(parent_node) {
     std.delete_val(parent_node.child_ids, node.node_id)
@@ -56,7 +56,7 @@ module.directive('tree', function() {
   }}
 })
 
-RemoteTree.prototype.after_drop = function() {}
+BaseTree.prototype.after_drop = function() {}
 
 
 

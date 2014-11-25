@@ -1,0 +1,171 @@
+<!doctype html>
+<meta http-equiv="content-type" content="text-html; charset=utf-8">
+
+<!-- Libraries by other people. -->
+
+<link rel="stylesheet" href="static/smoothness/jquery-ui-1.8.12.custom.css" />
+<script src='static/angular.js'></script>
+<script src='static/ui-bootstrap-tpls.js'></script>
+<link rel="stylesheet" href="static/bootstrap.min.css" />
+<script src='static/jquery.min.js'></script>
+<script src="static/jquery-ui.min.js"></script>
+<script src="static/moment.min.js"></script>
+<script src='static/jquery.mjs.nestedSortable.js'></script>
+<script src="static/PorterStemmer2.js"></script>
+
+
+<!-- My external javascript and css. -->
+
+<script src='static/std.js'></script>
+
+<link rel="stylesheet" href="static/tree.css">
+<link rel="stylesheet" href="static/tr.css">
+
+<script src='00_tree.js'></script>
+<script src='01_local_db.js'></script>
+
+<!-- <script src='01_firebase.js'></script>
+<script src='02_intervals.js'></script>
+<script src='03_drag_and_drop.js'></script>
+<script src='04_delete.js'></script>
+<script src='05_cum_time.js'></script>
+<script src='06_ping.js'></script>
+<script src='07_tags.js'></script>
+<script src='08_login.js'></script> -->
+
+
+<div ng-app="treeApp" class='main_content'>
+
+  <!-- Recursive node template.  Collapse button, input widget, new node buttons, child nodes. -->
+
+  <script type="text/ng-template" id="nodes_renderer.html">
+    <li node_id="{{node_id}}" ng-repeat="node_id in top_ids" ui-tree-node
+    ng-init="node = nodes[node_id]" ng-class="{'curr_node': node == curr_node}">
+    <div class='headline'>
+      <div class="ui-icon collapse"
+      ng-class="collapse_icon(node)"
+      ng-click="node.is_collapsed = !node.is_collapsed">
+    </div>
+    <input ng-model="node.text"
+    ng-change="save_node_key(node, 'text', node.text, true)"
+    ng-focus="set_current_node(node, e)">
+    <div title='Add sibling' class='ui-icon ui-icon-arrowthick-1-s insert-under'
+    ng-click='new_node(node.parent_id, top_ids.indexOf(node.node_id) + 1)'>
+  </div>
+  <div title='Add child' class='ui-icon ui-icon-arrowreturnthick-1-e insert-child'
+  ng-click='new_node(node.node_id, 0)'>
+</div>
+<div title='Delete' class='ui-icon ui-icon-closethick delete'
+ng-click='delete_node(node)'>
+</div>
+<div title='Cumulative time' class='cum_time time' ng-model="node.cum_ms">
+  {{node.cum_ms / 1000 | secs_to_hms}}
+</div>
+<span title='Value per hour' class='value_per_hour'>
+  {{task_score(node).toFixed(3)}}
+</span>
+<span title='Date created'></span>
+</div>
+<ol ng-include="'nodes_renderer.html'"
+ng-init="top_ids = node.child_ids; parent_node = node"
+ng-if="!node.is_collapsed"></ol>
+</li>
+</script>
+
+<!-- Outer tree followed by interval section: date picker, interval list, and interval info. -->
+
+<div ng-controller="TreeController">
+
+  <div class='reports'>
+    <div class='report'>
+      <div class='report_label'>Overall time breakdown:</div>
+      <ol id="top5">
+        <li ng-repeat='tag_info in top_list'>
+          {{tag_info.ms / 1000 | secs_to_hms | limitTo : 5}} {{tag_info.tag}}
+          ({{tag_info.ms / total_ms * 100 | number:0}}%)
+        </li>
+      </ol>
+    </div>
+
+    <div class='report'>
+      <span class='report_label'>Time logged today:</span>
+      {{tree_stats.time_per_day[curr_daily_date.getTime()] / 1000 | secs_to_hms}}
+    </div>
+  </div>
+
+  <div class='top_buttons'>
+    <button class='undelete' ng-click='undelete()' ng-if="deleted_node">
+      Undelete category
+    </button>
+    <button ng-click='toggle_pause()'>Pause</button>
+  </div>
+
+  <div id="tree_section">
+    <div class='section_label'>Project Categories</div>
+
+    <ol tree ng-include="'nodes_renderer.html'" class="ui-sortable">
+    </ol>
+  </div>
+
+  <div class="interval_section">
+    <div class='section_label'>Daily Work Log</div>
+
+    <!-- Datepicker widget. -->
+
+    <p class="input-group" style='float:right'>
+      <input type="text" class="form-control" datepicker-popup="MMMM dd, yyyy"
+      ng-model="curr_daily_date" is-open="date_opened"
+      ng-required="true" close-text="Close"
+      datepicker-options="{showWeeks:false}" show-button-bar="false"
+      ng-change="curr_interval = null" />
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-default" ng-click="open_datepicker($event)">
+          <i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </p>
+
+      <!-- Intervals -->
+
+      <div class="interval_list">
+        <div class="interval_div"
+        ng-repeat="interval in get_curr_intervals()"
+        ng-class="{'curr_interval': interval == curr_interval}">
+        <input ng-model="interval.text"
+        ng-change="save_interval(curr_node, curr_daily_date, $index, 'text', interval.text)"
+        ng-focus="set_curr_interval(interval)"
+        autogrow autoselect/>
+      </div>
+      <div title='Create new interval' class='ui-icon ui-icon-plusthick'
+      ng-click='new_interval(curr_node)' ng-if="curr_node">
+    </div>
+
+  </div>
+
+  <hr>
+
+  <div class="interval_info" ng-if='curr_interval'>
+    <span class="text">{{curr_interval.text}}</span>
+    <input time-input ng-model='curr_interval.ms' class='time_input'
+    ng-focus='pause()' ng-blur='unpause()' />
+    <div title='Delete this interval' class='ui-icon ui-icon-closethick delete'
+    ng-click='delete_interval(curr_node, curr_interval)'>
+  </div>
+</div>
+</div>
+
+<div style='color:white; margin-left:10px'>
+  <p>All data is saved automatically.</p>
+  <p>Send feedback to:
+    <a href='mailto:JesseAldridge@gmail.com' style='color:#ddddff'>
+      JesseAldridge@gmail.com</a>
+    </p>
+  </div>
+
+  <div class='pause' ng-if="paused">PAUSED</div>
+</div>
+
+</div>
+
+
+
+

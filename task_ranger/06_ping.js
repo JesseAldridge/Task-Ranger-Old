@@ -1,7 +1,7 @@
 
 // Start pinging.
 
-RemoteTree.prototype.after_bind_delete = function() {
+BaseTree.prototype.after_bind_delete = function() {
   this.ping_secs = 1
   this.ping_timer = setTimeout(ping, 1000 * this.ping_secs)
   var tree = global_tree = this
@@ -24,11 +24,11 @@ RemoteTree.prototype.after_bind_delete = function() {
   this.after_setup_ping()
 }
 
-RemoteTree.prototype.after_setup_ping = function() {}
+BaseTree.prototype.after_setup_ping = function() {}
 
 // Request permission and init notification vars.
 
-RemoteTree.prototype.init_notifications = function() {
+BaseTree.prototype.init_notifications = function() {
   if (Notification.permission !== 'granted')
     Notification.requestPermission(function (permission) {
       Notification.permission = permission;
@@ -62,7 +62,7 @@ RemoteTree.prototype.init_notifications = function() {
   this.after_init_notifications()
 }
 
-RemoteTree.prototype.after_init_notifications = function() {}
+BaseTree.prototype.after_init_notifications = function() {}
 
 // Increment selected node interval, re-render timer, recalc cum time, loop.
 
@@ -86,7 +86,7 @@ function ping() {
 
 // Create a notification every 10 minutes, unless the user ignored the last one.
 
-RemoteTree.prototype.nag = function() {
+BaseTree.prototype.nag = function() {
   if(this.scope.curr_interval && this.scope.curr_interval.ms / 1000 > this.nag_secs) {
     if(!this.nagged) {
       this.nagged = true
@@ -101,13 +101,13 @@ RemoteTree.prototype.nag = function() {
   }
 }
 
-RemoteTree.prototype.after_delete2 = function() {
+BaseTree.prototype.after_delete2 = function() {
   this.last_inc_time = null
 }
 
 // Increase node's last interval by ms since last ping.
 
-RemoteTree.prototype.increment_node = function(node) {
+BaseTree.prototype.increment_node = function(node) {
   var curr_time = Date.now()
   if(this.last_inc_time) {
     var delta = curr_time - this.last_inc_time
@@ -119,15 +119,15 @@ RemoteTree.prototype.increment_node = function(node) {
   this.last_inc_time = curr_time
 }
 
-RemoteTree.prototype.after_ping = function() {}
+BaseTree.prototype.after_ping = function() {}
 
-RemoteTree.prototype.after_drop = function(node, old_parent) {
+BaseTree.prototype.after_drop = function(node, old_parent) {
   this.recalc_cum_time(node)
   if(old_parent)
     this.recalc_cum_time(old_parent)
 }
 
-RemoteTree.prototype.after_set_current_node = function(node) {
+BaseTree.prototype.after_set_current_node = function(node) {
   node.just_selected = true
 }
 

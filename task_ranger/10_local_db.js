@@ -1,7 +1,10 @@
 
-RemoteTree.prototype.init_db = function() {
+RemoteTree.prototype.init_schema = function() {
 
   // Open the DB.  Create the data store if necessary.
+
+    if(!this.is_local)
+      return
 
   var tree = this
   var version = 3
@@ -19,69 +22,18 @@ RemoteTree.prototype.init_db = function() {
 
   request.onsuccess = function(e) {
     tree.db = e.target.result;
-    tree.after_init_db()
+    tree.ready_to_download()
   }
 }
 
-// Write the test data
-
-RemoteTree.prototype.after_init_db = function() {
-  this.write_root_json({
-    "nodes" : {
-      "5005108148" : {
-        "child_ids" : [ "9072973696" ],
-        "is_collapsed" : false,
-        "node_id" : "5005108148",
-        "node_intervals" : {
-          "1415952000000" : [ {
-            "create_ms" : 1413407782790,
-            "ms" : 3600000,
-            "text" : "#foo interval text 58233205",
-            'daily_time': 1415952000000
-          }, {
-            "create_ms" : 1413407782792,
-            "ms" : 3600000,
-            "text" : "#foo interval text 4848701092",
-            'daily_time': 1415952000000
-          } ]
-        },
-        "cum_ms": 14400000,
-        "text" : "foo text 5005108148"
-      },
-      "5534964984" : {
-        "node_id" : "5534964984",
-        "parent_id" : "9072973696",
-        "cum_ms": 0,
-        "child_ids": [],
-        "node_intervals": {}
-      },
-      "9072973696" : {
-        "child_ids" : [ "5534964984" ],
-        "is_collapsed" : false,
-        "node_id" : "9072973696",
-        "node_intervals" : {
-          "1415952000000" : [ {
-            "create_ms" : 1413407782793,
-            "ms" : 3600000,
-            "text" : "#bar interval text 9083590657"
-          }, {
-            "create_ms" : 1413407782793,
-            "ms" : 3600000,
-            "text" : "#bar interval text 5191242022"
-          } ]
-        },
-        "cum_ms": 7200000,
-        "parent_id" : "5005108148",
-        "text" : "foo text 9072973696"
-      }
-    },
-    "top_ids" : [ "5005108148" ]
-  })
-}
-
 // Write test data to db.
-
+RemoteTree.prototype.write_to_firebase = RemoteTree.prototype.write_root_json
 RemoteTree.prototype.write_root_json = function(test_json) {
+  if(!this.is_local) {
+    this.write_to_firebase()
+    return
+  }
+
   var trans = this.db.transaction(["tr_store"], "readwrite")
   var store = trans.objectStore("tr_store")
   var nodes = test_json.nodes

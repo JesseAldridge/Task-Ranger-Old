@@ -75,13 +75,10 @@ module.filter('secs_to_hms', function() {
   }
 })
 
-
-RemoteTree.prototype.after_request_data = function() {
+BaseTree.prototype.after_request_data = function() {
   var tree = this
 
   // Setup datepicker.
-
-  this.scope.curr_daily_date = new Date(this.date_to_daily_ms(new Date()))
 
   this.scope.open_datepicker = function(e) {
     e.preventDefault();
@@ -92,6 +89,7 @@ RemoteTree.prototype.after_request_data = function() {
   // Show intervals for the current day.
 
   this.scope.set_current_node = function(node, e) {
+    console.log('set_current_node')
     tree.scope.curr_node = node
     var daily_time = tree.date_to_daily_ms(new Date())
     var intervals = node.node_intervals[daily_time] || []
@@ -133,22 +131,10 @@ RemoteTree.prototype.after_request_data = function() {
       scope.new_interval(scope.curr_node)
   }
 
-  this.scope.get_curr_intervals = function() {
-    var curr_node = tree.scope.curr_node
-    return curr_node ? curr_node.node_intervals[tree.scope.curr_daily_date.getTime()] : []
-  }
-
-  this.scope.set_curr_interval = function(interval) {
-    tree.scope.curr_interval = interval
-  }
   this.after_bind_intervals()
 }
 
-RemoteTree.prototype.date_to_daily_ms = function(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-}
-
-RemoteTree.prototype.after_bind_intervals = function(){}
+BaseTree.prototype.after_bind_intervals = function(){}
 
 
 

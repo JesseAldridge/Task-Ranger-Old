@@ -1,8 +1,6 @@
 
 RemoteTree.prototype.write_test_data = function() {
 
-  console.log('writing test data')
-
   // Write some test data to firebase.
 
   var test_json = {
@@ -55,9 +53,15 @@ RemoteTree.prototype.write_test_data = function() {
     "top_ids" : [ "5005108148" ]
   }
 
+  this.write_root_json(test_json)
+}
+
+// Write a json object to the root
+// (monkey patched by 02_local_db.js)
+RemoteTree.prototype.write_root_json = function(root_json) {
   var tree = this
   new Firebase(this.firebase_url + 'test_tree').set(
-    test_json, function() {
+    root_json, function() {
       this.download_data()
     })
 }

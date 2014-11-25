@@ -1,0 +1,20 @@
+
+<!-- Recursive node template.  Collapse button, input widget, new node buttons, child nodes. -->
+
+<li node_id="{{node_id}}" ng-repeat="node_id in top_ids" ui-tree-node
+    ng-init="node = nodes[node_id]" ng-class="{'curr_node': node == curr_node}">
+  <div class='headline'>
+    <input ng-model="node.text"
+           ng-change="save_node_key(node, 'text', node.text, true)"
+           ng-focus="set_current_node(node, e)">
+    <div title='Add sibling' class='ui-icon ui-icon-arrowthick-1-s insert-under'
+         ng-click='add_under(node)'>
+    </div>
+    <div title='Add child' class='ui-icon ui-icon-arrowreturnthick-1-e insert-child'
+         ng-click='new_node(node.node_id, 0)'>
+    </div>
+  </div>
+  <ol ng-include="'00_node_template.html'"
+      ng-init="top_ids = node.child_ids; parent_node = node"
+      ng-if="!node.is_collapsed"></ol>
+</li>

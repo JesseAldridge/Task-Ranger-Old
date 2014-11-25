@@ -1,9 +1,9 @@
 
-RemoteTree.prototype.after_setup_ping = function() {
+BaseTree.prototype.after_setup_ping = function() {
   this.regen_every_ping = true
 }
 
-RemoteTree.prototype.after_ping = function() {
+BaseTree.prototype.after_ping = function() {
   this.regen_start = Date.now()
   if(this.regen_every_ping) {
     var tags_data = this.regen_top5()
@@ -16,13 +16,69 @@ RemoteTree.prototype.after_ping = function() {
   this.after_bind_top_list()
 }
 
-RemoteTree.prototype.after_bind_top_list = function() {}
+BaseTree.prototype.write_test_data = function() {
 
-RemoteTree.prototype.after_regenTop5 = function(tags_data) {}
+  // Write some test data to firebase.
 
-RemoteTree.prototype.regen_top5 = function() {
+  var scope = this.scope
+
+  scope.nodes = {
+    "5005108148" : {
+      "child_ids" : [ "9072973696" ],
+      "is_collapsed" : false,
+      "node_id" : "5005108148",
+      "node_intervals" : {
+        "1415952000000" : [ {
+          "create_ms" : 1413407782790,
+          "ms" : 3600000,
+          "text" : "#foo interval text 58233205",
+          'daily_time': 1415952000000
+        }, {
+          "create_ms" : 1413407782792,
+          "ms" : 3600000,
+          "text" : "#foo interval text 4848701092",
+          'daily_time': 1415952000000
+        } ]
+      },
+      "cum_ms": 14400000,
+      "text" : "foo text 5005108148"
+    },
+    "5534964984" : {
+      "node_id" : "5534964984",
+      "parent_id" : "9072973696",
+      "cum_ms": 0
+    },
+    "9072973696" : {
+      "child_ids" : [ "5534964984" ],
+      "is_collapsed" : false,
+      "node_id" : "9072973696",
+      "node_intervals" : {
+        "1415952000000" : [ {
+          "create_ms" : 1413407782793,
+          "ms" : 3600000,
+          "text" : "#bar interval text 9083590657"
+        }, {
+          "create_ms" : 1413407782793,
+          "ms" : 3600000,
+          "text" : "#bar interval text 5191242022"
+        } ]
+      },
+      "cum_ms": 7200000,
+      "parent_id" : "5005108148",
+      "text" : "foo text 9072973696"
+    }
+  }
+  scope.top_ids = [ "5005108148" ]
+}
+
+
+BaseTree.prototype.after_bind_top_list = function() {}
+
+BaseTree.prototype.after_regenTop5 = function(tags_data) {}
+
+BaseTree.prototype.regen_top5 = function() {
   var tree = this
-  
+
   function add_to_tags(task_node, tree_stats) {
 
     // Collect tags for each interval
@@ -115,12 +171,12 @@ RemoteTree.prototype.regen_top5 = function() {
   this.scope.top_list = top_list
 }
 
-RemoteTree.prototype.after_buttons_html = function() {
+BaseTree.prototype.after_buttons_html = function() {
   $('body').prepend("<ol id='top5' style='float:left'></ol>")
   this.after_top5_html()
 }
 
-RemoteTree.prototype.after_top5_html = function() {}
+BaseTree.prototype.after_top5_html = function() {}
 
 
 
