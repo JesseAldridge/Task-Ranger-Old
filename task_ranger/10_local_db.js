@@ -131,6 +131,20 @@ RemoteTree.prototype.save_top_ids = function() {
   this.save_key_val('top_ids', this.scope.top_ids)
 }
 
+RemoteTree.prototype.delete_node_from_db = function() {
+  console.log('write me')
+}
+
+RemoteTree.prototype.save_interval_list_to_db = function(node_id, daily_ms, interval_list) {
+  console.log('write me')
+}
+
+RemoteTree.prototype.save_node_to_db = function(node) {
+  console.log('write me')
+}
+
+
+
 RemoteTree.prototype.after_request_data = function(){}
 
 // (this file isn't as long as it looks -- 50 lines are the test data)

@@ -74,29 +74,7 @@
 
   <div ng-controller="TreeController">
 
-    <div class='reports'>
-      <div class='report'>
-        <div class='report_label'>Overall time breakdown:</div>
-        <ol id="top5">
-          <li ng-repeat='tag_info in top_list'>
-            {{tag_info.ms / 1000 | secs_to_hms | limitTo : 5}} {{tag_info.tag}}
-            ({{tag_info.ms / total_ms * 100 | number:0}}%)
-          </li>
-        </ol>
-      </div>
-
-      <div class='report'>
-        <span class='report_label'>Time logged today:</span>
-        {{tree_stats.time_per_day[curr_daily_date.getTime()] / 1000 | secs_to_hms}}
-      </div>
-    </div>
-
-    <div class='top_buttons'>
-      <button class='undelete' ng-click='undelete()' ng-if="deleted_node">
-        Undelete category
-      </button>
-      <button ng-click='toggle_pause()'>Pause</button>
-    </div>
+    <div class='top_div' ng-include='03_top_div.html'></div>
 
     <div id="tree_section">
       <div class='section_label'>Project Categories</div>
@@ -151,20 +129,8 @@
         </div>
       </div>
     </div>
-
-    <div style='color:white; margin-left:10px'>
-      <p>All data is saved automatically.</p>
-      <p>Send feedback to:
-        <a href='mailto:JesseAldridge@gmail.com' style='color:#ddddff'>
-          JesseAldridge@gmail.com</a>
-      </p>
-    </div>
-
-    <div class='pause' ng-if="paused">PAUSED</div>
   </div>
-
 </div>
-
 
 
 

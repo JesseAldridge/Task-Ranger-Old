@@ -89,7 +89,6 @@ BaseTree.prototype.after_bind_show_intervals = function() {
   // Show intervals for the current day.
 
   this.scope.set_current_node = function(node, e) {
-    console.log('set_current_node')
     tree.scope.curr_node = node
     var daily_time = tree.date_to_daily_ms(new Date())
     var intervals = node.node_intervals[daily_time] || []

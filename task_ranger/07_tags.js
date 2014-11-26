@@ -13,7 +13,15 @@ BaseTree.prototype.after_ping = function() {
     console.log('regen top5 too slow, stopping')
     this.regen_every_ping = false
   }
-  this.after_bind_top_list()
+}
+
+BaseTree.prototype.fixup_data = function() {
+  var scope = this.scope
+  for(var id in scope.nodes) {
+    var node = scope.nodes[id]
+    node.child_ids = node.child_ids || []
+    node.node_intervals = node.node_intervals || {}
+  }
 }
 
 BaseTree.prototype.write_test_data = function() {
@@ -27,52 +35,24 @@ BaseTree.prototype.write_test_data = function() {
       "child_ids" : [ "9072973696" ],
       "is_collapsed" : false,
       "node_id" : "5005108148",
-      "node_intervals" : {
-        "1415952000000" : [ {
-          "create_ms" : 1413407782790,
-          "ms" : 3600000,
-          "text" : "#foo interval text 58233205",
-          'daily_time': 1415952000000
-        }, {
-          "create_ms" : 1413407782792,
-          "ms" : 3600000,
-          "text" : "#foo interval text 4848701092",
-          'daily_time': 1415952000000
-        } ]
-      },
-      "cum_ms": 14400000,
       "text" : "foo text 5005108148"
     },
     "5534964984" : {
       "node_id" : "5534964984",
       "parent_id" : "9072973696",
-      "cum_ms": 0
     },
     "9072973696" : {
       "child_ids" : [ "5534964984" ],
       "is_collapsed" : false,
       "node_id" : "9072973696",
-      "node_intervals" : {
-        "1415952000000" : [ {
-          "create_ms" : 1413407782793,
-          "ms" : 3600000,
-          "text" : "#bar interval text 9083590657"
-        }, {
-          "create_ms" : 1413407782793,
-          "ms" : 3600000,
-          "text" : "#bar interval text 5191242022"
-        } ]
-      },
-      "cum_ms": 7200000,
       "parent_id" : "5005108148",
       "text" : "foo text 9072973696"
     }
   }
   scope.top_ids = [ "5005108148" ]
+  this.after_write_test_data()
+  this.fixup_data()
 }
-
-
-BaseTree.prototype.after_bind_top_list = function() {}
 
 BaseTree.prototype.after_regenTop5 = function(tags_data) {}
 

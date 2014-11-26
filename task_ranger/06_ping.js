@@ -77,10 +77,10 @@ function ping() {
     global_tree.increment_node(curr_node)
     global_tree.recalc_cum_time(curr_node)
     global_tree.nag()
+    global_tree.after_ping()
+    global_tree.scope.$apply()
   }
   global_tree.ping_timer = setTimeout(ping, global_tree.ping_secs * 1000)
-  global_tree.after_ping()
-  global_tree.scope.$apply()
 }
 
 

@@ -64,12 +64,11 @@ BaseTree.prototype.add_id_to_parent = function(node_id, parent_id, index) {
 BaseTree.prototype.save_node = function(node) {}
 BaseTree.prototype.save_id_list = function(parent_id, ids_list) {}
 
-BaseTree.prototype.after_write_test_data = function() {
+BaseTree.prototype.decorate_test_json = function(json) {
 
   // Generate some fake intervals.
 
-  var scope = this.scope
-  var nodes = scope.nodes
+  var nodes = json.nodes
 
   var daily_ms = this.date_to_daily_ms(new Date())
   for(var id in nodes) {
@@ -82,7 +81,6 @@ BaseTree.prototype.after_write_test_data = function() {
       text:'#test interval ' + id
     }]
   }
-
-  scope.top_ids = [ "5005108148" ]
+  return json
 }
 

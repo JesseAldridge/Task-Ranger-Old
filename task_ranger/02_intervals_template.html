@@ -1,3 +1,6 @@
+
+<div class='top_div' ng-include="'07_top_div.html'"></div>
+
 <div id="tree_section">
   <div class='section_label'>Project Categories</div>
 
@@ -37,7 +40,6 @@
     <div title='Create new interval' class='ui-icon ui-icon-plusthick'
          ng-click='new_interval(curr_node)' ng-if="curr_node">
     </div>
-
   </div>
 
   <hr>
@@ -51,3 +53,14 @@
     </div>
   </div>
 </div>
+
+<div style='color:white; margin-left:10px'>
+  <p>All data is saved automatically.</p>
+  <p>Send feedback to:
+    <a href='mailto:JesseAldridge@gmail.com' style='color:#ddddff'>
+      JesseAldridge@gmail.com</a>
+  </p>
+</div>
+
+<div class='pause' ng-if="paused">PAUSED</div>
+
