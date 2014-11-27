@@ -36,7 +36,7 @@ BaseTree.prototype.init_notifications = function() {
 
   this.nag_count = 0
   this.notification = null
-  
+
   this.nag_secs = 10 * 60
   // this.nag_secs = 5
 
@@ -94,6 +94,7 @@ BaseTree.prototype.nag = function() {
       if (Notification.permission === "granted")
         this.notification = new Notification(
           "It's been 10 minutes.", {icon:'static/clock.png'})
+        this.notification.onclick = function(x) { window.focus(); this.cancel(); };
     }
     return
   }
