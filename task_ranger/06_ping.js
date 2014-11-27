@@ -37,8 +37,8 @@ BaseTree.prototype.init_notifications = function() {
   this.nag_count = 0
   this.notification = null
 
-  // this.nag_secs = 10 * 60
-  this.nag_secs = 5
+  this.nag_secs = 10 * 60
+  // this.nag_secs = 5
 
   var tree = this
 
