@@ -101,7 +101,7 @@ BaseTree.prototype.delete_node_from_db = function() {
 }
 
 BaseTree.prototype.save_interval_list_to_db = function(node_id, daily_ms, interval_list) {
-  var path = 'nodes/' + node.node_id + '/node_intervals/' + daily_ms + '/'
+  var path = 'nodes/' + node_id + '/node_intervals/' + daily_ms + '/'
   this.root_ref.child(path).set(angular.copy(interval_list))
 }
 
