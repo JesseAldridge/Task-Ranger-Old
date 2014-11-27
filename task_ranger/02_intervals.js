@@ -122,10 +122,11 @@ BaseTree.prototype.after_bind_show_intervals = function() {
   }
 
   this.scope.interval_keydown = function(interval, e) {
+    tree.notification && tree.notification.close()
+
     var scope = tree.scope,
         curr_day_ms = tree.date_to_daily_ms(tree.scope.get_daily_date()),
         intervals = scope.curr_node.node_intervals[curr_day_ms]
-
     if(e.which == 9 && intervals[intervals.length - 1] == interval) // tab
       scope.new_interval(scope.curr_node)
   }

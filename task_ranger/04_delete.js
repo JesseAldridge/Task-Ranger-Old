@@ -46,6 +46,7 @@ BaseTree.prototype.after_bind_intervals = function() {
     if(interval == tree.scope.curr_interval)
       tree.scope.curr_interval = null
     tree.save_interval_list_to_db(node_id, daily_ms, interval_list)
+    tree.notification && tree.notification.close()
   }
 
   // Add the last deleted batch of nodes back to the tree.

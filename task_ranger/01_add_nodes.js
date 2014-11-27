@@ -26,6 +26,7 @@ BaseTree.prototype.after_construction = function() {
 
   this.scope.set_curr_interval = function(interval) {
     tree.scope.curr_interval = interval || null
+    tree.notification && tree.notification.close()
   }
 
   this.scope.get_curr_intervals = function() {

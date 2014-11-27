@@ -37,8 +37,8 @@ BaseTree.prototype.init_notifications = function() {
   this.nag_count = 0
   this.notification = null
 
-  this.nag_secs = 10 * 60
-  // this.nag_secs = 5
+  // this.nag_secs = 10 * 60
+  this.nag_secs = 5
 
   var tree = this
 
@@ -76,7 +76,6 @@ function ping() {
     }
     global_tree.increment_node(curr_node)
     global_tree.recalc_cum_time(curr_node)
-    global_tree.nag()
     global_tree.after_ping()
     global_tree.scope.$apply()
   }
@@ -89,17 +88,19 @@ function ping() {
 BaseTree.prototype.nag = function() {
   if(this.scope.curr_interval) {
     var curr_secs = this.scope.curr_interval.ms / 1000
-    if(curr_secs > this.nag_secs * (this.nag_count + 1)) {
-      this.nag_count = Math.floor(curr_secs / this.nag_secs)
-      if (Notification.permission === "granted")
+    if(curr_secs % this.nag_secs < 1) {
+      if (Notification.permission === "granted") {
+        this.notification && this.notification.close()
         this.notification = new Notification(
           "It's been 10 minutes.", {icon:'static/clock.png'})
-        this.notification.onclick = function(x) { window.focus(); this.cancel(); };
+        this.notification.onclick = function(x) {
+          window.focus()
+          this.close()
+        }
+      }
+      return
     }
-    return
   }
-  this.nag_count = 0
-  this.notification && this.notification.close()
 }
 
 BaseTree.prototype.after_delete2 = function() {
