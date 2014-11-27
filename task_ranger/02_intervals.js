@@ -108,7 +108,7 @@ BaseTree.prototype.after_bind_show_intervals = function() {
   // Create a new interval for the current node.
 
   this.scope.new_interval = function(node) {
-    var curr_day_ms = tree.date_to_daily_ms(tree.get_daily_date())
+    var curr_day_ms = tree.date_to_daily_ms(tree.scope.get_daily_date())
     var interval = {
       create_ms:new Date().getTime(), ms:0, text:'new interval #foo'}
     if(!node.node_intervals[curr_day_ms])
@@ -123,7 +123,7 @@ BaseTree.prototype.after_bind_show_intervals = function() {
 
   this.scope.interval_keydown = function(interval, e) {
     var scope = tree.scope,
-        curr_day_ms = tree.date_to_daily_ms(tree.get_daily_date()),
+        curr_day_ms = tree.date_to_daily_ms(tree.scope.get_daily_date()),
         intervals = scope.curr_node.node_intervals[curr_day_ms]
 
     if(e.which == 9 && intervals[intervals.length - 1] == interval) // tab

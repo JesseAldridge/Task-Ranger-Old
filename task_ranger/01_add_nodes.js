@@ -30,11 +30,11 @@ BaseTree.prototype.after_construction = function() {
 
   this.scope.get_curr_intervals = function() {
     var curr_node = tree.scope.curr_node,
-        daily_ms = tree.get_daily_date().getTime()
+        daily_ms = tree.scope.get_daily_date().getTime()
     return curr_node ? curr_node.node_intervals[daily_ms] : []
   }
 
-  this.get_daily_date = function() {
+  this.scope.get_daily_date = function() {
     return tree.scope.date_info.curr_daily_date
   }
 

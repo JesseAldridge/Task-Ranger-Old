@@ -32,7 +32,7 @@
          ng-repeat="interval in get_curr_intervals()"
          ng-class="{'curr_interval': interval == curr_interval}">
       <input ng-model="interval.text"
-             ng-change="save_interval(curr_node, curr_daily_date, $index, 'text', interval.text)"
+             ng-change="save_interval(curr_node, get_daily_date(), $index, 'text', interval.text)"
              ng-focus="set_curr_interval(interval)"
              ng-keydown="interval_keydown(interval, $event)"
              autogrow autoselect/>
