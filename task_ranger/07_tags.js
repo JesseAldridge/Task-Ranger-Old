@@ -5,10 +5,8 @@ BaseTree.prototype.after_setup_ping = function() {
 
 BaseTree.prototype.after_ping = function() {
   this.regen_start = Date.now()
-  if(this.regen_every_ping) {
+  if(this.regen_every_ping)
     var tags_data = this.regen_top5()
-    this.after_regenTop5(tags_data)
-  }
   if(Date.now() - this.regen_start > 200) {
     console.log('regen top5 too slow, stopping')
     this.regen_every_ping = false
@@ -149,6 +147,8 @@ BaseTree.prototype.regen_top5 = function() {
     delete tags_data[to_delete[i]]
   delete tags_data['null']
   this.scope.top_list = top_list
+  this.after_regenTop5(tags_data)
+  this.scope.$apply()
 }
 
 BaseTree.prototype.after_buttons_html = function() {

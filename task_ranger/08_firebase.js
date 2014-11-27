@@ -56,6 +56,7 @@ BaseTree.prototype.download_data = function() {
     scope.top_ids = snap.val().top_ids
     scope.nodes = nodes
     tree.fixup_data()
+    tree.regen_top5()
     scope.$apply()
   })
 
