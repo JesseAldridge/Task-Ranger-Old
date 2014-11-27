@@ -18,8 +18,8 @@ BaseTree.prototype.ready_to_download = function() {
       $('.login-layer').hide()
       $('.main_content').show()
       BaseTree.prototype.get_user_root = function(){ return 'user_trees/' + user.uid + '/' }
+      tree.user_data = user.thirdPartyUserData
       tree.download_data()
-      tree.root_ref.child('user_info').set(user.thirdPartyUserData)
     }
     else {
       $('.login-layer').show()
@@ -28,14 +28,18 @@ BaseTree.prototype.ready_to_download = function() {
   })
 
   $('#login-github').click(function() {
-    auth.login('github', { rememberMe: true }) })
+    auth.login('github', { rememberMe: true })
+  })
   $('#login-twitter').click(function() {
-    auth.login('twitter', { rememberMe: true }) })
+    auth.login('twitter', { rememberMe: true })
+  })
   $('#logout').click(function() {
-    auth.logout() });
+    auth.logout()
+  })
+}
+
+BaseTree.prototype.after_download_data = function() {
+  this.root_ref.child('user_info').set(this.user_data)
 }
 
 
-BaseTree.prototype.after_init_db = function() {
-  this.load_data()
-}

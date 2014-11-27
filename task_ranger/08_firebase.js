@@ -28,35 +28,40 @@ BaseTree.prototype.download_data = function() {
   this.root_ref = new Firebase(this.firebase_url() + this.get_user_root())
   var tree = this
   this.root_ref.once('value', function(snap) {
-    if(!snap.val() || !snap.val().nodes || snap.val().nodes.length == 0 ||
-       !snap.val().top_ids || snap.val().top_ids.length == 0) {
-        var default_json = {
-          "nodes" : {
-            "0" : {
-              "node_id" : "0",
-              "cum_ms": 0,
-              "text" : "Default Category",
-              "create_ms" : Date.now()
-            }
-          },
-          "top_ids" : [ "0" ]
+    var default_json = {
+      "nodes" : {
+        "0" : {
+          "node_id" : "0",
+          "cum_ms": 0,
+          "text" : "Default Category",
+          "create_ms" : Date.now()
         }
-
-        tree.root_ref.set(default_json, function() { tree.download_data() })
-        return
+      },
+      "top_ids" : [ "0" ]
     }
 
-    scope = tree.scope
-    var nodes = snap.val().nodes
+    var nodes = default_json.nodes,
+        top_ids = default_json.top_ids
+    if(!snap.val() || !snap.val().nodes || snap.val().nodes.length == 0 ||
+       !snap.val().top_ids || snap.val().top_ids.length == 0)
+      tree.root_ref.set(default_json)
+    else {
+      nodes = snap.val().nodes
+      top_ids = snap.val().top_ids
+    }
+
+    var scope = tree.scope
+
     for(var id in nodes) {
       var node = nodes[id]
       node.child_ids = node.child_ids || []
       node.node_intervals = node.node_intervals || {}
     }
-    scope.top_ids = snap.val().top_ids
     scope.nodes = nodes
+    scope.top_ids = top_ids
     tree.fixup_data()
     tree.regen_top5()
+    tree.after_download_data()
     scope.$apply()
   })
 
@@ -77,6 +82,8 @@ BaseTree.prototype.download_data = function() {
       set_func()
   }
 }
+
+BaseTree.prototype.after_download_data = function() {}
 
 // Special case saves for entire node and id list.
 
