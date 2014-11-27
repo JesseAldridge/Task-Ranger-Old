@@ -1,0 +1,11 @@
+<p class="input-group" style='float:right'>
+  <input type="text" class="form-control" datepicker-popup="dd MMMM, yyyy"
+         ng-model="curr_daily_date" is-open="opened"
+         ng-required="true" close-text="Close"
+         datepicker-options="{showWeeks:false}" show-button-bar="false"
+         ng-change="date_changed()" />
+  <span class="input-group-btn">
+    <button type="button" class="btn btn-default" ng-click="open_datepicker($event)">
+    <i class="glyphicon glyphicon-calendar"></i></button>
+  </span>
+</p>

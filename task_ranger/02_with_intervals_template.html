@@ -1,0 +1,66 @@
+
+<div class='top_div' ng-include="'07_top_div.html'"></div>
+
+<div id="tree_section">
+  <div class='section_label'>Project Categories</div>
+
+  <ol tree ng-include="'00_node_template.html'" class="ui-sortable">
+  </ol>
+</div>
+
+<div class="interval_section">
+  <div class='section_label'>Daily Work Log</div>
+
+  <!-- Datepicker widget. -->
+
+  <p class="input-group" style='float:right'>
+    <input type="text" class="form-control" datepicker-popup="MMMM dd, yyyy"
+           ng-model="date_info.curr_daily_date" is-open="date_info.date_opened"
+           ng-required="true" close-text="Close"
+           datepicker-options="{showWeeks:false}" show-button-bar="false"
+           ng-change="date_changed()" />
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" ng-click="open_datepicker($event)">
+      <i class="glyphicon glyphicon-calendar"></i></button>
+    </span>
+  </p>
+
+  <!-- Intervals -->
+
+  <div class="interval_list">
+    <div class="interval_div"
+         ng-repeat="interval in get_curr_intervals()"
+         ng-class="{'curr_interval': interval == curr_interval}">
+      <input ng-model="interval.text"
+             ng-change="save_interval(curr_node, curr_daily_date, $index, 'text', interval.text)"
+             ng-focus="set_curr_interval(interval)"
+             ng-keydown="interval_keydown(interval, $event)"
+             autogrow autoselect/>
+    </div>
+    <div title='Create new interval' class='ui-icon ui-icon-plusthick'
+         ng-click='new_interval(curr_node)' ng-if="curr_node">
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="interval_info" ng-if='curr_interval'>
+    <span class="text">{{curr_interval.text}}</span>
+    <input time-input ng-model='curr_interval.ms' class='time_input'
+           ng-focus='pause()' ng-blur='unpause()' />
+    <div title='Delete this interval' class='ui-icon ui-icon-closethick delete'
+         ng-click='delete_interval(curr_node, curr_interval)'>
+    </div>
+  </div>
+</div>
+
+<div style='color:white; margin-left:10px'>
+  <p>All data is saved automatically.</p>
+  <p>Send feedback to:
+    <a href='mailto:JesseAldridge@gmail.com' style='color:#ddddff'>
+      JesseAldridge@gmail.com</a>
+  </p>
+</div>
+
+<div class='pause' ng-if="paused">PAUSED</div>
+
