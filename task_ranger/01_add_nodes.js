@@ -29,15 +29,22 @@ BaseTree.prototype.after_construction = function() {
   }
 
   this.scope.get_curr_intervals = function() {
-    var curr_node = tree.scope.curr_node
-    return curr_node ? curr_node.node_intervals[tree.scope.curr_daily_date.getTime()] : []
+    var curr_node = tree.scope.curr_node,
+        daily_ms = tree.get_daily_date().getTime()
+    return curr_node ? curr_node.node_intervals[daily_ms] : []
+  }
+
+  this.get_daily_date = function() {
+    return tree.scope.date_info.curr_daily_date
   }
 
   this.scope.date_changed = function() {
     tree.scope.curr_interval = null
   }
 
-  this.scope.curr_daily_date = new Date(this.date_to_daily_ms(new Date()))
+  this.scope.date_info = {
+    curr_daily_date: new Date(this.date_to_daily_ms(new Date()))
+  }
 
   this.after_bind_show_intervals()
 }

@@ -57,7 +57,7 @@ BaseTree.prototype.decorate_test_json = function(json) {
   return json
 }
 
-var module = angular.module('treeApp', [])
+var module = angular.module('treeApp', ['ui.bootstrap'])
 
 module.controller('TreeController', ['$scope', '$filter',
   function($scope, $filter) {

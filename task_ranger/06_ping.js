@@ -55,7 +55,7 @@ BaseTree.prototype.init_notifications = function() {
           index = (node_intervals[daily_time] || []).indexOf(curr_interval)
       if(index == -1)
         return
-      tree.scope.save_interval(curr_node, tree.scope.curr_daily_date, index, 'ms', curr_interval.ms)
+      tree.scope.save_interval(curr_node, tree.get_daily_date(), index, 'ms', curr_interval.ms)
       tree.recalc_cum_time(curr_node)
     }, true);
 
