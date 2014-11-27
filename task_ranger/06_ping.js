@@ -34,9 +34,9 @@ BaseTree.prototype.init_notifications = function() {
       Notification.permission = permission;
     })
 
-  this.nagged = false
+  this.nag_count = 0
   this.notification = null
-
+  
   this.nag_secs = 10 * 60
   // this.nag_secs = 5
 
@@ -87,18 +87,18 @@ function ping() {
 // Create a notification every 10 minutes, unless the user ignored the last one.
 
 BaseTree.prototype.nag = function() {
-  if(this.scope.curr_interval && this.scope.curr_interval.ms / 1000 > this.nag_secs) {
-    if(!this.nagged) {
-      this.nagged = true
+  if(this.scope.curr_interval) {
+    var curr_secs = this.scope.curr_interval.ms / 1000
+    if(curr_secs > this.nag_secs * (this.nag_count + 1)) {
+      this.nag_count = Math.floor(curr_secs / this.nag_secs)
       if (Notification.permission === "granted")
         this.notification = new Notification(
           "It's been 10 minutes.", {icon:'static/clock.png'})
     }
+    return
   }
-  else {
-    this.nagged = false
-    this.notification && this.notification.close()
-  }
+  this.nag_count = 0
+  this.notification && this.notification.close()
 }
 
 BaseTree.prototype.after_delete2 = function() {
