@@ -1,0 +1,39 @@
+<!doctype html>
+
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+<style>
+.datepicker-row {margin:10px}
+
+.datepicker-container {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.btn:focus, .btn:active:focus, .btn.active:focus {
+ outline: none; outline-style: none;
+}
+</style>
+
+
+<button class='arrow btn btn-default' type='button'>
+  <i class="glyphicon glyphicon-arrow-left"></i>
+</button>
+
+<div class='datepicker-container'>
+  <div class="input-group" style='width:220px'>
+    <input type="text" class="form-control" datepicker-popup="MMMM dd, yyyy"
+           ng-model="date_info.curr_daily_date" is-open="date_info.is_open"
+           datepicker-options="{showWeeks:false}" show-button-bar="false"
+           ng-change="date_changed()" />
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" ng-click="open_datepicker($event)">
+        <i class="glyphicon glyphicon-calendar"></i>
+      </button>
+    </span>
+  </div>
+</div>
+
+<button class='arrow btn btn-default' type='button'>
+  <i class="glyphicon glyphicon-arrow-right"></i>
+</button>
