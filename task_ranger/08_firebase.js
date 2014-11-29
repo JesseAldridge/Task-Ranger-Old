@@ -92,6 +92,22 @@ BaseTree.prototype.save_node = function(node) {
   this.root_ref.child(path).set(node)
 }
 
+
+
+// Save a key/value for the passed interval path.
+
+BaseTree.prototype.save_interval = function(interval) {
+  var scope = control.scope
+  var daily_ms = scope.date_to_daily_ms(new Date(interval.create_ms))
+  var day = scope.get_day(daily_ms)
+  var index = scope.days[daily_ms].intervals.indexOf(interval)
+  var path = 'days/' + daily_ms + '/intervals/' + index
+  control.save_path(path, interval)
+}
+
+
+
+
 BaseTree.prototype.save_id_list = function(node_id, id_list) {
   var path = (
     node_id ? 'nodes/{0}/child_ids'.replace('{0}', node_id) : 'top_ids')

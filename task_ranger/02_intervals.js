@@ -1,28 +1,4 @@
 
-// Angular directive to autgrow interval inputs.
-
-module.directive('autogrow', ['$timeout', function($timeout) {
-  return {
-    link:function(scope, element, attrs) {
-      $(element).autoGrowInput({comfortZone: 7})
-      $timeout(function() { $(element).blur() })
-    }
-  }
-}])
-
-.directive('autoselect', ['$timeout', function($timeout) {
-  return {
-    link: function (scope, element) {
-      var select_timeout = scope.tree.select_timeout
-      $timeout.cancel(scope.tree.select_timeout)
-      scope.tree.select_timeout = $timeout(function() {
-        element[0].select();
-      }, 100)
-    }
-  };
-}])
-
-
 // '10:00:00' <-> 36000000  (hours, minutes, seconds string to milliseconds int)
 
 module.directive('timeInput', ['$filter', function($filter) {
@@ -75,68 +51,40 @@ module.filter('secs_to_hms', function() {
   }
 })
 
-BaseTree.prototype.after_bind_show_intervals = function() {
-  var tree = this
+OuterController.prototype.after_construction = function() {
+  var control = this,
+      scope = control.scope
 
-  // Setup datepicker.
+  // Create a new interval for the current day.
 
-  this.scope.open_datepicker = function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    tree.scope.date_info.date_opened = true;
-  }
-
-  // Show intervals for the current day.
-
-  this.scope.set_current_node = function(node, e) {
-    tree.scope.curr_node = node
-    var daily_time = tree.date_to_daily_ms(new Date())
-    var intervals = node.node_intervals[daily_time] || []
-    tree.scope.set_curr_interval(intervals[intervals.length - 1])
-  }
-
-  // Save a key/value for the passed interval path.
-
-  this.scope.save_interval = function(node, date, index, key, value) {
-    var path = 'node_intervals/{daily_time}/{index}/{key}'
-    var daily_time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-    path = path.replace('{daily_time}', daily_time).replace('{index}', index)
-               .replace('{key}', key)
-    tree.scope.save_node_key(node, path, value)
-  }
-
-  // Create a new interval for the current node.
-
-  this.scope.new_interval = function(node) {
-    var curr_day_ms = tree.date_to_daily_ms(tree.scope.get_daily_date())
+  this.scope.new_interval = function() {
+    var scope = control.scope
+    var curr_day_ms = scope.date_to_daily_ms(scope.get_daily_date())
     var interval = {
       create_ms:new Date().getTime(), ms:0, text:'new interval #foo'}
-    if(!node.node_intervals[curr_day_ms])
-      node.node_intervals[curr_day_ms] = []
-    var intervals = node.node_intervals[curr_day_ms]
-    intervals.push(interval)
-    var path = 'node_intervals/' + curr_day_ms + '/' + (intervals.length - 1)
-    tree.scope.save_node_key(node, path, interval)
-    tree.scope.set_curr_interval(interval)
-    var daily_time = tree.date_to_daily_ms(new Date())
+    var day = scope.get_day(curr_day_ms)
+    day.intervals.push(interval)
+    control.save_interval(interval)
+    scope.set_curr_interval(interval)
+    setTimeout(function() {
+      $('.curr_interval .interval-text').focus()
+    }, 100)
   }
+
+  // Create a new interval on tab.
 
   this.scope.interval_keydown = function(interval, e) {
-    tree.notification && tree.notification.close()
-
-    var scope = tree.scope,
-        curr_day_ms = tree.date_to_daily_ms(tree.scope.get_daily_date()),
-        intervals = scope.curr_node.node_intervals[curr_day_ms]
-    if(e.which == 9 && intervals[intervals.length - 1] == interval) // tab
-      scope.new_interval(scope.curr_node)
+    control.notification && control.notification.close()
+    if(e.which == 13) // return
+      scope.new_interval()
   }
-
-  this.scope.save_node_key = function(node, path, interval) {}
 
   this.after_bind_intervals()
 }
 
-BaseTree.prototype.after_bind_intervals = function(){}
+OuterController.prototype.save_interval = function(path, value) {}
+
+OuterController.prototype.after_bind_intervals = function() {}
 
 
 
