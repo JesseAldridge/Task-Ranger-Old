@@ -79,10 +79,25 @@ OuterController.prototype.after_construction = function() {
       scope.new_interval()
   }
 
+  // Delete the passed interval from the day which contains it.
+
+  this.scope.delete_interval = function(interval) {
+    var daily_ms = scope.date_to_daily_ms(new Date(interval.create_ms))
+    var day = scope.get_day(daily_ms)
+    var intervals = day.intervals
+    var index = intervals.indexOf(interval)
+    intervals.splice(index, 1)
+    if(interval == control.scope.curr_interval)
+      control.scope.curr_interval = null
+    control.save_interval_list(day)
+    control.notification && control.notification.close()
+  }
+
   this.after_bind_intervals()
 }
 
-OuterController.prototype.save_interval = function(path, value) {}
+OuterController.prototype.save_interval = function(interval) {}
+OuterController.prototype.save_interval_list = function(day) {}
 
 OuterController.prototype.after_bind_intervals = function() {}
 

@@ -124,12 +124,12 @@ BaseTree.prototype.delete_node_from_db = function() {
   this.root_ref.child('nodes/' + deleted_id).remove()
 }
 
-BaseTree.prototype.save_interval_list_to_db = function(node_id, daily_ms, interval_list) {
+BaseTree.prototype.save_interval_list = function(node_id, daily_ms, interval_list) {
   var path = 'nodes/' + node_id + '/node_intervals/' + daily_ms + '/'
   this.root_ref.child(path).set(angular.copy(interval_list))
 }
 
-BaseTree.prototype.save_node_to_db = function(node) {
+BaseTree.prototype.save_node = function(node) {
   this.root_ref.child('nodes/' + node.node_id).set(angular.copy(node))
 }
 
