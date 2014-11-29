@@ -71,7 +71,7 @@ OuterController.prototype.after_construction = function() {
     }, 100)
   }
 
-  // Create a new interval on tab.
+  // Create a new interval on return.
 
   this.scope.interval_keydown = function(interval, e) {
     control.notification && control.notification.close()

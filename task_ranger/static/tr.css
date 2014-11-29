@@ -109,11 +109,16 @@ body { height:100% }
   border:none
 }
 
+.activity-table {background:white}
+
 .time-col {width:78px}
+.delete-col {width:60px}
 
 .interval-time {width:62px}
 
 .interval-text {width:100%}
+
+.activity-table .delete-btn {padding: 2px 12px; border:none}
 
 .date-form {margin:10px}
 
