@@ -102,15 +102,15 @@ OuterController.prototype.after_construction = function() {
     intervals.splice(index, 1)
     if(interval == control.scope.curr_interval)
       control.scope.curr_interval = null
-    control.save_interval_list(day)
+    control.save_day(day)
     control.notification && control.notification.close()
-    this.after_delete()
+    control.after_delete()
   }
 
   this.after_bind_intervals()
 }
 
-OuterController.prototype.save_interval_list = function(day) {}
+OuterController.prototype.save_day = function(day) {}
 
 OuterController.prototype.after_delete = function() {}
 OuterController.prototype.after_bind_intervals = function() {}

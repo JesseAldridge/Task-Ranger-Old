@@ -63,6 +63,15 @@ OuterController.prototype.save_path = function(path, val, debounce) {
     set_func()
 }
 
+// Save entire day (e.g. after delete).
+
+OuterController.prototype.save_day = function(day) {
+  var scope = this.scope
+  console.log('saving day:', scope.date_info.curr_daily_date)
+  var daily_ms = this.date_to_daily_ms(scope.date_info.curr_daily_date)
+  this.save_path('days/' + daily_ms, day)
+}
+
 
 // Prepend login buttons to body.  Hide content.
 
