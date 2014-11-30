@@ -40,7 +40,7 @@
           <input class='interval-text' ng-model='interval.text'
                  ng-change="save_interval(interval)"
                  ng-focus="set_curr_interval(interval)"
-                 ng-keydown="interval_keydown(interval, $event)">
+                 ng-keydown="interval_keydown(interval, $event)" autoselect>
         </td>
         <td>
           <input time-input ng-model='interval.ms' class='interval-time'

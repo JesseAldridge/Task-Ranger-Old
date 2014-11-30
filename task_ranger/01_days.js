@@ -52,6 +52,7 @@ var module = angular.module('myApp', ['ui.bootstrap'])
 
 function OuterController(scope) {
   this.scope = scope
+  scope.control = this
   scope.days = {}
 }
 

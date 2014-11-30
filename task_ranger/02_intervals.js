@@ -24,6 +24,20 @@ module.directive('timeInput', ['$filter', function($filter) {
   }
 }])
 
+.directive('autoselect', ['$timeout', function($timeout) {
+  return {
+    link: function (scope, element) {
+      console.log('autoselecting')
+      var select_timeout = scope.control.select_timeout
+      $timeout.cancel(scope.control.select_timeout)
+      scope.control.select_timeout = $timeout(function() {
+        element[0].select();
+      }, 100)
+    }
+  }
+}])
+
+
 // Integer seconds to hours:mins:seconds string.
 
 module.filter('secs_to_hms', function() {
