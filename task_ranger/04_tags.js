@@ -33,7 +33,7 @@ OuterController.prototype.regen_top5 = function() {
 
   // Iterate through every interval for every day.
 
-  var tags = {}, stem_to_tags = {}, time_per_day = {}
+  var tags = {}, stem_to_tags = {}, time_per_day = scope.time_per_day = {}
 
   var days = scope.days
   for(var day_ms in days) {

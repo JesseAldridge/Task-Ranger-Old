@@ -66,7 +66,7 @@
   <div class='reports'>
     <div class='report'>
       <span class='report_label'>Time logged today:</span>
-      {{tree_stats.time_per_day[date_info.curr_daily_date.getTime()] / 1000 | secs_to_hms}}
+      {{time_per_day[date_info.curr_daily_date.getTime()] / 1000 | secs_to_hms}}
     </div>
     <div class='report'>
       <div class='report_label'>Overall time breakdown:</div>
