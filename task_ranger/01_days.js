@@ -37,51 +37,59 @@ var module = angular.module('myApp', ['ui.bootstrap'])
     $scope.curr_interval = null
   }
 
-  $scope.date_to_daily_ms = function(date) {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-  }
+  $scope.save_interval = function(interval) {}
 
-  // Write some test days.
-
-  $scope.write_test_data = function() {
-    $scope.days = this.get_test_json()
-  }
-
-  $scope.get_test_json = function() {
-    var daily_ms = this.date_to_daily_ms(new Date())
-    var days = {}
-    days[daily_ms] = {
-      intervals:[{
-        ms: 1000 * 10,
-        text: '#test interval 1',
-        create_ms: daily_ms
-      }, {
-        ms: 1000 * 20,
-        text: 'test #interval 2',
-        create_ms: daily_ms
-      }]
-    }
-    return days
-  }
+  control = new OuterController($scope)
 
   $scope.date_info = {
-    curr_daily_date: new Date($scope.date_to_daily_ms(new Date())),
+    curr_daily_date: new Date(control.date_to_daily_ms(new Date())),
     is_open: false
   }
 
-  outer_controller = new OuterController($scope)
-  outer_controller.after_construction()
-  outer_controller.launch()
+  control.after_construction()
+  control.launch()
 })
 
 function OuterController(scope) {
   this.scope = scope
+  scope.days = {}
 }
+
+// Write some test days.
+
+OuterController.prototype.write_test_data = function() {
+  this.scope.days = this.get_test_json().days
+  this.after_have_data()
+}
+
+OuterController.prototype.after_have_data = function() {}
+
+OuterController.prototype.get_test_json = function() {
+  var daily_ms = this.date_to_daily_ms(new Date())
+  var days = {}
+  days[daily_ms] = {
+    intervals:[{
+      ms: 1000 * 10,
+      text: '#test interval 1',
+      create_ms: daily_ms
+    }, {
+      ms: 1000 * 20,
+      text: 'test #interval 2',
+      create_ms: daily_ms
+    }]
+  }
+  return {days:days}
+}
+
+OuterController.prototype.date_to_daily_ms = function(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
 
 OuterController.prototype.after_construction = function() {}
 
 OuterController.prototype.launch = function() {
-  this.scope.write_test_data()
+  this.write_test_data()
 }
 
 

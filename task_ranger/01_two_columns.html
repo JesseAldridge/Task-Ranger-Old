@@ -5,6 +5,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
 <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script src="./static/PorterStemmer2.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.0.5/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/simple-login/1.6.1/firebase-simple-login.js"></script>
 
 <!-- My css -->
 
@@ -12,58 +15,79 @@
 
 <script src='01_days.js'></script>
 <script src='02_intervals.js'></script>
+<script src='03_ping.js'></script>
+<script src='04_tags.js'></script>
+<script src='05_firebase.js'></script>
 
 
 <div ng-controller='MyController'>
+  <div ng-include="'03_top_div.html'"></div>
+
   <div class="datepicker-row" ng-include="'00_datepicker.html'"></div>
 
-  <table class='table activity-table'>
-    <tr>
-      <th>Activity</th>
-      <th class='time-col'>Time</th>
-      <th class='delete-col'></th>
-    </tr>
-    <tr ng-repeat="interval in get_curr_intervals()"
-        ng-class="{'curr_interval': interval == curr_interval}"
-        ng-mouseenter='should_show_delete = true'
-        ng-mouseleave='should_show_delete = false'>
-      <td>
-        <input class='interval-text' ng-model='interval.text'
-               ng-change="save_interval(interval)"
-               ng-focus="set_curr_interval(interval)"
-               ng-keydown="interval_keydown(interval, $event)">
-      </td>
-      <td>
-        <input time-input ng-model='interval.ms' class='interval-time'
-               ng-change="save_interval(interval)" ng-focus='pause()'
-               ng-blur='unpause()'>
-      </td>
-      <td>
-        <button class='btn btn-default delete-btn' type='button'
-                ng-click='delete_interval(interval)'
-                ng-if='should_show_delete'>
-          <i class="glyphicon glyphicon-remove"></i>
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td><button ng-click='new_interval()'>New Interval</button></td> <td></td> <td></td>
-    </tr>
-  </table>
+  <div style='display:inline-block'>
+    <table class='table activity-table'>
+      <tr>
+        <th>Activity</th>
+        <th class='time-col'>Time</th>
+        <th class='delete-col'></th>
+      </tr>
+      <tr ng-repeat="interval in get_curr_intervals()"
+          ng-class="{'curr_interval': interval == curr_interval}"
+          ng-mouseenter='should_show_delete = true'
+          ng-mouseleave='should_show_delete = false'>
+        <td>
+          <input class='interval-text' ng-model='interval.text'
+                 ng-change="save_interval(interval)"
+                 ng-focus="set_curr_interval(interval)"
+                 ng-keydown="interval_keydown(interval, $event)">
+        </td>
+        <td>
+          <input time-input ng-model='interval.ms' class='interval-time'
+                 ng-change="save_interval(interval)" ng-focus='pause()'
+                 ng-blur='unpause()'>
+        </td>
+        <td>
+          <button class='btn btn-default delete-btn' type='button'
+                  ng-click='delete_interval(interval)'
+                  ng-if='should_show_delete'>
+            <i class="glyphicon glyphicon-remove"></i>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td><button class='btn btn-default' ng-click='new_interval()'>New Interval</button></td> <td></td> <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class='pause' ng-if="paused">PAUSED</div>
+
+  <div class='reports'>
+    <div class='report'>
+      <span class='report_label'>Time logged today:</span>
+      {{tree_stats.time_per_day[date_info.curr_daily_date.getTime()] / 1000 | secs_to_hms}}
+    </div>
+    <div class='report'>
+      <div class='report_label'>Overall time breakdown:</div>
+      <ol id="top5">
+        <li ng-repeat='tag_info in top_list'>
+          {{tag_info.ms / 1000 | secs_to_hms | limitTo : 5}} {{tag_info.tag}}
+          ({{tag_info.ms / total_ms * 100 | number:0}}%)
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class='footer'>
+    <p>All data is saved automatically.</p>
+    <p>Send feedback to:
+      <a href='mailto:JesseAldridge@gmail.com'>
+        JesseAldridge@gmail.com</a>
+    </p>
+  </div>
+
 </div>
-
-<div style='margin-left:10px; position:absolute; bottom:0px; z-index:-10'>
-  <p>All data is saved automatically.</p>
-  <p>Send feedback to:
-    <a href='mailto:JesseAldridge@gmail.com'>
-      JesseAldridge@gmail.com</a>
-  </p>
-</div>
-
-<div class='pause' ng-if="paused">PAUSED</div>
-
-
-
 </html>
 
 

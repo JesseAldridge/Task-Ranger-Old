@@ -59,12 +59,12 @@ OuterController.prototype.after_construction = function() {
 
   this.scope.new_interval = function() {
     var scope = control.scope
-    var curr_day_ms = scope.date_to_daily_ms(scope.get_daily_date())
+    var curr_day_ms = control.date_to_daily_ms(scope.get_daily_date())
     var interval = {
       create_ms:new Date().getTime(), ms:0, text:'new interval #foo'}
     var day = scope.get_day(curr_day_ms)
     day.intervals.push(interval)
-    control.save_interval(interval)
+    scope.save_interval(interval)
     scope.set_curr_interval(interval)
     setTimeout(function() {
       $('.curr_interval .interval-text').focus()
@@ -82,7 +82,7 @@ OuterController.prototype.after_construction = function() {
   // Delete the passed interval from the day which contains it.
 
   this.scope.delete_interval = function(interval) {
-    var daily_ms = scope.date_to_daily_ms(new Date(interval.create_ms))
+    var daily_ms = control.date_to_daily_ms(new Date(interval.create_ms))
     var day = scope.get_day(daily_ms)
     var intervals = day.intervals
     var index = intervals.indexOf(interval)
@@ -91,14 +91,15 @@ OuterController.prototype.after_construction = function() {
       control.scope.curr_interval = null
     control.save_interval_list(day)
     control.notification && control.notification.close()
+    this.after_delete()
   }
 
   this.after_bind_intervals()
 }
 
-OuterController.prototype.save_interval = function(interval) {}
 OuterController.prototype.save_interval_list = function(day) {}
 
+OuterController.prototype.after_delete = function() {}
 OuterController.prototype.after_bind_intervals = function() {}
 
 
