@@ -8,18 +8,29 @@ OuterController.prototype.after_bind_intervals = function() {
   this.ping_timer = setTimeout(ping, 1000 * this.ping_secs)
   this.init_notifications()
 
+  var scope = this.scope
+
   this.scope.toggle_pause = function() {
-    var scope = control.scope
     scope.paused ? scope.unpause() : scope.pause()
   }
 
   this.scope.pause = function() {
-    control.scope.paused = true
+    scope.paused = true
   }
 
   this.scope.unpause = function() {
     control.last_inc_time = Date.now()
-    control.scope.paused = false
+    scope.paused = false
+  }
+
+  this.scope.prev_day = function() {
+    var yesterday = moment(scope.date_info.curr_daily_date).subtract(1, 'days').toDate()
+    scope.date_info.curr_daily_date = new Date(control.date_to_daily_ms(yesterday))
+  }
+
+  this.scope.next_day = function() {
+    var next_day = moment(scope.date_info.curr_daily_date).add(1, 'days').toDate()
+    scope.date_info.curr_daily_date = new Date(control.date_to_daily_ms(next_day))
   }
 
   this.after_setup_ping()

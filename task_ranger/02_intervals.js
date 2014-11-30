@@ -27,7 +27,6 @@ module.directive('timeInput', ['$filter', function($filter) {
 .directive('autoselect', ['$timeout', function($timeout) {
   return {
     link: function (scope, element) {
-      console.log('autoselecting')
       var select_timeout = scope.control.select_timeout
       $timeout.cancel(scope.control.select_timeout)
       scope.control.select_timeout = $timeout(function() {
