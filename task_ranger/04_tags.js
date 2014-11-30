@@ -1,6 +1,34 @@
 
 OuterController.prototype.after_setup_ping = function() {
+  var control = this,
+      scope = control.scope
+
   this.regen_every_ping = true
+
+  scope.interval_tag_color = function(interval) {
+    var color = control.tag_colors[scope.extract_tag_from_interval(interval)]
+    return color || null
+  }
+
+  scope.extract_tag_from_interval = function(interval) {
+
+    // Regex match the #tag in the interval.  Stem to normalize similar.
+
+    if(!this.stem_to_tags)
+      this.stem_to_tags = {}
+    var stem_to_tags = this.stem_to_tags
+    var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(interval.text)
+    if(match) {
+      tag = match[0].trim().slice(1)
+      var stem_tag = stemmer(tag)
+      if(!(stem_tag in stem_to_tags))
+        stem_to_tags[stem_tag] = []
+      stem_to_tags[stem_tag].push(tag)
+      return stem_to_tags[stem_tag][0]
+    }
+    return null
+  }
+
   this.after_setup_tags()
 }
 
@@ -33,7 +61,8 @@ OuterController.prototype.regen_top5 = function() {
 
   // Iterate through every interval for every day.
 
-  var tags = {}, stem_to_tags = {}, time_per_day = scope.time_per_day = {}
+  var tags = {}, time_per_day = scope.time_per_day = {}
+  var stem_to_tags = this.stem_to_tags = {}
 
   var days = scope.days
   for(var day_ms in days) {
@@ -46,15 +75,7 @@ OuterController.prototype.regen_top5 = function() {
 
       // Regex out the tag from the current interval if it has one.
 
-      var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(interval.text)
-      if(match) {
-        tag = match[0].trim().slice(1)
-        var stem_tag = stemmer(tag)
-        if(!(stem_tag in stem_to_tags))
-          stem_to_tags[stem_tag] = []
-        stem_to_tags[stem_tag].push(tag)
-        tag = stem_to_tags[stem_tag][0]
-      }
+      var tag = scope.extract_tag_from_interval(interval)
       if(!(day_ms in time_per_day))
         time_per_day[day_ms] = 0
       time_per_day[day_ms] += interval.ms || 0
@@ -106,14 +127,22 @@ OuterController.prototype.regen_top5 = function() {
       to_delete.push(tag)
     }
   }
-  for(var i = 0; i < to_delete.length; i++)
+
+  // Color tags.
+
+  this.tag_colors = {}
+  var hue = 0
+  for(var tag in tags)
+    this.tag_colors[tag] = color_seq.next_color(hue++)
+
+  for(var i = 0; i < to_delete.length; i++) {
     delete tags[to_delete[i]]
+  }
   delete tags['null']
   this.scope.top_list = top_list
   this.after_regenTop5(tags)
+  this.scope.$apply()
 }
-
-
 
 
 

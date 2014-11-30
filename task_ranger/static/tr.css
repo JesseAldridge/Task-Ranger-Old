@@ -34,6 +34,8 @@ body { height:100% }
   -ms-user-select: none;
 }
 
+.top-row { margin:10px }
+
 /* main content */
 
 .reports {
@@ -77,11 +79,17 @@ body { height:100% }
   background: #ffa
 }
 
+.dot-col {
+  width:20px
+}
 
-
-.cum_time {
-  font-size: 80%;
-  margin-top: 4px;
+.dot {
+  width: 10px;
+  height: 10px;
+  background: green;
+  border-radius: 50%;
+  position: absolute;
+  top: 40%;
 }
 
 .task_time {
@@ -134,11 +142,19 @@ body { height:100% }
 
 div > .activity-table {
   margin-left: 10px;
+  margin-bottom: 0px;
   border: solid 1px silver;
   width: 450px;
 }
 
-.top-row { margin:10px }
+.new-interval-wrapper {
+  border: solid 1px silver;
+  border-top: none;
+  margin-left: 10px;
+  padding: 8px;
+}
+
+  </div>
 
 .footer { margin-left:10px; margin-top:40px }
 
