@@ -1,55 +1,94 @@
 <!doctype html>
-<meta http-equiv="content-type" content="text-html; charset=utf-8">
+<html ng-app="myApp">
 
-<!-- Libraries by other people. -->
-
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+<script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
-<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
-<script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
-<script src='https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.2/ui-bootstrap-tpls.js'></script>
-<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-<script src='https://cdn.rawgit.com/ilikenwf/nestedSortable/2.0alpha/jquery.mjs.nestedSortable.js'></script>
-<script src="https://cdn.firebase.com/js/simple-login/1.6.1/firebase-simple-login.js"></script>
 <script src="./static/PorterStemmer2.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.0.5/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/simple-login/1.6.1/firebase-simple-login.js"></script>
 
+<!-- My css -->
 
-<!-- My external javascript and css. -->
+<link rel="stylesheet" href='static/tr.css'></link>
 
-<script src='static/std.js'></script>
-
-<link rel="stylesheet" href="static/tree.css">
-<link rel="stylesheet" href="static/tr.css">
-
-<script src='00_base_tree.js'></script>
-<script src='01_add_nodes.js'></script>
+<script src='01_days.js'></script>
 <script src='02_intervals.js'></script>
-<script src='03_drag_and_drop.js'></script>
-<script src='04_delete.js'></script>
-<script src='05_cum_time.js'></script>
-<script src='06_ping.js'></script>
-<script src='07_tags.js'></script>
-<script src='08_firebase.js'></script>
-<script src='09_login.js'></script>
+<script src='03_ping.js'></script>
+<script src='04_tags.js'></script>
+<script src='05_firebase.js'></script>
 
-<button class="login-layer login" id="login-github" style="display: none">
-  Log in with GitHub
-</button>
-<button class="login-layer login" id="login-twitter" style="display: none">
-  Log in with Twitter
-</button>
-<button class="logout-layer login" style="display: none; float:right" id="logout">
-  Log out
-</button>
 
-<div ng-app="treeApp" class='main_content'>
+<div ng-controller='MyController'>
+  <div ng-include="'03_top_div.html'"></div>
 
-  <!-- Outer tree followed by interval section: date picker, interval list, and interval info. -->
+  <div class="datepicker-row" ng-include="'00_datepicker.html'"></div>
 
-  <div ng-controller="TreeController" ng-include="'02_with_intervals_template.html'">
+  <div style='display:inline-block'>
+    <table class='table activity-table'>
+      <tr>
+        <th>Activity</th>
+        <th class='time-col'>Time</th>
+        <th class='delete-col'></th>
+      </tr>
+      <tr ng-repeat="interval in get_curr_intervals()"
+          ng-class="{'curr_interval': interval == curr_interval}"
+          ng-mouseenter='should_show_delete = true'
+          ng-mouseleave='should_show_delete = false'>
+        <td>
+          <input class='interval-text' ng-model='interval.text'
+                 ng-change="save_interval(interval)"
+                 ng-focus="set_curr_interval(interval)"
+                 ng-keydown="interval_keydown(interval, $event)">
+        </td>
+        <td>
+          <input time-input ng-model='interval.ms' class='interval-time'
+                 ng-change="save_interval(interval)" ng-focus='pause()'
+                 ng-blur='unpause()'>
+        </td>
+        <td>
+          <button class='btn btn-default delete-btn' type='button'
+                  ng-click='delete_interval(interval)'
+                  ng-if='should_show_delete'>
+            <i class="glyphicon glyphicon-remove"></i>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td><button class='btn btn-default' ng-click='new_interval()'>New Interval</button></td> <td></td> <td></td>
+      </tr>
+    </table>
   </div>
+
+  <div class='pause' ng-if="paused">PAUSED</div>
+
+  <div class='reports'>
+    <div class='report'>
+      <span class='report_label'>Time logged today:</span>
+      {{tree_stats.time_per_day[date_info.curr_daily_date.getTime()] / 1000 | secs_to_hms}}
+    </div>
+    <div class='report'>
+      <div class='report_label'>Overall time breakdown:</div>
+      <ol id="top5">
+        <li ng-repeat='tag_info in top_list'>
+          {{tag_info.ms / 1000 | secs_to_hms | limitTo : 5}} {{tag_info.tag}}
+          ({{tag_info.ms / total_ms * 100 | number:0}}%)
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class='footer'>
+    <p>All data is saved automatically.</p>
+    <p>Send feedback to:
+      <a href='mailto:JesseAldridge@gmail.com'>
+        JesseAldridge@gmail.com</a>
+    </p>
+  </div>
+
 </div>
+</html>
+
+
+
