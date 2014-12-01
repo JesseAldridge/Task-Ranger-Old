@@ -6,7 +6,15 @@ OuterController.prototype.after_setup_ping = function() {
   this.regen_every_ping = true
 
   scope.interval_tag_color = function(interval) {
-    var color = control.tag_colors[scope.extract_tag_from_interval(interval)]
+    var tag = scope.extract_tag_from_interval(interval)
+    if(!tag) {
+      var day = scope.get_day(interval.create_ms)
+      var index = day.intervals.indexOf(interval)
+      if(index > 0)
+        return scope.interval_tag_color(day.intervals[index - 1])
+      return null
+    }
+    var color = control.tag_colors[tag]
     return color || null
   }
 
@@ -66,8 +74,7 @@ OuterController.prototype.regen_top5 = function() {
 
   var days = scope.days
   for(var day_ms in days) {
-
-    var tag = null
+    var tag = null, prev_tag = null
 
     var intervals = days[day_ms].intervals
     for(var i = 0; i < intervals.length; i++) {
@@ -75,7 +82,10 @@ OuterController.prototype.regen_top5 = function() {
 
       // Regex out the tag from the current interval if it has one.
 
-      var tag = scope.extract_tag_from_interval(interval)
+      prev_tag = tag
+      tag = scope.extract_tag_from_interval(interval)
+      if(!tag)
+        tag = prev_tag
       if(!(day_ms in time_per_day))
         time_per_day[day_ms] = 0
       time_per_day[day_ms] += interval.ms || 0
@@ -128,16 +138,15 @@ OuterController.prototype.regen_top5 = function() {
     }
   }
 
-  // Color tags.
+  // Assign a unique color to each tag.
 
   this.tag_colors = {}
   var hue = 0
   for(var tag in tags)
     this.tag_colors[tag] = color_seq.next_color(hue++)
 
-  for(var i = 0; i < to_delete.length; i++) {
+  for(var i = 0; i < to_delete.length; i++)
     delete tags[to_delete[i]]
-  }
   delete tags['null']
   this.scope.top_list = top_list
   this.after_regenTop5(tags)

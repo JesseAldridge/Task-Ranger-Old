@@ -23,11 +23,13 @@ var module = angular.module('myApp', ['ui.bootstrap'])
   }
 
   $scope.get_curr_intervals = function() {
-    var daily_ms = $scope.get_daily_date().getTime()
-    return $scope.get_day(daily_ms).intervals
+    return $scope.get_day($scope.get_daily_date()).intervals
   }
 
-  $scope.get_day = function(daily_ms) {
+  $scope.get_day = function(date) {
+    if(!(date instanceof Date))
+      date = new Date(date)
+    var daily_ms = control.date_to_daily_ms(date)
     if(!$scope.days[daily_ms])
       $scope.days[daily_ms] = {intervals:[]}
     return $scope.days[daily_ms]

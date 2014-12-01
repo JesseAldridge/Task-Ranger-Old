@@ -29,7 +29,6 @@
     <table class='table activity-table'>
       <tr>
         <th class='dot-col'></th>
-        <th class='dot-col'></th>
         <th>Activity</th>
         <th class='time-col'>Time</th>
         <th class='delete-col'></th>
@@ -38,9 +37,6 @@
           ng-class="{'curr_interval': interval == curr_interval}"
           ng-mouseenter='should_show_delete = true'
           ng-mouseleave='should_show_delete = false'>
-        <td class='dot-col' style='position:relative'>
-          <div class='project-dot dot'></div>
-        </td>
         <td class='dot-col' style='position:relative'>
           <div class='task-dot dot'
                ng-style="{'background-color': 'hsl(' + interval_tag_color(interval) + ', 100%, 65%)'}"
