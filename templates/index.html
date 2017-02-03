@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<link rel="shorcut icon" href="/static/favicon.png"/>
+
+<!-- css -->
+<html>
+<head>
+<style>
+/* Main content */
+
+* {font-family:Tahoma}
+
+.content {
+  max-width:1100px; min-width:1100px;
+  margin-left:auto; margin-right:auto; margin-top:40px;
+}
+
+.white_box {
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
+  background: -moz-linear-gradient(top,  #fff,  #eee);
+  filter: progid:DXImageTransform.Microsoft.gradient(
+    startColorstr='#ffffff', endColorstr='#eeeeee');
+    border-radius:10px; box-shadow:-2px 2px 2px #888;
+    padding:10px
+  }
+
+  .info {
+    width: 380px;
+    display: inline-block;
+    vertical-align: top;
+
+    margin-left:80px;
+    padding-bottom:30px;
+  }
+
+  .text_descrip {
+    width:700px; font-size:20px; margin-left:auto; margin-right:auto;
+    margin-top:40px; margin-bottom:40px; padding-left:20px; padding-right:20px
+  }
+
+  .screens { margin-left:auto; margin-right:auto; margin-bottom:20px;}
+  .screens img { box-shadow:0px 0px 8px 4px #ddd; border-radius:5px; margin-top:20px}
+  .screens p { font-size:80% }
+
+  /* Title bar (header) */
+
+  .header {
+    text-align:center; font-size:250%; font-weight:700; color:#fff;
+    background-color:#58C; padding-bottom:10px; padding-top:5px;
+    text-shadow: #249 0px 1px; border-bottom:solid 2px; border-color:#000;
+  }
+
+  /* Go button */
+
+  .button-container {
+    text-align:center;
+    margin-top:30px; margin-bottom:30px; position:relative
+  }
+
+  .go_button {
+    font-size:200%; color:#fff; text-decoration:none;
+    padding:10px; border-radius:5px;
+    background: -webkit-gradient(linear, left top, left bottom,
+    from(#7A5), to(#6A4));
+    background: -moz-linear-gradient(top,  #7A5,  #6A4);
+    filter: progid:DXImageTransform.Microsoft.gradient(
+    startColorstr='#7AA55', endColorstr='#66AA444');
+    border:solid 1px; border-color:#336622;
+  }
+  .go_button:hover{
+    background: -webkit-gradient(linear, left top, left bottom,
+    from(#8B6), to(#7B5));
+    background: -moz-linear-gradient(top,  #8B6,  #7B5);
+    filter: progid:DXImageTransform.Microsoft.gradient(
+    startColorstr='#88bb66', endColorstr='#77bb55');
+  }
+</style>
+
+  <!-- start Mixpanel --><script type="text/javascript">var mpq=[];mpq.push(["init","d920d058c73bd25ffbed514faf8584db"]);(function(){var b,a,e,d,c;b=document.createElement("script");b.type="text/javascript";b.async=true;b.src=(document.location.protocol==="https:"?"https:":"http:")+"//api.mixpanel.com/site_media/js/api/mixpanel.js";a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(b,a);e=function(f){return function(){mpq.push([f].concat(Array.prototype.slice.call(arguments,0)))}};d=["init","track","track_links","track_forms","register","register_once","identify","name_tag","set_config"];for(c=0;c<d.length;c++){mpq[d[c]]=e(d[c])}})();
+</script><!-- end Mixpanel -->
+</head>
+
+<!-- Main structure. -->
+<body style='margin:0px; padding:0px; background-image:url("static/images/diag.png")'>
+<div class='header'>Task Ranger</div>
+<div style='margin:0px; padding:0px; width:100%;' class='main_grad'>
+  <div class='content'>
+
+    <!-- Text description -->
+    <div class='text_descrip white_box' style='width:800px'>
+      <div class='screens' style='width:762px'>
+        <div>
+          <img src='/static/images/the_app.png'>
+        </div>
+        <div style='clear:both'></div>
+      </div>
+
+      <div class='button-container'>
+        <a href="#" onclick="chromeless()" class='go_button'>Click here to start</a>
+      </div>
+
+      <ul style='font-size:120%'>
+        <li>Jot down notes as you work</li>
+        <li>Automatically track your time</li>
+        <li>Find bottlenecks in your workflow</li>
+        <li>Become more productive</li>
+        <li>Do the impossible</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function chromeless() {
+    var win = window.open(
+      'main_app.html', 'Task Ranger', 'scrollbars=1,width=1000,height=450', true)
+    win.moveTo(10,350)
+    win.focus()
+    return win
+}
+
+</script>
+
+<!-- <iframe width="420" height="315" src="https://www.youtube.com/embed/rCPvHe7EXM8" frameborder="0" allowfullscreen></iframe> -->
+<!-- <p><a href="/example.html">Example page</a></p> -->

@@ -1,0 +1,14 @@
+{
+  "firebase": "taskranger",
+  "public": ".",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**",
+    "junk",
+    "layers",
+    "stuff",
+    "static/bower_components",
+    "static/smoothness"
+  ]
+}
