@@ -180,7 +180,3 @@ OuterController.prototype.regen_top5 = function() {
   this.after_regenTop5(tags)
   this.scope.$apply()
 }
-
-
-
-

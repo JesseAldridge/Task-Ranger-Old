@@ -1,0 +1,33 @@
+
+scope.days:
+  {
+    "2014 10 30": {
+      "intervals": [
+        {
+          "create_ms": 1417371391115,
+          "ms": 316607,
+          "text": "#debug test Task Ranger"
+        }
+      ]
+    },
+    ...
+  }
+
+
+templates/main_app.html
+  <div ng-controller='MyController' class='main_content'>
+    01_days.js
+      .controller('MyController', function ($scope) {
+        control = new OuterController($scope)
+        control.after_construction()
+          02_intervals.js
+            // define interval callbacks
+            this.after_bind_intervals
+              03_ping.js
+                this.ping_timer = setTimeout(ping, 1000 * this.ping_secs)
+                  this.after_ping
+                    04_tags.js
+                      regen_top5
+        control.launch()
+          05_firebase.js
+            var ref = new Firebase('https://taskranger.firebaseio.com/')

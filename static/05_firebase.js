@@ -35,15 +35,16 @@ OuterController.prototype.download_data = function() {
 
   // Download data from firebase.
 
-  this.root_ref = new Firebase(this.firebase_url() + this.get_user_root())
-  var control = this
+  console.log('downloading data:', this.firebase_url() + this.get_user_root());
+  this.root_ref = new Firebase(this.firebase_url() + this.get_user_root());
+  var control = this;
   this.root_ref.once('value', function(snap) {
-    var scope = control.scope
-    console.log('downloading data:', snap.val())
-    scope.days = snap.val() ? (snap.val().days || {}) : {}
-    control.after_have_data()
-    scope.$apply()
-  })
+    var scope = control.scope;
+    console.log('downloaded data:', snap.val());
+    scope.days = snap.val() ? (snap.val().days || {}) : {};
+    control.after_have_data();
+    scope.$apply();
+  }, function(err) { console.log('error downloading data:', err); });
 }
 
 OuterController.prototype.save_path = function(path, val, debounce) {

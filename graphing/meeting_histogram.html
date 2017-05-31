@@ -1,0 +1,267 @@
+<!doctype html>
+<html ng-app="myApp">
+
+<script src="https://cdn.firebase.com/js/client/2.0.5/firebase.js"></script>
+<script src="https://cdn.firebase.com/js/simple-login/1.6.1/firebase-simple-login.js"></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+<script src="static/PorterStemmer2.js"></script>
+<script src='static/color_sequence.js'></script>
+
+<style type="text/css">
+  .intervals { border-bottom: solid 1px }
+  .ms-bar { background-color: red; height: 10px;}
+</style>
+
+<div class='login-layer' style='margin-left: 20px; display:none'>
+  <button class="login btn btn-default" id="login-github">
+    Log in with GitHub
+  </button>
+  <button class="login btn btn-default" id="login-twitter" style='margin-left:10px'>
+    Log in with Twitter
+  </button>
+</div>
+
+
+<div ng-controller='MyController' class='main_content'>
+  <div class='main-content'>
+    <table>
+      <colgroup>
+        <col width="10%">
+        <col width="20%">
+        <col width="0*">
+      </colgroup>
+      <tr><th>Date</th><th>Time</th><th>Meetings</th>
+      <tr ng-repeat="obj in tag_to_daily_obj['meet']">
+        <td>{{format_dt_str(obj.dt_str)}}</td>
+        <td>
+          <div>{{obj.ms | ms_to_hm}}</div>
+          <div class='ms-bar' ng-style="get_bar_style(obj)"></div>
+        </td>
+        <td class='intervals'>
+          <div ng-repeat="interval in obj.intervals">
+            {{interval.text}} ({{interval.ms | ms_to_hm}})
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<script>
+
+function connect_to_firebase(firebase_url, scope, after_have_data) {
+  var ref = new Firebase(firebase_url)
+  var auth = new FirebaseSimpleLogin(ref, function(err,user) {
+    if(err)
+      alert(err)
+    else if(user) {
+      $('.login-layer').hide()
+      $('.main_content').show()
+      var user_data = user.thirdPartyUserData
+      user_data.last_login = new Date().toString()
+      var user_url = firebase_url + 'user_trees/' + user.uid + '/'
+      download_data(user_url, scope, after_have_data)
+    }
+    else {
+      $('.login-layer').show()
+    }
+  })
+
+  $('#login-github').click(function() {
+    auth.login('github', { rememberMe: true })
+  })
+  $('#login-twitter').click(function() {
+    auth.login('twitter', { rememberMe: true })
+  })
+}
+
+function download_data(user_url, scope, after_have_data) {
+  // Download data from firebase.
+
+  console.log('downloading data:', user_url);
+  var root_ref = new Firebase(user_url);
+  root_ref.once('value', function(snap) {
+    console.log('downloaded data:', snap.val());
+    scope.days = snap.val() ? (snap.val().days || {}) : {};
+    after_have_data(scope);
+    scope.$apply();
+  }, function(err) { console.log('error downloading data:', err); });
+}
+
+function generate_histogram(scope) {
+  // Iterate through every interval for every day.
+
+  /*
+  scope.days:
+    {
+      "2014 10 30": {
+        "intervals": [
+          {
+            "create_ms": 1417371391115,
+            "ms": 316607,
+            "text": "#debug test Task Ranger"
+          }
+        ]
+      },
+      ...
+    }
+
+  Output:
+    ['October 30, 2014', {'meet': 0}]
+  */
+
+  var tag_to_days = {}
+  var stem_to_tags = this.stem_to_tags = {}
+
+  var days = scope.days
+
+  var day_keys = Object.keys(days)
+  day_keys.forEach(function(day_key_str) {
+    var tag = null;
+
+    var intervals = days[day_key_str].intervals || [];
+    for(var i = 0; i < intervals.length; i++) {
+      var interval = intervals[i];
+
+      // Regex out the tag from the current interval if it has one.
+
+      if(interval.text[0] == '*')
+        continue;
+
+      tag = extract_tag_from_interval(intervals, i)
+      if(!tag)
+        continue
+      if(!(tag in tag_to_days))
+        tag_to_days[tag] = {}
+      if(!(day_key_str in tag_to_days[tag]))
+        tag_to_days[tag][day_key_str] = 0
+      tag_to_days[tag][day_key_str] += interval.ms
+    }
+  });
+
+  // Calculate all time logged ever.
+
+  var grand_total_ms = 0
+  for(var tag in tag_to_days)
+    for(var date_key in tag_to_days[tag])
+      grand_total_ms += tag_to_days[tag][date_key]
+
+  // Stick < 5% tags under misc tag.
+
+  tag_to_days['misc'] = {}
+  to_delete = []
+  for(var tag in tag_to_days) {
+    var day_to_ms = tag_to_days[tag]
+    var day_total_ms = 0
+    for(var date_key in day_to_ms)
+      day_total_ms += day_to_ms[date_key]
+    if(day_total_ms < grand_total_ms * .04) {
+      for(var date_key in day_to_ms) {
+        if(!tag_to_days['misc'][date_key])
+          tag_to_days['misc'][date_key] = 0
+        tag_to_days['misc'][date_key] += day_to_ms[date_key]
+      }
+      to_delete.push(tag)
+    }
+  }
+
+  // Assign a unique color to each tag.
+
+  scope.tag_colors = {}
+  var hue = 0
+  for(var tag in tag_to_days)
+    scope.tag_colors[tag] = color_seq.next_color(hue++)
+
+  for(var i = 0; i < to_delete.length; i++)
+    delete tag_to_days[to_delete[i]]
+  delete tag_to_days['null']
+
+  // Build array consumable by angular
+
+  var tag_to_daily_obj = {};
+  for(var tag in tag_to_days) {
+    var dt_strs = Object.keys(tag_to_days[tag]);
+    var daily_obj = [];
+    for(var i = 0; i < dt_strs.length; i++) {
+      var matching_intervals = [];
+      var daily_intervals = days[dt_strs[i]].intervals
+      daily_intervals.forEach(function(interval, index) {
+        if(extract_tag_from_interval(daily_intervals, index) == tag)
+          matching_intervals.push(interval)
+      })
+
+      var ms = (tag_to_days[tag][dt_strs[i]] || 0);
+      daily_obj.push({dt_str: dt_strs[i], ms: ms, intervals: matching_intervals});
+    }
+    daily_obj.sort(function(a, b) {
+      return date_str_to_date_obj(b.dt_str).getTime() - date_str_to_date_obj(a.dt_str).getTime()
+    });
+    tag_to_daily_obj[tag] = daily_obj;
+  }
+  scope.tag_to_daily_obj = tag_to_daily_obj;
+}
+
+function date_str_to_date_obj(date_str) {
+  var split = date_str.split(' ')
+  return new Date(parseInt(split[0]), parseInt(split[1]), parseInt(split[2]))
+}
+
+extract_tag_from_interval = (function() {
+  var tag_to_stem = {};
+
+  return function (intervals, index) {
+    // Regex match the #tag in the interval.  Stem to normalize similar.
+
+    var interval = intervals[index]
+
+    if(interval.text[0] == '*')
+      return null
+
+    var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(interval.text)
+    if(match) {
+      var tag = match[0].trim().slice(1)
+      if(tag in tag_to_stem)
+        return tag_to_stem[tag]
+      var stem = stemmer(tag)
+      tag_to_stem[tag] = stem
+      return stem
+    }
+    else if(index > 0)
+      return extract_tag_from_interval(intervals, index - 1)
+    return null
+  }
+})();
+
+
+var module = angular.module('myApp', [])
+.controller('MyController', function ($scope) {
+  $scope.format_dt_str = function(dt_str) {
+    return moment(date_str_to_date_obj(dt_str)).format('MMMM Do YYYY');
+  }
+
+  $scope.get_bar_style = function(obj) {
+    width_percent = ((obj.ms / (12 * 60 * 60 * 1000)) * 100).toFixed(0)
+    return {width: width_percent + '%'}
+  }
+
+  connect_to_firebase('https://taskranger.firebaseio.com/', $scope, generate_histogram);
+})
+.filter('ms_to_hm', function() {
+  return function ms_to_hm(ms) {
+    var total_minutes = (ms / 1000 / 60).toFixed(0);
+    var hours = Math.floor(total_minutes / 60);
+    var rem_minutes = total_minutes % 60;
+
+    function pad(n) {
+      var s = '' + n;
+      return s.length == 2 ? s : '0' + s;
+    }
+
+    return '' + pad(hours) + ':' + pad(rem_minutes);
+  }
+})
+</script>
+</html>

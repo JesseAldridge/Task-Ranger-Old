@@ -1,0 +1,4 @@
+meeting_histogram.html
+  <tr ng-repeat="obj in tag_to_daily_obj['meet']">
+  generate_histogram
+    tag_to_daily_obj[tag] = daily_obj;
