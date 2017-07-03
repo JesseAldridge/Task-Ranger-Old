@@ -26,6 +26,9 @@
 
 <div ng-controller='MyController' class='main_content'>
   <div class='main-content'>
+    <select class="tag-dropdown form-control" ng-model="selected_daily_obj"
+          ng-options="tag for (tag, val) in tag_to_daily_obj">
+    </select>
     <table>
       <colgroup>
         <col width="10%">
@@ -33,7 +36,7 @@
         <col width="0*">
       </colgroup>
       <tr><th>Date</th><th>Time</th><th>Meetings</th>
-      <tr ng-repeat="obj in tag_to_daily_obj['meet']">
+      <tr ng-repeat="obj in selected_daily_obj">
         <td>{{format_dt_str(obj.dt_str)}}</td>
         <td>
           <div>{{obj.ms | ms_to_hm}}</div>
@@ -41,6 +44,7 @@
         </td>
         <td class='intervals'>
           <div ng-repeat="interval in obj.intervals">
+            <span style='color: #aaa' ng-bind='interval.create_ms | ms_to_hm12'></span>
             {{interval.text}} ({{interval.ms | ms_to_hm}})
           </div>
         </td>
@@ -201,7 +205,9 @@ function generate_histogram(scope) {
     });
     tag_to_daily_obj[tag] = daily_obj;
   }
+
   scope.tag_to_daily_obj = tag_to_daily_obj;
+  scope.selected_daily_obj = scope.tag_to_daily_obj[Object.keys(scope.tag_to_daily_obj)[0]];
 }
 
 function date_str_to_date_obj(date_str) {
@@ -249,8 +255,13 @@ var module = angular.module('myApp', [])
 
   connect_to_firebase('https://taskranger.firebaseio.com/', $scope, generate_histogram);
 })
+.filter('ms_to_hm12', function() {
+  return function(ms) {
+    return moment(ms).format('hh:mm a');
+  }
+})
 .filter('ms_to_hm', function() {
-  return function ms_to_hm(ms) {
+  return function(ms) {
     var total_minutes = (ms / 1000 / 60).toFixed(0);
     var hours = Math.floor(total_minutes / 60);
     var rem_minutes = total_minutes % 60;

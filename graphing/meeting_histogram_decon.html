@@ -1,0 +1,201 @@
+<!doctype html>
+<html ng-app="myApp">
+
+<link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css'>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js"></script>
+
+<div ng-controller='MyController' class='main_content'>
+  <div class='main-content'>
+    <select class="tag-dropdown form-control" ng-model="selected_daily_obj"
+          ng-options="tag for (tag, val) in tag_to_daily_obj">
+    </select>
+  </div>
+</div>
+
+
+<script>
+
+function generate_histogram(scope) {
+  // Iterate through every interval for every day.
+
+  var tag_to_days = {}
+  var stem_to_tags = this.stem_to_tags = {}
+
+  var days = scope.days
+
+  var day_keys = Object.keys(days)
+  day_keys.forEach(function(day_key_str) {
+    var tag = null;
+
+    var intervals = days[day_key_str].intervals || [];
+    for(var i = 0; i < intervals.length; i++) {
+      var interval = intervals[i];
+
+      // Regex out the tag from the current interval if it has one.
+
+      if(interval.text[0] == '*')
+        continue;
+
+      tag = extract_tag_from_interval(intervals, i)
+      if(!tag)
+        continue
+      if(!(tag in tag_to_days))
+        tag_to_days[tag] = {}
+      if(!(day_key_str in tag_to_days[tag]))
+        tag_to_days[tag][day_key_str] = 0
+      tag_to_days[tag][day_key_str] += interval.ms
+    }
+  });
+
+  // Calculate all time logged ever.
+
+  var grand_total_ms = 0
+  for(var tag in tag_to_days)
+    for(var date_key in tag_to_days[tag])
+      grand_total_ms += tag_to_days[tag][date_key]
+
+  // Stick < 5% tags under misc tag.
+
+  tag_to_days['misc'] = {}
+  to_delete = []
+  for(var tag in tag_to_days) {
+    var day_to_ms = tag_to_days[tag]
+    var day_total_ms = 0
+    for(var date_key in day_to_ms)
+      day_total_ms += day_to_ms[date_key]
+    if(day_total_ms < grand_total_ms * .04) {
+      for(var date_key in day_to_ms) {
+        if(!tag_to_days['misc'][date_key])
+          tag_to_days['misc'][date_key] = 0
+        tag_to_days['misc'][date_key] += day_to_ms[date_key]
+      }
+      to_delete.push(tag)
+    }
+  }
+
+  for(var i = 0; i < to_delete.length; i++)
+    delete tag_to_days[to_delete[i]]
+  delete tag_to_days['null']
+
+  // Build array consumable by angular
+
+  var tag_to_daily_obj = {};
+  for(var tag in tag_to_days) {
+    var dt_strs = Object.keys(tag_to_days[tag]);
+    var daily_obj = [];
+    for(var i = 0; i < dt_strs.length; i++) {
+      var matching_intervals = [];
+      var daily_intervals = days[dt_strs[i]].intervals
+      daily_intervals.forEach(function(interval, index) {
+        if(extract_tag_from_interval(daily_intervals, index) == tag)
+          matching_intervals.push(interval)
+      })
+
+      var ms = (tag_to_days[tag][dt_strs[i]] || 0);
+      daily_obj.push({dt_str: dt_strs[i], ms: ms, intervals: matching_intervals});
+    }
+    daily_obj.sort(function(a, b) {
+      return date_str_to_date_obj(b.dt_str).getTime() - date_str_to_date_obj(a.dt_str).getTime()
+    });
+    tag_to_daily_obj[tag] = daily_obj;
+  }
+  console.log('foo');
+  scope.tag_to_daily_obj = tag_to_daily_obj;
+  scope.selected_daily_obj = scope.tag_to_daily_obj[Object.keys(scope.tag_to_daily_obj)[0]];
+  console.log('selected_daily_obj:', scope.selected_daily_obj);
+  console.log('tag_to_daily_obj:', scope.tag_to_daily_obj);
+}
+
+function date_str_to_date_obj(date_str) {
+  var split = date_str.split(' ')
+  return new Date(parseInt(split[0]), parseInt(split[1]), parseInt(split[2]))
+}
+
+extract_tag_from_interval = (function() {
+  var tag_to_stem = {};
+
+  return function (intervals, index) {
+    // Regex match the #tag in the interval.  Stem to normalize similar.
+
+    var interval = intervals[index]
+
+    if(interval.text[0] == '*')
+      return null
+
+    var match = /^#[a-zA-Z_]+| #[a-zA-Z_]+/.exec(interval.text)
+    if(match) {
+      var tag = match[0].trim().slice(1)
+      if(tag in tag_to_stem)
+        return tag_to_stem[tag]
+      // var stem = stemmer(tag)
+      var stem = tag
+      tag_to_stem[tag] = stem
+      return stem
+    }
+    else if(index > 0)
+      return extract_tag_from_interval(intervals, index - 1)
+    return null
+  }
+})();
+
+
+var module = angular.module('myApp', [])
+.controller('MyController', function ($scope) {
+  $scope.format_dt_str = function(dt_str) {
+    return moment(date_str_to_date_obj(dt_str)).format('MMMM Do YYYY');
+  }
+
+  $scope.get_bar_style = function(obj) {
+    width_percent = ((obj.ms / (12 * 60 * 60 * 1000)) * 100).toFixed(0)
+    return {width: width_percent + '%'}
+  }
+
+  $scope.days = {
+    "2014 10 30": {
+      "intervals": [
+        {
+          "create_ms": 1417371391115,
+          "ms": 316607,
+          "text": "#debug test Task Ranger"
+        },
+        {
+          "create_ms": 1417371678809,
+          "ms": 542214,
+          "text": "#plan next thing to do?"
+        },
+      ],
+    },
+    "2014 11 01": {
+      "intervals": [
+        {
+          "create_ms": 1417371391115,
+          "ms": 316607,
+          "text": "#debug test Task Ranger"
+        },
+        {
+          "create_ms": 1417371678809,
+          "ms": 542214,
+          "text": "#plan next thing to do?"
+        },
+      ],
+    },
+  };
+
+  generate_histogram($scope);
+})
+.filter('ms_to_hm', function() {
+  return function ms_to_hm(ms) {
+    var total_minutes = (ms / 1000 / 60).toFixed(0);
+    var hours = Math.floor(total_minutes / 60);
+    var rem_minutes = total_minutes % 60;
+
+    function pad(n) {
+      var s = '' + n;
+      return s.length == 2 ? s : '0' + s;
+    }
+
+    return '' + pad(hours) + ':' + pad(rem_minutes);
+  }
+})
+</script>
+</html>
