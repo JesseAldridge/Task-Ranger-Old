@@ -153,7 +153,7 @@ function generate_histogram(scope) {
     for(var date_key in tag_to_days[tag])
       grand_total_ms += tag_to_days[tag][date_key]
 
-  // Stick < 5% tags under misc tag.
+  // Stick < 1% tags under misc tag.
 
   tag_to_days['misc'] = {}
   to_delete = []
@@ -162,7 +162,7 @@ function generate_histogram(scope) {
     var day_total_ms = 0
     for(var date_key in day_to_ms)
       day_total_ms += day_to_ms[date_key]
-    if(day_total_ms < grand_total_ms * .04) {
+    if(day_total_ms < grand_total_ms * .01) {
       for(var date_key in day_to_ms) {
         if(!tag_to_days['misc'][date_key])
           tag_to_days['misc'][date_key] = 0
