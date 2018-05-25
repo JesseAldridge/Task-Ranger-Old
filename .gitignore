@@ -1,2 +1,4 @@
 .git.old
 docs.txt
+.DS_Store
+taskranger-export.json
