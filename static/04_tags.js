@@ -27,8 +27,8 @@ OuterController.prototype.after_setup_ping = function() {
       return stem_to_tags[stem_tag][0]
     }
     else {
+      // If there is no match, look for a tag in the previous interval
       var day = scope.get_day(scope.curr_day_key)
-      // day with youtrack tickets; but no intervals logged
       if(!day.intervals)
         day.intervals = [];
       if(!day.intervals.indexOf) {

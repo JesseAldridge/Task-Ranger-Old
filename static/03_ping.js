@@ -119,33 +119,9 @@ OuterController.prototype.increment_interval = function() {
     var delta = curr_time - this.last_inc_time
     if(this.scope.curr_interval) {
       this.scope.curr_interval.ms += delta
-      this.nag()
     }
   }
   this.last_inc_time = curr_time
-}
-
-// Create a notification every 10 minutes.
-
-OuterController.prototype.nag = function() {
-  var curr_interval = this.scope.curr_interval
-  if(curr_interval && curr_interval.text[0] != '*') {
-    var curr_secs = curr_interval.ms / 1000
-    var mod = curr_secs % this.nag_secs
-    if(mod < 2 && curr_secs > 2 && (new Date() - this.last_notification_time) / 1000 > 2) {
-      this.last_notification_time = new Date()
-      if (Notification.permission === "granted") {
-        this.notification && this.notification.close()
-        this.notification = new Notification(
-          "It's been " + (this.nag_secs / 60) + " minutes.", {icon:'static/clock.png'})
-        this.notification.onclick = function(x) {
-          window.focus()
-          this.close()
-        }
-      }
-      return
-    }
-  }
 }
 
 OuterController.prototype.after_delete = function() {
