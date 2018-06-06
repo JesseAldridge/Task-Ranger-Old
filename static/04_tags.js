@@ -1,26 +1,17 @@
 
 OuterController.prototype.after_setup_ping = function() {
   var control = this,
-      scope = control.scope
+      scope = control.scope;
 
-  this.regen_every_ping = true
-  this.stem_to_tags = {}
-  scope.tag_colors = {}
-
-  scope.root_project_node = get_or_create_proj_node(
-    {
-      parent_node: null,
-      indentation: 0,
-      proj_name: 'unspecified',
-      initial_ms: 0,
-    }
-  );
+  this.regen_every_ping = true;
+  this.stem_to_tags = {};
+  scope.tag_colors = {};
 
   scope.interval_tag_color = function(interval) {
     var tag = scope.extract_tag_from_interval(interval)
     var color = scope.tag_colors[tag]
     return color || null
-  }
+  };
 
   scope.extract_tag_from_interval = function(interval) {
     // Regex match the #tag in the interval.  Stem to normalize similar.
@@ -105,6 +96,15 @@ OuterController.prototype.regen_top5 = function() {
     this.logged_days = true
   }
 
+  scope.root_project_node = get_or_create_proj_node(
+    {
+      parent_node: null,
+      indentation: 0,
+      proj_name: 'unspecified',
+      initial_ms: 0,
+    }
+  );
+
   var day_keys = Object.keys(days)
   // day_keys = day_keys.slice(day_keys.length - 5, day_keys.length)
   day_keys.forEach(function(day_key) {
@@ -171,7 +171,6 @@ OuterController.prototype.regen_top5 = function() {
   }
 
   recalc_cum_time(root_project_node);
-  console.log('calct root time:', scope.root_project_node);
 
   // Calculate all time logged ever.
 
