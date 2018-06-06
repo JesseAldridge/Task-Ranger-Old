@@ -104,6 +104,16 @@
         </li>
       </ol>
     </div>
+    <div class='report'>
+      <div class='report_label'>Project breakdown:</div>
+      <ol>
+        <li ng-repeat='proj_node in root_project_node.children'>
+          <div style='display:inline-block'>
+            {{proj_node.cum_ms / 1000 | secs_to_hms }} {{proj_node.name}}
+          </div>
+        </li>
+      </ol>
+    </div>
   </div>
 
   <div class='footer'>

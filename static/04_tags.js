@@ -7,6 +7,15 @@ OuterController.prototype.after_setup_ping = function() {
   this.stem_to_tags = {}
   scope.tag_colors = {}
 
+  scope.root_project_node = get_or_create_proj_node(
+    {
+      parent_node: null,
+      indentation: 0,
+      proj_name: 'unspecified',
+      initial_ms: 0,
+    }
+  );
+
   scope.interval_tag_color = function(interval) {
     var tag = scope.extract_tag_from_interval(interval)
     var color = scope.tag_colors[tag]
@@ -99,17 +108,43 @@ OuterController.prototype.regen_top5 = function() {
   var day_keys = Object.keys(days)
   // day_keys = day_keys.slice(day_keys.length - 5, day_keys.length)
   day_keys.forEach(function(day_key) {
+    var curr_proj_node = root_project_node = scope.root_project_node;
     var tag = null, prev_tag = null;
 
     var intervals = days[day_key].intervals || [];
     for(var i = 0; i < intervals.length; i++) {
       var interval = intervals[i];
 
-      // Regex out the tag from the current interval if it has one.
-
       if(interval.text[0] == '*')
         continue;
 
+      // Build daily project hierarchy
+      var match = interval.text.match(/ (@+)(\w+)/) || interval.text.match(/^(@+)(\w+)/);
+      if(match) {
+        var parent_node = curr_proj_node,
+            new_indentation = parseInt(match[1].length);
+        while(parent_node && new_indentation <= parent_node.indentation)
+          parent_node = parent_node.parent;
+        var new_proj_node = get_or_create_proj_node({
+          parent_node: parent_node,
+          indentation: new_indentation,
+          proj_name: match[2],
+          initial_ms: interval.ms,
+        });
+        if(parent_node && !new_proj_node.parent)
+          add_child_to_parent(new_proj_node, parent_node);
+        new_proj_node.parent = parent_node;
+        curr_proj_node = new_proj_node;
+      }
+      else
+        curr_proj_node.indiv_ms += interval.ms;
+
+      function add_child_to_parent(child, parent) {
+        parent.children.push(child);
+        child.parent = parent;
+      }
+
+      // Regex out the tag from the current interval if it has one.
       prev_tag = tag
       tag = scope.extract_tag_from_interval(interval)
       if(!tag)
@@ -125,7 +160,18 @@ OuterController.prototype.regen_top5 = function() {
         tags[tag][day_key] = 0
       tags[tag][day_key] += interval.ms
     }
-  })
+  });
+
+  function recalc_cum_time(root) {
+    root.cum_ms = root.indiv_ms;
+    for(var i = 0; i < root.children.length; i++) {
+      recalc_cum_time(root.children[i]);
+      root.cum_ms += root.children[i].cum_ms;
+    }
+  }
+
+  recalc_cum_time(root_project_node);
+  console.log('calct root time:', scope.root_project_node);
 
   // Calculate all time logged ever.
 
@@ -179,4 +225,28 @@ OuterController.prototype.regen_top5 = function() {
   this.scope.top_list = top_list
   this.after_regenTop5(tags)
   this.scope.$apply()
+}
+
+function get_or_create_proj_node(params) {
+  var parent_node = params.parent_node,
+      indentation = params.indentation,
+      proj_name = params.proj_name,
+      initial_ms = params.initial_ms;
+
+  var matching_node = null;
+  if(parent_node)
+    for(var i = 0; i < parent_node.children.length; i++)
+      if(parent_node.children[i].name == proj_name) {
+        matching_node = parent_node.children[i];
+        break;
+      }
+
+  if(matching_node == null)
+    matching_node = {
+      children: [], indentation: indentation, name: proj_name,
+      indiv_ms: 0, cum_ms: 0, parent: null
+    };
+
+  matching_node.indiv_ms += initial_ms;
+  return matching_node;
 }
