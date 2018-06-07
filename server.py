@@ -28,5 +28,6 @@ def top_div():
   return flask.render_template('03_top_div.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port, debug=(port != 80))
-
+  app.jinja_env.auto_reload = True
+  app.config['TEMPLATES_AUTO_RELOAD'] = True
+  app.run(host='0.0.0.0', port=port, debug=(port != 80))

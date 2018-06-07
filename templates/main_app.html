@@ -111,6 +111,20 @@
           <div style='display:inline-block'>
             {{proj_node.cum_ms / 1000 | secs_to_hms }} {{proj_node.name}}
           </div>
+          <ol style='margin-left: 5px'>
+            <li ng-repeat='child_node in proj_node.children'>
+              <div style='display:inline-block'>
+                {{child_node.cum_ms / 1000 | secs_to_hms }} {{child_node.name}}
+              </div>
+              <ol style='margin-left: 5px'>
+                <li ng-repeat='grandchild_node in child_node.children'>
+                  <div style='display:inline-block'>
+                    {{grandchild_node.cum_ms / 1000 | secs_to_hms }} {{grandchild_node.name}}
+                  </div>
+                </li>
+              </ol>
+            </li>
+          </ol>
         </li>
       </ol>
     </div>
@@ -125,6 +139,5 @@
         JesseAldridge@gmail.com</a>
     </p>
   </div>
-
 </div>
 </html>
