@@ -119,7 +119,7 @@ OuterController.prototype.regen_top5 = function() {
         continue;
 
       // Build daily project hierarchy
-      var match = interval.text.match(/ (@+)(\w+)/) || interval.text.match(/^(@+)(\w+)/);
+      var match = interval.text.match(/^(@+)(\w+)/ || interval.text.match(/ (@+)(\w+)/)/);
       if(match) {
         var parent_node = curr_proj_node,
             new_indentation = parseInt(match[1].length);
