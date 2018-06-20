@@ -32,31 +32,34 @@ def weighted_choice(choices):
             return select_choice(choice_key)
         upto += weight
 
+def add_category(hash, name, hours):
+  hash[name] = {
+    'name': name,
+    'children': {
+      'wildcard': .1,
+      'categorize_tasks': .15,
+      'cleanup_notes': .15,
+      'review_tasks': .6,
+    },
+    'value': hours,
+  }
+
 if __name__ == '__main__':
-  print weighted_choice({
-    'study': {
-      'value': 2400,
-      'children': {
-        'categories': 1,
-        'cleanup': 1,
-      }
-    },
-    'debug': 1500,
-    'meeting': 1200,
-    'plan': 1100,
-    'errands': 900,
-    'setup':  {
-      'value': 800,
-      'children': {
-        'categories': 1,
-        'cleanup': 1,
-      }
-    },
-    'coding': 800,
-    'talk': 500,
-    'exercise': 400,
-    'writing': 300,
-    'break': 200,
-    'thinking': 200,
-    'daydream': 100,
-  })
+  choice_name_to_choice_dict = {}
+  for category_name, hours in [
+    ('study', 2400),
+    ('debug', 1500),
+    ('meeting', 1200),
+    ('plan', 1100),
+    ('errands', 900),
+    ('setup', 800),
+    ('coding', 800),
+    ('talk', 500),
+    ('exercise', 400),
+    ('writing', 300),
+    ('break', 200),
+    ('thinking', 200),
+    ('daydream', 100),
+  ]:
+    add_category(choice_name_to_choice_dict, category_name, hours)
+  print weighted_choice(choice_name_to_choice_dict)
