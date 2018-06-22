@@ -1,65 +1,57 @@
 import random
 
 def weighted_choice(choices):
-
-    # Return weighted random selection; format: {'choice1':.7, 'choice2':.5}
-
     if not choices:
-        raise IndexError  # raise IndexError on empty dict
+        raise IndexError  # raise IndexError on empty list
 
-    def choice_value(choice_key):
-      choice_val = choices[choice_key]
-      if isinstance(choice_val, dict):
-        return choice_val['value']
-      return choice_val
+    def select_choice(choice):
+      children = choice.get('children', [])
+      if children:
+        return [choice] + weighted_choice(children)
+      return [choice]
 
-    def select_choice(choice_key):
-      choice_val = choices[choice_key]
-      if isinstance(choice_val, dict):
-        node_sequence = [choice_val]
-        while isinstance(choice_val, dict):
-          choice_val = weighted_choice(choice_val['children'])
-          node_sequence.append(choice_val)
-        return node_sequence
-      return choice_key
-
-    total = sum(choice_value(choice_key) for choice_key in choices)
+    total = sum(choice['weight'] for choice in choices)
     rand = random.uniform(0, total)
     upto = 0
-    for choice_key in choices:
-        weight = choice_value(choice_key)
+    for choice in choices:
+        weight = choice['weight']
         if upto + weight > rand:
-            return select_choice(choice_key)
+            return select_choice(choice)
         upto += weight
 
-def add_category(hash, name, hours):
-  hash[name] = {
+def node(weight, name, children=None):
+  return {
     'name': name,
-    'children': {
-      'wildcard': .1,
-      'categorize_tasks': .15,
-      'cleanup_notes': .15,
-      'review_tasks': .6,
-    },
-    'value': hours,
+    'weight': weight,
+    'children': children or []
   }
 
+def category(weight, name, sub_categories=None):
+  return node(weight, name, children=[
+    node(.1, 'wildcard'),
+    node(.15, 'categorize_tasks'),
+    node(.15, 'cleanup_notes'),
+    node(.7, 'review_categorized', sub_categories or [])
+  ])
+
+def sub_categories(weights):
+  return [node(weight, str(weight)) for weight in weights]
+
 if __name__ == '__main__':
-  choice_name_to_choice_dict = {}
-  for category_name, hours in [
-    ('study', 2400),
-    ('debug', 1500),
-    ('meeting', 1200),
-    ('plan', 1100),
-    ('errands', 900),
-    ('setup', 800),
-    ('coding', 800),
-    ('talk', 500),
-    ('exercise', 400),
-    ('writing', 300),
-    ('break', 200),
-    ('thinking', 200),
-    ('daydream', 100),
-  ]:
-    add_category(choice_name_to_choice_dict, category_name, hours)
-  print weighted_choice(choice_name_to_choice_dict)
+  categories = [
+    category(2400, 'study', sub_categories([69.5, 57, 50.5, 48, 6, 1])),
+    category(1500, 'debug'),
+    category(1200, 'meeting'),
+    category(1100, 'plan'),
+    category(900, 'errands', sub_categories([107, 15, 11.5, 4.5, 3.5])),
+    category(800, 'setup'),
+    category(800, 'coding'),
+    category(500, 'talk'),
+    category(400, 'exercise'),
+    category(300, 'writing'),
+    category(200, 'break'),
+    category(200, 'thinking'),
+    category(100, 'daydream'),
+  ]
+
+  print [node['name'] for node in weighted_choice(categories)]
