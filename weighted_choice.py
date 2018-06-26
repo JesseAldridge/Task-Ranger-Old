@@ -79,9 +79,7 @@ if __name__ == '__main__':
     ]),
     node(.2, 'networking'),
     node(.1, 'wildcard'),
+    node(.1, 'review previous work'),
   ]
 
-  # print [node['name'] for node in weighted_choice(categories)]
-  print [node['name'] for node in weighted_choice(
-    categories[0]['children'][0]['children'][1]['children']
-  )]
+  print [node['name'] for node in weighted_choice(categories)]
